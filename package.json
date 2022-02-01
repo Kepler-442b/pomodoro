@@ -3,17 +3,26 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build postcss in.css -0 out.css",
     "start": "next start",
     "lint": "next lint"
   },
+  "eslintIgnore": [
+    "build/**/*",
+    "public/**/*"
+  ],
   "dependencies": {
     "next": "12.0.9",
+    "postcss": "^8.4.5",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "sass": "^1.49.3"
   },
   "devDependencies": {
     "eslint": "8.8.0",
-    "eslint-config-next": "12.0.9"
+    "eslint-config-next": "12.0.9",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.5.1",
+    "tailwindcss": "^3.0.18"
   }
 }
