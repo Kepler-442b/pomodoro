@@ -1,11 +1,11 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap');
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap");
 
 @layer components {
   .button-basic-style {
-    @apply fixed flex items-center justify-between w-auto h-10 px-3 py-1 text-lg text-white shadow-xl rounded-2xl;
+    @apply relative flex items-center justify-between w-auto h-10 px-3 py-1 mx-2 text-lg text-white shadow-xl hover:bg-slate-800 rounded-2xl;
   }
 
   .long-button-style {
@@ -25,12 +25,17 @@
   }
 }
 
+.cc {
+  min-height: 205px;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Allerta Stencil', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Allerta Stencil", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+    sans-serif;
 }
 
 a {
@@ -40,6 +45,52 @@ a {
 
 * {
   box-sizing: border-box;
+}
+.centering {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+}
+.center-bottom {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  transform: translate(-50%, -50%);
+  flex-wrap: wrap;
+}
+.center-end {
+  display: flex;
+  position: absolute;
+  left: 97%;
+  top: 90%;
+  transform: translate(-50%, -50%);
+  flex-wrap: wrap;
+}
+
+.top-left {
+  align-items: center;
+  position: relative;
+  display: inline-flex;
+  flex: 1 1 auto;
+}
+
+.top-center {
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  display: inline-flex;
+  flex: 1 1 auto;
+}
+
+.top-right {
+  align-items: center;
+  min-width: 0;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  flex: 1 1 auto;
 }
 
 .background {
@@ -62,9 +113,11 @@ a {
   transition: transform var(--a-show-full-duration) var(--a-show-full-curve);
   background-image: url("/images/hubble_cha1_mosiac_ccexpress.jpeg");
   background-size: cover;
-  height: 100%
+  height: 100%;
 }
 
-/* input[type="search"]:-moz-placeholder:before {
-  content: "\e003  ";
-} */
+input[type="text"] {
+  font-size: 1.125rem;
+  color: #fff;
+  margin-left: 0.5rem;
+}
