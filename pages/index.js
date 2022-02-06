@@ -1,14 +1,32 @@
+import { useEffect, useState } from "react"
 import Head from "next/head"
 import Image from "next/image"
 import levi from "../public/images/levi.jpeg"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
 import MyButton from "../src/components/button"
+import MyTimer from "../src/components/timer"
 import UserIcon from "../public/icons/UserIcon.svg"
 import MyInputBox from "../src/components/inputbox"
 import SearchIcon from "../public/icons/SearchIcon.svg"
 import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
+import debounce from "../src/utils/debounce"
 
 export default function Home() {
+  const [windowWidth, setWindowWidth] = useState(0)
+  const [paused, togglePaused] = useState(false)
+  console.log("paused", paused)
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+
+    window.addEventListener(
+      "resize",
+      debounce(() => {
+        setWindowWidth(window.innerWidth)
+      })
+    )
+    return () => {}
+  }, [windowWidth])
+
   return (
     <>
       <Head>
@@ -16,37 +34,35 @@ export default function Home() {
         <meta name="description" content="pomodoro" />
         <link rel="icon" href="/icons8-tomato-64.png" />
       </Head>
-      <div className="background">
-        <div className="bg-img" />
-      </div>
-      <div className="flex items-start mx-3 my-4 cc">
+      <nav className="navWrapper">
         <div className="top-left">
           <MyInputBox
             text=" search users.."
             icon={SearchIcon.src}
-            styling="bg-secondary rounded-2xl h-10"
-            iconStyling="button-icon-spacing ml-2"
+            styling="bg-secondary rounded-2xl h-10 md:w-full w-36"
+            iconStyling="button-icon ml-2"
           />
         </div>
-        <div className="top-center" />
         <div className="flex top-right">
           <MyButton
             text="users"
+            screenW={windowWidth}
             icon={UserIcon.src}
             styling="bg-secondary "
-            iconStyling="button-icon-spacing"
+            iconStyling="button-icon"
           />
           <MyButton
             text="settings"
+            screenW={windowWidth}
             icon={SettingsIcon.src}
             styling="bg-secondary "
-            iconStyling="button-icon-spacing"
+            iconStyling="button-icon"
           />
         </div>
-      </div>
-      <div className="mx-3 my-4 centering">
-        <div className="top-left" />
-        <div className="relative overflow-hidden rounded-full w-timerRadius h-timerRadius ring-2 ring-primary ring-offset-4">
+      </nav>
+      <div className="timerWrapper mid-center">
+        <div className="timer">
+          <MyTimer target={{ minutes: 1, seconds: 0 }} paused={paused} />
           <Image
             objectFit="cover"
             src={levi}
@@ -55,21 +71,27 @@ export default function Home() {
             priority
           />
         </div>
-        <div className="top-right" />
       </div>
-      <div className="flex center-bottom">
-        <div className="top-left" />
-        <div className="top-center">
-          <MyButton text="start" styling="long-button-style" />
-          <MyButton text="skip" styling="long-button-style" />
-        </div>
-        <div className="top-right" />
+      <div className="buttonsWrapper">
+        <MyButton
+          text="start"
+          handleOnClick={() => togglePaused(!paused)}
+          screenW={windowWidth}
+          styling="long-button-style"
+          textOnly={true}
+        />
+        <MyButton
+          text="skip"
+          screenW={windowWidth}
+          styling="long-button-style"
+          textOnly={true}
+        />
       </div>
-      <div className="flex center-end">
+      <div className="chatButtonWrapper">
         <MyButton
           icon={ChatBubbleIcon.src}
           styling="circle-button-style bg-secondary"
-          iconStyling="circle-icon-spacing"
+          iconStyling="circle-icon"
         />
       </div>
     </>

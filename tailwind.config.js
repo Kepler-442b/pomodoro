@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        "space-theme-1": "url('/images/hubble_cha1_mosiac.jpg')",
+      },
       colors: {
         primary: "#FFF171",
         secondary: "#0D354B",
@@ -13,11 +16,17 @@ module.exports = {
         inputBox: "#C4C4C4",
       },
       width: {
-        buttonWidth: "240px",
-        timerRadius: "300px",
+        buttonSmWidth: "7.25rem",
+        timerSmRadius: "12.25rem",
+        timerLgRadius: "18.5rem",
       },
       height: {
-        timerRadius: "300px",
+        timerSmRadius: "12.25rem",
+        timerLgRadius: "18.5rem",
+        buttonSmHeight: "2.25rem",
+        timerWrapperSmHeight: "14.75rem",
+        timerWrapperMdHeight: "17.5rem",
+        timerWrapperLgHeight: "21rem",
       },
     },
   },
