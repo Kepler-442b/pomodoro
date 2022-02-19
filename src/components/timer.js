@@ -1,36 +1,44 @@
-import React, { useEffect, useState, useRef } from "react"
+/**
+ * File: /src/components/timer.js
+ * Copyright (c) 2022 - Sooyeon Kim
+ */
 
-const MyTimer = ({ target, paused }) => {
-  const { minutes = 0, seconds = 0 } = target
-  const [[mins, secs], setTimer] = useState([minutes, seconds])
-  const countdown = useRef(null)
-  const [timerId, setId] = useState(null)
+import React, { useEffect, useState } from "react"
 
-  const reset = () => setTimer([parseInt(minutes), parseInt(seconds)])
+const MyTimer = ({ pomoTime, paused }) => {
+  const { minutes = "00", seconds = "00" } = pomoTime
+  const [[currMins, currSecs], setTimer] = useState([minutes, seconds])
 
-  const tick = () => {
-    if (mins === 0 && secs === 0) return
+  // const reset = () => setTimer([parseInt(minutes), parseInt(seconds)])
+
+  const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
+
+  const tick = (id) => {
+    const minsInt = parseInt(currMins)
+    const secsInt = parseInt(currSecs)
+
+    if (minsInt === 0 && secsInt === 0) clearInterval(id)
     //reset()
-    else if (secs === 0) {
-      setTimer([mins - 1, 59])
+    else if (secsInt === 0) {
+      setTimer([addZeroOnEnd(minsInt - 1)])
     } else {
-      setTimer([mins, secs - 1])
+      setTimer([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
     }
   }
 
   useEffect(() => {
+    let timerId
     if (paused) {
       clearInterval(timerId)
     } else {
-      const timerId = setInterval(() => tick(), 1000)
-      setId(timerId)
-      return () => clearInterval(timerId)
+      timerId = setInterval(() => tick(timerId), 1000)
     }
+    return () => clearInterval(timerId)
   }, [[paused]])
 
   return (
     <>
-      <div className="timerText">{`${mins}:${secs}`}</div>
+      <div className="timerText">{`${currMins}:${currSecs}`}</div>
     </>
   )
 }

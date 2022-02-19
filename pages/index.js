@@ -13,8 +13,9 @@ import debounce from "../src/utils/debounce"
 
 export default function Home() {
   const [windowWidth, setWindowWidth] = useState(0)
-  const [paused, togglePaused] = useState(false)
-  console.log("paused", paused)
+  const [paused, togglePaused] = useState(true)
+  const [targetTime, setTargetTime] = useState({ minutes: "00", seconds: "10" })
+
   useEffect(() => {
     setWindowWidth(window.innerWidth)
 
@@ -26,6 +27,7 @@ export default function Home() {
     )
     return () => {}
   }, [windowWidth])
+  console.log("paused??", paused)
 
   return (
     <>
@@ -62,7 +64,7 @@ export default function Home() {
       </nav>
       <div className="timerWrapper mid-center">
         <div className="timer">
-          <MyTimer target={{ minutes: 1, seconds: 0 }} paused={paused} />
+          <MyTimer pomoTime={targetTime} paused={paused} />
           <Image
             objectFit="cover"
             src={levi}
@@ -75,6 +77,8 @@ export default function Home() {
       <div className="buttonsWrapper">
         <MyButton
           text="start"
+          toggleText="pause"
+          showToggle={!paused}
           handleOnClick={() => togglePaused(!paused)}
           screenW={windowWidth}
           styling="long-button-style"
