@@ -1,19 +1,23 @@
 import React from "react"
 
-const MyInputBox = ({ text, icon, styling, iconStyling }) => {
+const MyTextInputWithLabel = ({
+  inputId,
+  inputStyle,
+  labelStyle,
+  labelElement,
+  placeHolderText,
+}) => {
   return (
-    <div className="flex h-full rounded-2xl bg-secondary">
-      <label className="flex items-center">
-        <img src={icon} alt="icon" className={iconStyling} />
-      </label>
+    <>
+      <label className={labelStyle}>{labelElement}</label>
       <input
-        id="search-user"
+        id={inputId}
         type="text"
-        className={`input-basic-style ${styling}`}
-        placeholder={`${text}`}
+        className={inputStyle}
+        placeholder={`${placeHolderText}`}
       />
-    </div>
+    </>
   )
 }
 
-export default MyInputBox
+export default MyTextInputWithLabel

@@ -34,6 +34,30 @@ input[type="text"] {
     @apply mx-3 my-4;
   }
 
+  .settingsModal {
+    @apply absolute bottom-0 rounded-xl w-80 h-96 right-36 top-14 bg-button;
+  }
+
+  .modalTitle {
+    @apply px-5 pt-3 pb-6 text-xl tracking-wide text-center text-white;
+  }
+
+  .modalSubtitle {
+    @apply px-4 pb-1.5 text-lg tracking-wide text-white;
+  }
+
+  .modalLabel {
+    @apply inline-block w-20 pb-1 mx-2 text-sm tracking-tight text-gray-400;
+  }
+
+  .modalInput {
+    @apply w-20 h-8 mx-2 text-xl font-semibold text-center border-2 border-black border-solid rounded-md;
+  }
+
+  .settingGroup {
+    @apply mb-8;
+  }
+
   .navWrapper {
     @apply flex items-start layout-spaces h-44 md:h-48;
   }
