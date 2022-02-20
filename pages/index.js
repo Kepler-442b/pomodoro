@@ -3,13 +3,12 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
-import Modal from "react-modal"
-import Select from "react-select"
 import levi from "../public/images/levi.jpeg"
+import DefaultBg from "../public/images/default-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
 import MyButton from "../src/components/button"
 import MyTimer from "../src/components/timer"
@@ -18,13 +17,56 @@ import MyTextInputWithLabel from "../src/components/inputbox"
 import SearchIcon from "../public/icons/SearchIcon.svg"
 import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import debounce from "../src/utils/debounce"
+import SettingsModal from "../src/components/settingsModal"
 
 export default function Home() {
   const [windowWidth, setWindowWidth] = useState(0)
   const [paused, togglePaused] = useState(true)
   const [isSettingsOpen, toggleSettings] = useState(false)
-  const [targetTime, setTargetTime] = useState({ minutes: "00", seconds: "10" })
-  const [selectedOption, setSelectedOption] = useState(null)
+  const [pomoTime, setPomoTime] = useState("25")
+  const [shortBreak, setShortBreak] = useState("5")
+  const [longBreak, setLongBreak] = useState("15")
+  const [interval, setInterval] = useState(5)
+  // const [alarm, setAlarm] = useState("")
+  const [isOnShortBreak, setIsOnShortBreak] = useState(false)
+  const [isOnLongBreak, setIsOnLongBreak] = useState(false)
+
+  const setIntialVals = () => {
+    window.localStorage.setItem(
+      "pomoTime",
+      window.localStorage.getItem("pomoTime") || pomoTime
+    )
+    window.localStorage.setItem(
+      "shortBreak",
+      window.localStorage.getItem("shortBreak") || shortBreak
+    )
+    window.localStorage.setItem(
+      "longBreak",
+      window.localStorage.getItem("longBreak") || longBreak
+    )
+    window.localStorage.setItem(
+      "interval",
+      window.localStorage.getItem("interval") || interval
+    )
+    // window.localStorage.setItem("alarm",alarm)
+    setPomoTime(window.localStorage.getItem("pomoTime"))
+    setShortBreak(window.localStorage.getItem("shortBreak"))
+    setLongBreak(window.localStorage.getItem("longBreak"))
+    setInterval(window.localStorage.getItem("interval"))
+  }
+
+  const handleSaveSettings = useCallback(() => {
+    window.localStorage.setItem("pomoTime", pomoTime)
+    window.localStorage.setItem("shortBreak", shortBreak)
+    window.localStorage.setItem("longBreak", longBreak)
+    window.localStorage.setItem("interval", interval)
+    // window.localStorage.setItem("alarm",alarm)
+  }, [pomoTime, shortBreak, longBreak, interval])
+
+  useEffect(() => {
+    setIntialVals()
+  }, [])
+
   useEffect(() => {
     setWindowWidth(window.innerWidth)
 
@@ -37,14 +79,6 @@ export default function Home() {
     return () => {}
   }, [windowWidth])
 
-  const handleSelectOption = (e) => {
-    console.log(e)
-    // setSelectedOption
-  }
-
-  Modal.setAppElement("#__next")
-
-  console.log("isSettingsOpen,", isSettingsOpen)
   return (
     <>
       <Head>
@@ -97,102 +131,41 @@ export default function Home() {
             iconStyling="button-icon"
           />
           {isSettingsOpen && (
-            <Modal
-              className="settingsModal"
+            <SettingsModal
+              handleToggle={toggleSettings}
               isOpen={isSettingsOpen}
-              onRequestClose={() => toggleSettings(false)}
-              style={{ overlay: { backgroundColor: "transparent" } }}
-              contentLabel="Example Modal"
-            >
-              <div className="modalTitle">TIMER SETTINGS</div>
-              <div id="mainTimerSetting" className="settingGroup">
-                <div className="modalSubtitle">Time(minutes)</div>
-                <div className="px-3">
-                  <label className="modalLabel" htmlFor="pomodoroInput">
-                    pomodoro
-                  </label>
-                  <label className="modalLabel" htmlFor="shortBreakInput">
-                    short break
-                  </label>
-                  <label className="modalLabel" htmlFor="longBreakInput">
-                    long break
-                  </label>
-                  <input
-                    className="modalInput"
-                    id="pomodoroInput"
-                    type="number"
-                    min={0}
-                    max={60}
-                    step={1}
-                    value={25}
-                  />
-                  <input
-                    className="modalInput"
-                    id="shortBreakInput"
-                    type="number"
-                    min={0}
-                    max={10}
-                    step={1}
-                    value={5}
-                  />
-                  <input
-                    className="modalInput"
-                    id="longBreakInput"
-                    type="number"
-                    min={0}
-                    max={60}
-                    step={1}
-                    value={15}
-                  />
-                </div>
-              </div>
-              <div id="intervalSetting" className="settingGroup">
-                <div className="modalSubtitle">Long break every..</div>
-                <div className="px-3">
-                  <input
-                    className="modalInput"
-                    id="intervalInput"
-                    type="number"
-                    min={1}
-                    max={10}
-                    step={1}
-                    value={5}
-                  />
-                  <label className="modalLabel" htmlFor="pomodoroInput">
-                    pomodoro(s)
-                  </label>
-                </div>
-              </div>
-              <div id="soundSetting" className="settingGroup">
-                <div className="modalSubtitle">Alarm Sound</div>
-                <div className="px-3 ">
-                  <Select
-                    className="font-semibold border-2 border-black border-solid rounded-md w-64mx-2"
-                    onChange={(option) => setSelectedOption(option)}
-                    value={selectedOption}
-                    options={[
-                      { value: "Levi Ackerman", label: "Levi Ackerman" },
-                      { value: "Eren Jaeger", label: "Eren Jaeger" },
-                    ]}
-                  />
-                </div>
-              </div>
-            </Modal>
+              pomoTime={pomoTime}
+              setPomoTime={setPomoTime}
+              shortBreak={shortBreak}
+              setShortBreak={setShortBreak}
+              longBreak={longBreak}
+              setLongBreak={setLongBreak}
+              interval={interval}
+              setInterval={setInterval}
+              screenW={windowWidth}
+              handleSave={handleSaveSettings}
+            />
           )}
         </div>
       </nav>
       <div className="timerWrapper mid-center">
         <div className="timer">
-          <MyTimer pomoTime={targetTime} paused={paused} />
+          <MyTimer
+            pomoTime={pomoTime}
+            shortBreak={shortBreak}
+            longBreak={longBreak}
+            paused={paused}
+          />
           <Image
             objectFit="cover"
-            src={levi}
+            src={DefaultBg}
             alt="Picture of Levi"
             layout="fill"
             priority
           />
         </div>
       </div>
+
       <div className="buttonsWrapper">
         <MyButton
           text="start"

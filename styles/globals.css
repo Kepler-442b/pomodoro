@@ -35,7 +35,7 @@ input[type="text"] {
   }
 
   .settingsModal {
-    @apply absolute bottom-0 rounded-xl w-80 h-96 right-36 top-14 bg-button;
+    @apply absolute bottom-0 z-20 rounded-xl w-80 h-settingsModalLgHeight right-36 top-14 bg-button;
   }
 
   .modalTitle {
@@ -83,7 +83,7 @@ input[type="text"] {
   }
 
   .timerText {
-    @apply z-10 text-5xl font-bold text-white;
+    @apply z-10 text-7xl font-bold text-white [text-shadow:0_8px_8px_rgba(0,0,0,1)];
   }
 
   .buttonsWrapper {

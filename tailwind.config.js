@@ -27,6 +27,7 @@ module.exports = {
         timerWrapperSmHeight: "14.75rem",
         timerWrapperMdHeight: "17.5rem",
         timerWrapperLgHeight: "21rem",
+        settingsModalLgHeight: "28rem",
       },
     },
   },

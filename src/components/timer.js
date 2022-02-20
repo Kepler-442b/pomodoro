@@ -6,21 +6,31 @@
 import React, { useEffect, useState } from "react"
 
 const MyTimer = ({ pomoTime, paused }) => {
-  const { minutes = "00", seconds = "00" } = pomoTime
-  const [[currMins, currSecs], setTimer] = useState([minutes, seconds])
+  const SECONDS = "00"
 
-  // const reset = () => setTimer([parseInt(minutes), parseInt(seconds)])
+  const [[currMins, currSecs], setTimer] = useState([pomoTime, SECONDS])
 
   const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
+
+  let pomoTimeFromLocal, sbFromLocal, lbFromLocal, intervalFromLocal
+  if (typeof window !== "undefined") {
+    pomoTimeFromLocal = window.localStorage.getItem("pomoTime")
+    sbFromLocal = window.localStorage.getItem("shortBreak")
+    lbFromLocal = window.localStorage.getItem("longBreak")
+    intervalFromLocal = window.localStorage.getItem("interval")
+  }
+
+  useEffect(() => {
+    setTimer([pomoTimeFromLocal, SECONDS])
+  }, [pomoTimeFromLocal, sbFromLocal, lbFromLocal, intervalFromLocal])
 
   const tick = (id) => {
     const minsInt = parseInt(currMins)
     const secsInt = parseInt(currSecs)
 
     if (minsInt === 0 && secsInt === 0) clearInterval(id)
-    //reset()
     else if (secsInt === 0) {
-      setTimer([addZeroOnEnd(minsInt - 1)])
+      setTimer([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
     } else {
       setTimer([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
     }
@@ -43,4 +53,4 @@ const MyTimer = ({ pomoTime, paused }) => {
   )
 }
 
-export default React.memo(MyTimer)
+export default MyTimer

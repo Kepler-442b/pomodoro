@@ -1,3 +1,8 @@
+/**
+ * File: /pages/inputbox.js
+ * Copyright (c) 2022 - Sooyeon Kim
+ */
+
 import React from "react"
 
 const MyTextInputWithLabel = ({
