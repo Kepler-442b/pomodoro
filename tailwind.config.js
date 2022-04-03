@@ -29,6 +29,9 @@ module.exports = {
         timerWrapperLgHeight: "21rem",
         settingsModalLgHeight: "28rem",
       },
+      zIndex: {
+        max: 9999,
+      },
     },
   },
   plugins: [],

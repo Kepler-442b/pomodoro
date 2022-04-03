@@ -5,35 +5,80 @@
 
 import React, { useEffect, useState } from "react"
 
-const MyTimer = ({ pomoTime, paused }) => {
-  const SECONDS = "00"
+const SECONDS = "00"
 
+const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
+
+const MyTimer = ({
+  pomoTime,
+  shortBreak,
+  longBreak,
+  paused,
+  count,
+  isOnShortBreak,
+  isOnLongBreak,
+  setIsOnShortBreak,
+  setIsOnLongBreak,
+  togglePaused,
+}) => {
   const [[currMins, currSecs], setTimer] = useState([pomoTime, SECONDS])
-
-  const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
-
+  const [[currSBMins, currSBSecs], setSBTimer] = useState([shortBreak, SECONDS])
+  const [[currLBMins, currLBSecs], setLBTimer] = useState([longBreak, SECONDS])
   let pomoTimeFromLocal, sbFromLocal, lbFromLocal, intervalFromLocal
-  if (typeof window !== "undefined") {
-    pomoTimeFromLocal = window.localStorage.getItem("pomoTime")
-    sbFromLocal = window.localStorage.getItem("shortBreak")
-    lbFromLocal = window.localStorage.getItem("longBreak")
-    intervalFromLocal = window.localStorage.getItem("interval")
-  }
-
+  // if (typeof window !== "undefined") {
+  //   pomoTimeFromLocal = window.localStorage.getItem("pomoTime")
+  //   sbFromLocal = window.localStorage.getItem("shortBreak")
+  //   lbFromLocal = window.localStorage.getItem("longBreak")
+  //   intervalFromLocal = window.localStorage.getItem("longBreakInterval")
+  // }
   useEffect(() => {
-    setTimer([pomoTimeFromLocal, SECONDS])
-  }, [pomoTimeFromLocal, sbFromLocal, lbFromLocal, intervalFromLocal])
+    setTimer([0, SECONDS])
+    setSBTimer([shortBreak, SECONDS])
+    setLBTimer([longBreak, SECONDS])
+  }, [pomoTime, shortBreak, longBreak])
 
   const tick = (id) => {
-    const minsInt = parseInt(currMins)
-    const secsInt = parseInt(currSecs)
-
-    if (minsInt === 0 && secsInt === 0) clearInterval(id)
-    else if (secsInt === 0) {
-      setTimer([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
+    let minsInt, secsInt
+    if (isOnShortBreak) {
+      minsInt = parseInt(currSBMins)
+      secsInt = parseInt(currSBSecs)
+    } else if (isOnLongBreak) {
+      minsInt = parseInt(currLBMins)
+      secsInt = parseInt(currLBSecs)
     } else {
-      setTimer([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
+      minsInt = parseInt(currMins)
+      secsInt = parseInt(currSecs)
     }
+
+    console.log("tick", minsInt, secsInt, isOnShortBreak)
+    if (minsInt === 0 && secsInt === 0) {
+      clearInterval(id)
+      if (isOnShortBreak || isOnLongBreak) {
+        setIsOnShortBreak(false)
+        setIsOnLongBreak(false)
+        count.current += 1
+      } else {
+        setIsOnShortBreak(true)
+      }
+    } else if (minsInt !== 0 && secsInt === 0) {
+      if (isOnLongBreak)
+        setLBTimer([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
+      else if (isOnShortBreak)
+        setSBTimer([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
+      else setTimer([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
+    } else {
+      if (isOnLongBreak)
+        setLBTimer([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
+      else if (isOnShortBreak)
+        setSBTimer([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
+      else setTimer([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
+    }
+  }
+
+  const displayTime = () => {
+    if (isOnShortBreak) return `${currSBMins}:${currSBSecs}`
+    else if (isOnLongBreak) return `${currLBMins}:${currLBSecs}`
+    else return `${currMins}:${currSecs}`
   }
 
   useEffect(() => {
@@ -44,11 +89,11 @@ const MyTimer = ({ pomoTime, paused }) => {
       timerId = setInterval(() => tick(timerId), 1000)
     }
     return () => clearInterval(timerId)
-  }, [[paused]])
+  }, [[paused, isOnLongBreak, isOnShortBreak]])
 
   return (
     <>
-      <div className="timerText">{`${currMins}:${currSecs}`}</div>
+      <div className="timerText">{displayTime()}</div>
     </>
   )
 }

@@ -17,8 +17,8 @@ const SettingsModal = ({
   setShortBreak,
   longBreak,
   setLongBreak,
-  interval,
-  setInterval,
+  longBreakInterval,
+  setLongBreakInterval,
   screenW,
   handleSave,
 }) => {
@@ -31,7 +31,7 @@ const SettingsModal = ({
       className="settingsModal"
       isOpen={isOpen}
       onRequestClose={() => handleToggle(false)}
-      style={{ overlay: { backgroundColor: "transparent" } }}
+      style={{ overlay: { backgroundColor: "transparent", zIndex: 9999 } }}
       contentLabel="Example Modal"
     >
       <div className="modalTitle">TIMER SETTINGS</div>
@@ -89,8 +89,8 @@ const SettingsModal = ({
             min={1}
             max={10}
             step={1}
-            value={interval}
-            onChange={(evt) => setInterval(evt.currentTarget.value)}
+            value={longBreakInterval}
+            onChange={(evt) => setLongBreakInterval(evt.currentTarget.value)}
           />
           <label className="modalLabel" htmlFor="pomodoroInput">
             pomodoro(s)
@@ -114,6 +114,7 @@ const SettingsModal = ({
       <div className="flex justify-center">
         <MyButton
           text="Save"
+          textOnly={true}
           screenW={screenW}
           styling="bg-secondary border-black border-2 border-solid"
           handleOnClick={() => handleSave()}

@@ -3,7 +3,7 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
@@ -26,10 +26,12 @@ export default function Home() {
   const [pomoTime, setPomoTime] = useState("25")
   const [shortBreak, setShortBreak] = useState("5")
   const [longBreak, setLongBreak] = useState("15")
-  const [interval, setInterval] = useState(5)
+  const [longBreakInterval, setLongBreakInterval] = useState(5)
   // const [alarm, setAlarm] = useState("")
   const [isOnShortBreak, setIsOnShortBreak] = useState(false)
   const [isOnLongBreak, setIsOnLongBreak] = useState(false)
+
+  const countPomodoro = useRef(0)
 
   const setIntialVals = () => {
     window.localStorage.setItem(
@@ -45,23 +47,23 @@ export default function Home() {
       window.localStorage.getItem("longBreak") || longBreak
     )
     window.localStorage.setItem(
-      "interval",
-      window.localStorage.getItem("interval") || interval
+      "longBreakInterval",
+      window.localStorage.getItem("longBreakInterval") || longBreakInterval
     )
     // window.localStorage.setItem("alarm",alarm)
     setPomoTime(window.localStorage.getItem("pomoTime"))
     setShortBreak(window.localStorage.getItem("shortBreak"))
     setLongBreak(window.localStorage.getItem("longBreak"))
-    setInterval(window.localStorage.getItem("interval"))
+    setLongBreakInterval(window.localStorage.getItem("longBreakInterval"))
   }
 
   const handleSaveSettings = useCallback(() => {
     window.localStorage.setItem("pomoTime", pomoTime)
     window.localStorage.setItem("shortBreak", shortBreak)
     window.localStorage.setItem("longBreak", longBreak)
-    window.localStorage.setItem("interval", interval)
+    window.localStorage.setItem("longBreakInterval", longBreakInterval)
     // window.localStorage.setItem("alarm",alarm)
-  }, [pomoTime, shortBreak, longBreak, interval])
+  }, [pomoTime, shortBreak, longBreak, longBreakInterval])
 
   useEffect(() => {
     setIntialVals()
@@ -140,8 +142,8 @@ export default function Home() {
               setShortBreak={setShortBreak}
               longBreak={longBreak}
               setLongBreak={setLongBreak}
-              interval={interval}
-              setInterval={setInterval}
+              longBreakInterval={longBreakInterval}
+              setLongBreakInterval={setLongBreakInterval}
               screenW={windowWidth}
               handleSave={handleSaveSettings}
             />
@@ -155,7 +157,14 @@ export default function Home() {
             shortBreak={shortBreak}
             longBreak={longBreak}
             paused={paused}
+            count={countPomodoro}
+            isOnShortBreak={isOnShortBreak}
+            isOnLongBreak={isOnLongBreak}
+            setIsOnShortBreak={setIsOnShortBreak}
+            setIsOnLongBreak={setIsOnLongBreak}
+            togglePaused={togglePaused}
           />
+          {/* https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/ */}
           <Image
             objectFit="cover"
             src={DefaultBg}
@@ -171,7 +180,10 @@ export default function Home() {
           text="start"
           toggleText="pause"
           showToggle={!paused}
-          handleOnClick={() => togglePaused(!paused)}
+          handleOnClick={() => {
+            togglePaused(!paused)
+            if (!isOnShortBreak && !isOnShortBreak) countPomodoro.current += 1
+          }}
           screenW={windowWidth}
           styling="long-button-style"
           textOnly={true}
