@@ -86,6 +86,10 @@ input[type="text"] {
     @apply z-10 text-5xl md:text-6xl lg:text-7xl font-bold text-white [text-shadow:0_8px_8px_rgba(0,0,0,1)];
   }
 
+  .breakTimerText {
+    @apply z-10 text-5xl font-bold text-white text-opacity-50 md:text-6xl lg:text-7xl;
+  }
+
   .buttonsWrapper {
     @apply grid justify-center text-center layout-spaces;
   }

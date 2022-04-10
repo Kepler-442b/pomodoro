@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
-import levi from "../public/images/levi.jpeg"
+import Levi from "../public/images/levi.jpeg"
 import DefaultBg from "../public/images/default-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
 import MyButton from "../src/components/button"
@@ -19,6 +19,9 @@ import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import debounce from "../src/utils/debounce"
 import SettingsModal from "../src/components/settingsModal"
 
+const LEVI_BREAK = "/levi-break.mp3"
+export const LEVI_START = "/levi-start.mp3"
+
 export default function Home() {
   const [windowWidth, setWindowWidth] = useState(0)
   const [paused, togglePaused] = useState(true)
@@ -27,9 +30,11 @@ export default function Home() {
   const [shortBreak, setShortBreak] = useState("5")
   const [longBreak, setLongBreak] = useState("15")
   const [longBreakInterval, setLongBreakInterval] = useState(5)
-  // const [alarm, setAlarm] = useState("")
+  const [isStartingNewPomo, setIsStartingNewPomo] = useState(false)
   const [isOnShortBreak, setIsOnShortBreak] = useState(false)
   const [isOnLongBreak, setIsOnLongBreak] = useState(false)
+  const [currImg, setCurrImg] = useState(DefaultBg)
+  const [audio, setAudioFile] = useState(null)
 
   const countPomodoro = useRef(0)
 
@@ -67,7 +72,8 @@ export default function Home() {
 
   useEffect(() => {
     setIntialVals()
-  }, [])
+    setAudioFile(new Audio(LEVI_BREAK))
+  }, [isOnShortBreak, isOnLongBreak])
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
@@ -80,6 +86,16 @@ export default function Home() {
     )
     return () => {}
   }, [windowWidth])
+
+  useEffect(() => {
+    if (isOnShortBreak || isOnLongBreak) {
+      setCurrImg(Levi)
+      audio.play()
+    } else {
+      setCurrImg(DefaultBg)
+      if (isStartingNewPomo) audio.play()
+    }
+  }, [isOnLongBreak, isOnShortBreak, audio, isStartingNewPomo])
 
   return (
     <>
@@ -160,15 +176,17 @@ export default function Home() {
             count={countPomodoro}
             isOnShortBreak={isOnShortBreak}
             isOnLongBreak={isOnLongBreak}
+            setIsStartingNewPomo={setIsStartingNewPomo}
             setIsOnShortBreak={setIsOnShortBreak}
             setIsOnLongBreak={setIsOnLongBreak}
             togglePaused={togglePaused}
+            setAudioFile={setAudioFile}
           />
           {/* https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/ */}
           <Image
             objectFit="cover"
-            src={DefaultBg}
-            alt="Picture of Levi"
+            src={currImg}
+            alt="timer background"
             layout="fill"
             priority
           />

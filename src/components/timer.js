@@ -4,8 +4,9 @@
  */
 
 import React, { useEffect, useState } from "react"
+import { LEVI_START } from "../../pages"
 
-const SECONDS = "02" // TODO: change to 00
+const SECONDS = "04" // TODO: change to 00
 
 const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
 
@@ -19,7 +20,8 @@ const MyTimer = ({
   isOnLongBreak,
   setIsOnShortBreak,
   setIsOnLongBreak,
-  togglePaused,
+  setIsStartingNewPomo,
+  setAudioFile,
 }) => {
   const [[currMins, currSecs], setTimer] = useState([pomoTime, SECONDS])
   const [[currSBMins, currSBSecs], setSBTimer] = useState([shortBreak, SECONDS])
@@ -27,7 +29,7 @@ const MyTimer = ({
 
   useEffect(() => {
     setTimer([0, SECONDS]) //TODO: change to pomoTime
-    setSBTimer([shortBreak, SECONDS])
+    setSBTimer([1, SECONDS])
     setLBTimer([longBreak, SECONDS])
   }, [pomoTime, shortBreak, longBreak])
 
@@ -50,9 +52,13 @@ const MyTimer = ({
       if (isOnShortBreak || isOnLongBreak) {
         setIsOnShortBreak(false)
         setIsOnLongBreak(false)
+        setTimer([0, SECONDS])
+        setAudioFile(new Audio(LEVI_START))
+        setIsStartingNewPomo(true)
         count.current += 1
       } else {
-        setIsOnShortBreak(true)
+        setIsOnShortBreak(true) //TODO: add long break too
+        setSBTimer([0, SECONDS])
       }
       // when the timer's second reaches 00, set the next second to 59
     } else if (minsInt !== 0 && secsInt === 0) {
@@ -68,7 +74,6 @@ const MyTimer = ({
     else if (isOnLongBreak) return `${currLBMins}:${currLBSecs}`
     else return `${currMins}:${currSecs}`
   }
-
   useEffect(() => {
     let timerId
     if (paused) {
@@ -85,7 +90,13 @@ const MyTimer = ({
 
   return (
     <>
-      <div className="timerText">{displayTime()}</div>
+      <div
+        className={
+          !isOnShortBreak && !isOnLongBreak ? "timerText" : "breakTimerText"
+        }
+      >
+        {displayTime()}
+      </div>
     </>
   )
 }
