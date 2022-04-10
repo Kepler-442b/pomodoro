@@ -35,7 +35,7 @@ input[type="text"] {
   }
 
   .settingsModal {
-    @apply absolute bottom-0 rounded-xl w-80 h-settingsModalLgHeight right-36 top-14 bg-button;
+    @apply absolute bottom-0 rounded-xl w-80 h-settingsModalLg right-36 top-14 bg-button;
   }
 
   .modalTitle {
@@ -70,8 +70,43 @@ input[type="text"] {
     @apply relative flex flex-row-reverse items-center justify-start flex-auto min-w-0;
   }
 
+  .timerRingWrapper {
+    @apply absolute h-timerWrapperRingSm md:h-timerWrapperRingMd lg:h-timerWrapperRingLg;
+  }
+
+  .timerRing {
+    @apply stroke-transparent fill-transparent;
+  }
+
+  .timerRingElapsed {
+    @apply stroke-button stroke-ring;
+  }
+
+  .base-timer__path-remaining {
+    /* Just as thick as the original ring */
+    stroke-width: 0.3rem;
+
+    /* Rounds the line endings to create a seamless circle */
+    stroke-linecap: round;
+
+    /* Makes sure the animation starts at the top of the circle */
+    transform: rotate(90deg);
+    transform-origin: center;
+
+    /* One second aligns with the speed of the countdown timer */
+    transition: 1s linear all;
+
+    /* Allows the ring to change color when the color value updates */
+    stroke: #fff141;
+  }
+
+  .timerRingWrapper {
+    /* Flips the svg and makes the animation to move left-to-right */
+    transform: scaleX(-1);
+  }
+
   .timerWrapper {
-    @apply layout-spaces h-timerWrapperSmHeight md:h-timerWrapperMdHeight lg:h-timerWrapperLgHeight;
+    @apply layout-spaces h-timerWrapperSm md:h-timerWrapperMd lg:h-timerWrapperLg;
   }
 
   .mid-center {
@@ -79,7 +114,7 @@ input[type="text"] {
   }
 
   .timer {
-    @apply relative flex items-center justify-center overflow-hidden rounded-full w-timerSmRadius h-timerSmRadius md:w-60 md:h-60 lg:w-timerLgRadius lg:h-timerLgRadius ring-2 ring-primary ring-offset-4;
+    @apply relative flex items-center justify-center overflow-hidden rounded-full w-timerSmRadius h-timerSmRadius md:w-60 md:h-60 lg:w-timerLgRadius lg:h-timerLgRadius;
   }
 
   .timerText {
@@ -103,7 +138,7 @@ input[type="text"] {
   }
 
   .long-button-style {
-    @apply justify-center my-2 text-lg md:my-3 md:text-3xl bg-button w-buttonSmWidth h-buttonSmHeight md:h-12 md:w-52;
+    @apply justify-center my-2 text-lg md:my-3 md:text-3xl bg-button w-buttonSm h-buttonSm md:h-12 md:w-52;
   }
 
   .circle-button-style {

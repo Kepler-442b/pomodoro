@@ -12,6 +12,7 @@ import DefaultBg from "../public/images/default-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
 import MyButton from "../src/components/button"
 import MyTimer from "../src/components/timer"
+import MyTimerAnimation from "../src/components/timerAnimation"
 import UserIcon from "../public/icons/UserIcon.svg"
 import MyTextInputWithLabel from "../src/components/inputbox"
 import SearchIcon from "../public/icons/SearchIcon.svg"
@@ -19,30 +20,35 @@ import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import debounce from "../src/utils/debounce"
 import SettingsModal from "../src/components/settingsModal"
 
+export const SECONDS = "00" // TODO: change to 00
+const FULL_DASH_ARRAY = 283
+
 const LEVI_BREAK = "/levi-break.mp3"
 export const LEVI_START = "/levi-start.mp3"
 
 export default function Home() {
   const [windowWidth, setWindowWidth] = useState(0)
+  const [currImg, setCurrImg] = useState(DefaultBg)
+  const [audio, setAudioFile] = useState(null)
+
   const [paused, togglePaused] = useState(true)
   const [isSettingsOpen, toggleSettings] = useState(false)
-  const [pomoTime, setPomoTime] = useState("25")
+  const [pomoTime, setPomoTime] = useState("1")
   const [shortBreak, setShortBreak] = useState("5")
   const [longBreak, setLongBreak] = useState("15")
   const [longBreakInterval, setLongBreakInterval] = useState(5)
   const [isStartingNewPomo, setIsStartingNewPomo] = useState(false)
   const [isOnShortBreak, setIsOnShortBreak] = useState(false)
   const [isOnLongBreak, setIsOnLongBreak] = useState(false)
-  const [currImg, setCurrImg] = useState(DefaultBg)
-  const [audio, setAudioFile] = useState(null)
+  const [[currMins, currSecs], setTimer] = useState([pomoTime, SECONDS])
+  const [[currSBMins, currSBSecs], setSBTimer] = useState([shortBreak, SECONDS])
+  const [[currLBMins, currLBSecs], setLBTimer] = useState([longBreak, SECONDS])
+  const [dashArrVal, setDashArrVal] = useState(FULL_DASH_ARRAY)
 
   const countPomodoro = useRef(0)
 
   const setIntialVals = () => {
-    window.localStorage.setItem(
-      "pomoTime",
-      window.localStorage.getItem("pomoTime") || pomoTime
-    )
+    window.localStorage.setItem("pomoTime", pomoTime)
     window.localStorage.setItem(
       "shortBreak",
       window.localStorage.getItem("shortBreak") || shortBreak
@@ -90,13 +96,14 @@ export default function Home() {
   useEffect(() => {
     if (isOnShortBreak || isOnLongBreak) {
       setCurrImg(Levi)
-      audio.play()
+      // audio.play()
     } else {
       setCurrImg(DefaultBg)
-      if (isStartingNewPomo) audio.play()
+      // if (isStartingNewPomo)
+      // audio.play()
     }
   }, [isOnLongBreak, isOnShortBreak, audio, isStartingNewPomo])
-
+  console.log("dashvalarl", dashArrVal)
   return (
     <>
       <Head>
@@ -108,8 +115,8 @@ export default function Home() {
         src="https://cdnjs.cloudflare.com/ajax/libs/react-modal/3.14.3/react-modal.min.js"
         strategy="lazyOnload"
         // integrity="sha512-MY2jfK3DBnVzdS2V8MXo5lRtr0mNRroUI9hoLVv2/yL3vrJTam3VzASuKQ96fLEpyYIT4a8o7YgtUs5lPjiLVQ=="
-        referrerPolicy="no-referrer"
         // crossOrigin="anonymous"
+        referrerPolicy="no-referrer"
         onError={(e) => {
           console.error("Script failed to load", e)
         }}
@@ -167,6 +174,7 @@ export default function Home() {
         </div>
       </nav>
       <div className="timerWrapper mid-center">
+        <MyTimerAnimation dashArrVal={dashArrVal} />
         <div className="timer">
           <MyTimer
             pomoTime={pomoTime}
@@ -181,8 +189,17 @@ export default function Home() {
             setIsOnLongBreak={setIsOnLongBreak}
             togglePaused={togglePaused}
             setAudioFile={setAudioFile}
+            currMins={currMins}
+            currSecs={currSecs}
+            currLBMins={currLBMins}
+            currLBSecs={currLBSecs}
+            currSBMins={currSBMins}
+            currSBSecs={currSBSecs}
+            setTimer={setTimer}
+            setSBTimer={setSBTimer}
+            setLBTimer={setLBTimer}
+            setDashArrVal={setDashArrVal}
           />
-          {/* https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/ */}
           <Image
             objectFit="cover"
             src={currImg}
@@ -192,7 +209,6 @@ export default function Home() {
           />
         </div>
       </div>
-
       <div className="buttonsWrapper">
         <MyButton
           text="start"

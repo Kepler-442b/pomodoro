@@ -4,9 +4,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { LEVI_START } from "../../pages"
-
-const SECONDS = "04" // TODO: change to 00
+import { LEVI_START, SECONDS } from "../../pages"
 
 const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
 
@@ -22,16 +20,24 @@ const MyTimer = ({
   setIsOnLongBreak,
   setIsStartingNewPomo,
   setAudioFile,
+  currMins,
+  currSecs,
+  currSBMins,
+  currSBSecs,
+  currLBMins,
+  currLBSecs,
+  setTimer,
+  setSBTimer,
+  setLBTimer,
+  setDashArrVal,
 }) => {
-  const [[currMins, currSecs], setTimer] = useState([pomoTime, SECONDS])
-  const [[currSBMins, currSBSecs], setSBTimer] = useState([shortBreak, SECONDS])
-  const [[currLBMins, currLBSecs], setLBTimer] = useState([longBreak, SECONDS])
-
   useEffect(() => {
-    setTimer([0, SECONDS]) //TODO: change to pomoTime
+    setTimer([1, SECONDS]) //TODO: change to pomoTime
     setSBTimer([1, SECONDS])
     setLBTimer([longBreak, SECONDS])
   }, [pomoTime, shortBreak, longBreak])
+
+  const [secsElapsed, setSecsElapsed] = useState(0)
 
   const tick = (id, handleSetTime) => {
     let minsInt, secsInt
@@ -83,6 +89,16 @@ const MyTimer = ({
         if (isOnShortBreak) tick(timerId, setSBTimer)
         else if (isOnLongBreak) tick(timerId, setLBTimer)
         else tick(timerId, setTimer)
+
+        setSecsElapsed(secsElapsed + 1)
+        const totalTime = parseInt(pomoTime) * 60 + parseInt(SECONDS)
+        const timeElapsed = totalTime - secsElapsed
+        console.log("timeElapsed", timeElapsed, totalTime)
+
+        const circleDasharray = `${((283 * timeElapsed) / totalTime).toFixed(
+          0
+        )} 283`
+        setDashArrVal(circleDasharray)
       }, 1000)
     }
     return () => clearInterval(timerId)
