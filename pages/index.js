@@ -20,10 +20,10 @@ import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import debounce from "../src/utils/debounce"
 import SettingsModal from "../src/components/settingsModal"
 
-export const SECONDS = "00" // TODO: change to 00
-const FULL_DASH_ARRAY = 283
+export const SECONDS = "05" // TODO: change to 00
+export const FULL_DASH_ARRAY = 283
 
-const LEVI_BREAK = "/levi-break.mp3"
+export const LEVI_BREAK = "/levi-break.mp3"
 export const LEVI_START = "/levi-start.mp3"
 
 export default function Home() {
@@ -33,8 +33,8 @@ export default function Home() {
 
   const [paused, togglePaused] = useState(true)
   const [isSettingsOpen, toggleSettings] = useState(false)
-  const [pomoTime, setPomoTime] = useState("1")
-  const [shortBreak, setShortBreak] = useState("5")
+  const [pomoTime, setPomoTime] = useState("0")
+  const [shortBreak, setShortBreak] = useState("0")
   const [longBreak, setLongBreak] = useState("15")
   const [longBreakInterval, setLongBreakInterval] = useState(5)
   const [isStartingNewPomo, setIsStartingNewPomo] = useState(false)
@@ -43,7 +43,10 @@ export default function Home() {
   const [[currMins, currSecs], setTimer] = useState([pomoTime, SECONDS])
   const [[currSBMins, currSBSecs], setSBTimer] = useState([shortBreak, SECONDS])
   const [[currLBMins, currLBSecs], setLBTimer] = useState([longBreak, SECONDS])
-  const [dashArrVal, setDashArrVal] = useState(FULL_DASH_ARRAY)
+  const [dashArrVal, setDashArrVal] = useState(
+    `${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`
+  )
+  const [secsElapsed, setSecsElapsed] = useState(0)
 
   const countPomodoro = useRef(0)
 
@@ -51,7 +54,7 @@ export default function Home() {
     window.localStorage.setItem("pomoTime", pomoTime)
     window.localStorage.setItem(
       "shortBreak",
-      window.localStorage.getItem("shortBreak") || shortBreak
+      window.localStorage.getItem("shortBreak")
     )
     window.localStorage.setItem(
       "longBreak",
@@ -79,8 +82,21 @@ export default function Home() {
   useEffect(() => {
     setIntialVals()
     setAudioFile(new Audio(LEVI_BREAK))
-  }, [isOnShortBreak, isOnLongBreak])
-
+  }, [])
+  console.log("???", currMins, currSecs)
+  useEffect(() => {
+    if (
+      (currMins === "00" &&
+        currSecs === "00" &&
+        !isOnLongBreak &&
+        !isOnShortBreak) ||
+      (currSBMins === "00" && currSBSecs === "00" && isOnShortBreak) ||
+      (currLBMins === "00" && currLBSecs === "00" && isOnLongBreak)
+    ) {
+      setSecsElapsed(0)
+      setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
+    }
+  }, [currMins, currSecs, currSBMins, currSBSecs, currLBMins, currLBSecs])
   useEffect(() => {
     setWindowWidth(window.innerWidth)
 
@@ -96,11 +112,11 @@ export default function Home() {
   useEffect(() => {
     if (isOnShortBreak || isOnLongBreak) {
       setCurrImg(Levi)
-      // audio.play()
+
+      audio.play()
     } else {
       setCurrImg(DefaultBg)
-      // if (isStartingNewPomo)
-      // audio.play()
+      if (isStartingNewPomo) audio.play()
     }
   }, [isOnLongBreak, isOnShortBreak, audio, isStartingNewPomo])
   console.log("dashvalarl", dashArrVal)
@@ -187,18 +203,19 @@ export default function Home() {
             setIsStartingNewPomo={setIsStartingNewPomo}
             setIsOnShortBreak={setIsOnShortBreak}
             setIsOnLongBreak={setIsOnLongBreak}
-            togglePaused={togglePaused}
             setAudioFile={setAudioFile}
             currMins={currMins}
             currSecs={currSecs}
-            currLBMins={currLBMins}
-            currLBSecs={currLBSecs}
             currSBMins={currSBMins}
             currSBSecs={currSBSecs}
+            currLBMins={currLBMins}
+            currLBSecs={currLBSecs}
             setTimer={setTimer}
             setSBTimer={setSBTimer}
             setLBTimer={setLBTimer}
             setDashArrVal={setDashArrVal}
+            secsElapsed={secsElapsed}
+            setSecsElapsed={setSecsElapsed}
           />
           <Image
             objectFit="cover"
