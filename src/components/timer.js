@@ -3,8 +3,8 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React, { useCallback, useEffect, useState } from "react"
-import { FULL_DASH_ARRAY, LEVI_BREAK, LEVI_START, SECONDS } from "../../pages"
+import React, { useCallback, useEffect } from "react"
+import { FULL_DASH_ARRAY, SECONDS } from "../../pages"
 
 const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
 
@@ -16,10 +16,10 @@ const MyTimer = ({
   count,
   isOnShortBreak,
   isOnLongBreak,
+  isOnPomoSession,
   setIsOnPomoSession,
   setIsOnShortBreak,
   setIsOnLongBreak,
-  setAudioFile,
   currMins,
   currSecs,
   currSBMins,
@@ -34,7 +34,7 @@ const MyTimer = ({
   setSecsElapsed,
 }) => {
   useEffect(() => {
-    setTimer([0, SECONDS]) //TODO: change to pomoTime
+    setTimer([0, SECONDS]) //TODO: change 0 to pomoTime
     setSBTimer([0, SECONDS])
     setLBTimer([longBreak, SECONDS])
   }, [pomoTime, shortBreak, longBreak])
@@ -59,21 +59,23 @@ const MyTimer = ({
           setIsOnShortBreak(false)
           setIsOnLongBreak(false)
           setTimer([0, SECONDS])
-          // setAudioFile(new Audio(LEVI_START))
           setIsOnPomoSession(true)
           count.current += 1
         } else {
           setIsOnShortBreak(true) //TODO: add long break too
-          // setAudioFile(new Audio(LEVI_BREAK))
           setIsOnPomoSession(false)
           setSBTimer([0, SECONDS])
         }
         // when the timer's second reaches 00, set the next second to 59
       } else if (minsInt !== 0 && secsInt === 0) {
-        handleSetTime([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
+        count.current === 0
+          ? (count.current += 1)
+          : handleSetTime([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
         // otherwise just reduce 1 second from the current time
       } else {
-        handleSetTime([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
+        count.current === 0
+          ? (count.current += 1)
+          : handleSetTime([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
       }
     },
     [
@@ -89,10 +91,13 @@ const MyTimer = ({
   )
 
   const displayTime = () => {
-    if (isOnShortBreak) return `${currSBMins}:${currSBSecs}`
+    // show Begin! only on the initial pomo session of the day
+    if (isOnPomoSession && count.current === 0) return "Begin!"
+    else if (isOnShortBreak) return `${currSBMins}:${currSBSecs}`
     else if (isOnLongBreak) return `${currLBMins}:${currLBSecs}`
     else return `${currMins}:${currSecs}`
   }
+
   useEffect(() => {
     let timerId
     if (paused) {
@@ -110,18 +115,20 @@ const MyTimer = ({
           tick(timerId, setTimer)
           baseMins = pomoTime
         }
+
         setSecsElapsed((prev) => prev + 1)
 
         const totalSecs = 6 //parseInt(baseMins) * 60 + parseInt(SECONDS)
-        const timeRemained = totalSecs - secsElapsed
+        const secsLeft = totalSecs - secsElapsed
 
         // console.log("Hit secsElapsed", secsElapsed)
 
-        const remainedFraction = timeRemained / totalSecs
-        // gradually reduce the dash array to set it to 0 when the timer is 00:00
+        const remainedFraction = secsLeft / totalSecs
+        // gradually reduce the dash array to be set to 0, so that when the
+        // timer ends, the animation also ends at the same time
         const reducer =
           remainedFraction - (1 / totalSecs) * (1 - remainedFraction)
-        let updatedDashArr = FULL_DASH_ARRAY * reducer
+        let updatedDashArr = reducer * FULL_DASH_ARRAY
 
         const circleDasharray = `${updatedDashArr.toFixed(
           0

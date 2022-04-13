@@ -115,7 +115,7 @@ export default function Home() {
       console.log("on break", audio)
       setCurrImg(Levi)
       audio.play()
-    } else if (isOnPomoSession && countPomodoro.current !== 1) {
+    } else if (isOnPomoSession && countPomodoro.current > 1) {
       setCurrImg(DefaultBg)
       console.log("on pomo session", audio, countPomodoro.current)
       audio.play()
@@ -123,7 +123,7 @@ export default function Home() {
 
     if (audio) {
       audio.addEventListener("ended", () => {
-        if (isOnPomoSession && countPomodoro.current !== 1) {
+        if (isOnPomoSession && countPomodoro.current > 1) {
           setAudioFile(new Audio(LEVI_BREAK))
         } else if (isOnLongBreak || isOnShortBreak) {
           setAudioFile(new Audio(LEVI_START))
@@ -132,7 +132,7 @@ export default function Home() {
     }
   }, [isOnLongBreak, isOnShortBreak, isOnPomoSession, countPomodoro.current])
 
-  // console.log("dashvalarl", dashArrVal)
+  console.log("dashvalarl", dashArrVal)
   return (
     <>
       <Head>
@@ -211,6 +211,7 @@ export default function Home() {
             longBreak={longBreak}
             paused={paused}
             count={countPomodoro}
+            isOnPomoSession={isOnPomoSession}
             isOnShortBreak={isOnShortBreak}
             isOnLongBreak={isOnLongBreak}
             setIsOnPomoSession={setIsOnPomoSession}
@@ -246,8 +247,9 @@ export default function Home() {
           showToggle={!paused}
           handleOnClick={() => {
             togglePaused(!paused)
-            setIsOnPomoSession(!isOnPomoSession)
-            if (!isOnShortBreak && !isOnShortBreak) countPomodoro.current += 1
+            if (!isOnShortBreak && !isOnShortBreak) {
+              setIsOnPomoSession(!isOnPomoSession)
+            }
           }}
           screenW={windowWidth}
           styling="long-button-style"
