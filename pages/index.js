@@ -20,7 +20,7 @@ import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import debounce from "../src/utils/debounce"
 import SettingsModal from "../src/components/settingsModal"
 
-export const SECONDS = "05" // TODO: change to 00
+export const SECONDS = "06" // TODO: change to 00
 export const FULL_DASH_ARRAY = 283
 
 export const LEVI_BREAK = "/levi-break.mp3"
@@ -37,7 +37,7 @@ export default function Home() {
   const [shortBreak, setShortBreak] = useState("0")
   const [longBreak, setLongBreak] = useState("15")
   const [longBreakInterval, setLongBreakInterval] = useState(5)
-  const [isStartingNewPomo, setIsStartingNewPomo] = useState(false)
+  const [isOnPomoSession, setIsOnPomoSession] = useState(false)
   const [isOnShortBreak, setIsOnShortBreak] = useState(false)
   const [isOnLongBreak, setIsOnLongBreak] = useState(false)
   const [[currMins, currSecs], setTimer] = useState([pomoTime, SECONDS])
@@ -83,7 +83,7 @@ export default function Home() {
     setIntialVals()
     setAudioFile(new Audio(LEVI_BREAK))
   }, [])
-  console.log("???", currMins, currSecs)
+
   useEffect(() => {
     if (
       (currMins === "00" &&
@@ -97,6 +97,7 @@ export default function Home() {
       setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
     }
   }, [currMins, currSecs, currSBMins, currSBSecs, currLBMins, currLBSecs])
+
   useEffect(() => {
     setWindowWidth(window.innerWidth)
 
@@ -111,15 +112,27 @@ export default function Home() {
 
   useEffect(() => {
     if (isOnShortBreak || isOnLongBreak) {
+      console.log("on break", audio)
       setCurrImg(Levi)
-
       audio.play()
-    } else {
+    } else if (isOnPomoSession && countPomodoro.current !== 1) {
       setCurrImg(DefaultBg)
-      if (isStartingNewPomo) audio.play()
+      console.log("on pomo session", audio, countPomodoro.current)
+      audio.play()
     }
-  }, [isOnLongBreak, isOnShortBreak, audio, isStartingNewPomo])
-  console.log("dashvalarl", dashArrVal)
+
+    if (audio) {
+      audio.addEventListener("ended", () => {
+        if (isOnPomoSession && countPomodoro.current !== 1) {
+          setAudioFile(new Audio(LEVI_BREAK))
+        } else if (isOnLongBreak || isOnShortBreak) {
+          setAudioFile(new Audio(LEVI_START))
+        }
+      })
+    }
+  }, [isOnLongBreak, isOnShortBreak, isOnPomoSession, countPomodoro.current])
+
+  // console.log("dashvalarl", dashArrVal)
   return (
     <>
       <Head>
@@ -200,7 +213,7 @@ export default function Home() {
             count={countPomodoro}
             isOnShortBreak={isOnShortBreak}
             isOnLongBreak={isOnLongBreak}
-            setIsStartingNewPomo={setIsStartingNewPomo}
+            setIsOnPomoSession={setIsOnPomoSession}
             setIsOnShortBreak={setIsOnShortBreak}
             setIsOnLongBreak={setIsOnLongBreak}
             setAudioFile={setAudioFile}
@@ -233,6 +246,7 @@ export default function Home() {
           showToggle={!paused}
           handleOnClick={() => {
             togglePaused(!paused)
+            setIsOnPomoSession(!isOnPomoSession)
             if (!isOnShortBreak && !isOnShortBreak) countPomodoro.current += 1
           }}
           screenW={windowWidth}

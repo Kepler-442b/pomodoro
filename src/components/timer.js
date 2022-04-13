@@ -16,7 +16,7 @@ const MyTimer = ({
   count,
   isOnShortBreak,
   isOnLongBreak,
-  setIsStartingNewPomo,
+  setIsOnPomoSession,
   setIsOnShortBreak,
   setIsOnLongBreak,
   setAudioFile,
@@ -59,12 +59,13 @@ const MyTimer = ({
           setIsOnShortBreak(false)
           setIsOnLongBreak(false)
           setTimer([0, SECONDS])
-          setAudioFile(new Audio(LEVI_START))
-          setIsStartingNewPomo(true)
+          // setAudioFile(new Audio(LEVI_START))
+          setIsOnPomoSession(true)
           count.current += 1
         } else {
           setIsOnShortBreak(true) //TODO: add long break too
-          setAudioFile(new Audio(LEVI_BREAK))
+          // setAudioFile(new Audio(LEVI_BREAK))
+          setIsOnPomoSession(false)
           setSBTimer([0, SECONDS])
         }
         // when the timer's second reaches 00, set the next second to 59
@@ -101,7 +102,7 @@ const MyTimer = ({
         let baseMins
         if (isOnShortBreak) {
           tick(timerId, setSBTimer)
-          baseMins = 5 //shortBreak
+          baseMins = 6 //shortBreak
         } else if (isOnLongBreak) {
           tick(timerId, setLBTimer)
           baseMins = longBreak
@@ -111,10 +112,10 @@ const MyTimer = ({
         }
         setSecsElapsed((prev) => prev + 1)
 
-        const totalSecs = 5 //parseInt(baseMins) * 60 + parseInt(SECONDS)
+        const totalSecs = 6 //parseInt(baseMins) * 60 + parseInt(SECONDS)
         const timeRemained = totalSecs - secsElapsed
 
-        console.log("Hit secsElapsed", secsElapsed)
+        // console.log("Hit secsElapsed", secsElapsed)
 
         const remainedFraction = timeRemained / totalSecs
         // gradually reduce the dash array to set it to 0 when the timer is 00:00
