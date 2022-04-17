@@ -15,11 +15,14 @@ const MyButton = ({
   screenW,
   textOnly,
   handleOnClick,
+  isDisabled,
+  isHidden,
 }) => {
   return (
     <button
       className={`button-basic-style ${styling}`}
       onClick={(evt) => handleOnClick(evt)}
+      disabled={isDisabled}
     >
       {icon && <img src={icon} alt="icon" className={`${iconStyling}`} />}
       {(text && screenW >= 768) || textOnly ? (

@@ -38,6 +38,10 @@ input[type="text"] {
     @apply absolute bottom-0 rounded-xl w-80 h-settingsModalLg right-36 top-14 bg-button;
   }
 
+  .confirmModal {
+    @apply flex items-center justify-center h-20 text-white md:h-14 bg-button;
+  }
+
   .modalTitle {
     @apply px-5 pt-3 pb-6 text-xl tracking-wide text-center text-white;
   }
@@ -59,7 +63,7 @@ input[type="text"] {
   }
 
   .navWrapper {
-    @apply flex items-start layout-spaces h-44 md:h-48;
+    @apply flex items-start h-28 layout-spaces md:h-32;
   }
 
   .top-left {
@@ -97,7 +101,7 @@ input[type="text"] {
     transition: 1s linear all;
 
     /* Allows the ring to change color when the color value updates */
-    stroke: #fff141;
+    stroke: #f2e78a;
   }
 
   .timerRingWrapper {
@@ -114,7 +118,7 @@ input[type="text"] {
   }
 
   .timer {
-    @apply relative flex items-center justify-center overflow-hidden rounded-full w-timerSmRadius h-timerSmRadius md:w-60 md:h-60 lg:w-timerLgRadius lg:h-timerLgRadius;
+    @apply relative flex items-center justify-center overflow-hidden rounded-full w-timerSmRadius h-timerSmRadius md:w-timerMdRadius md:h-timerMdRadius lg:w-timerLgRadius lg:h-timerLgRadius;
   }
 
   .timerText {
@@ -134,15 +138,19 @@ input[type="text"] {
   }
 
   .button-basic-style {
-    @apply relative flex items-center justify-between w-auto h-10 px-3 py-1 mx-1 text-lg text-white shadow-xl md:mx-2 hover:bg-slate-800 rounded-2xl;
+    @apply relative flex items-center justify-between w-auto h-10 px-3 py-1 mx-1 text-lg text-white border-b-2 shadow-xl border-neutral-800 hover:border-b-0 md:mx-2 hover:bg-slate-800 rounded-2xl;
   }
 
   .long-button-style {
-    @apply justify-center my-2 text-lg md:my-3 md:text-3xl bg-button w-buttonSm h-buttonSm md:h-12 md:w-52;
+    @apply justify-center my-2 text-lg border-b-4 border-neutral-800 hover:border-b-0 md:my-3 md:text-3xl bg-button w-buttonSm h-buttonSm md:h-12 md:w-52;
+  }
+
+  .targetCounter {
+    @apply h-10 px-3 mb-5 text-3xl text-white md:text-4xl md:mx-2 [text-shadow:0_8px_8px_rgba(0,0,0,1)];
   }
 
   .circle-button-style {
-    @apply flex items-center justify-center w-12 h-12 rounded-full;
+    @apply flex items-center justify-center w-12 h-12 border-b-4 rounded-full border-neutral-800 hover:border-b-0;
   }
 
   .circle-icon {

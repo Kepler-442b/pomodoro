@@ -34,8 +34,8 @@ const MyTimer = ({
   setSecsElapsed,
 }) => {
   useEffect(() => {
-    setTimer([0, SECONDS]) //TODO: change 0 to pomoTime
-    setSBTimer([0, SECONDS])
+    setTimer([pomoTime, SECONDS]) //TODO: change 0 to pomoTime
+    setSBTimer([shortBreak, SECONDS])
     setLBTimer([longBreak, SECONDS])
   }, [pomoTime, shortBreak, longBreak])
 
@@ -118,7 +118,7 @@ const MyTimer = ({
 
         setSecsElapsed((prev) => prev + 1)
 
-        const totalSecs = 6 //parseInt(baseMins) * 60 + parseInt(SECONDS)
+        const totalSecs = parseInt(baseMins) * 60 + parseInt(SECONDS)
         const secsLeft = totalSecs - secsElapsed
 
         // console.log("Hit secsElapsed", secsElapsed)

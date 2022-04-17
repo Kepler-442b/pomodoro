@@ -6,7 +6,6 @@
 import React, { useState } from "react"
 import Select from "react-select"
 import Modal from "react-modal"
-import MyButton from "../components/button"
 
 const SettingsModal = ({
   isOpen,
@@ -19,8 +18,9 @@ const SettingsModal = ({
   setLongBreak,
   longBreakInterval,
   setLongBreakInterval,
-  screenW,
   handleSave,
+  goal,
+  setGoal,
 }) => {
   Modal.setAppElement("#__next")
 
@@ -30,9 +30,12 @@ const SettingsModal = ({
     <Modal
       className="settingsModal"
       isOpen={isOpen}
-      onRequestClose={() => handleToggle(false)}
+      onRequestClose={() => {
+        handleSave()
+        handleToggle(false)
+      }}
+      shouldCloseOnOverlayClick
       style={{ overlay: { backgroundColor: "transparent", zIndex: 9999 } }}
-      contentLabel="Example Modal"
     >
       <div className="modalTitle">TIMER SETTINGS</div>
       <div id="mainTimerSetting" className="settingGroup">
@@ -84,7 +87,7 @@ const SettingsModal = ({
         <div className="px-3">
           <input
             className="modalInput"
-            id="intervalInput"
+            id="longBreakIntervalInput"
             type="number"
             min={1}
             max={10}
@@ -97,9 +100,27 @@ const SettingsModal = ({
           </label>
         </div>
       </div>
+      <div id="targetSetting" className="settingGroup">
+        <div className="modalSubtitle">Target per day</div>
+        <div className="px-3 ">
+          <input
+            className="modalInput"
+            id="targetIntervalInput"
+            type="number"
+            min={1}
+            max={50}
+            step={1}
+            value={goal}
+            onChange={(evt) => setGoal(evt.currentTarget.value)}
+          />
+          <label className="modalLabel" htmlFor="pomodoroInput">
+            pomodoro(s)
+          </label>
+        </div>
+      </div>
       <div id="soundSetting" className="settingGroup">
         <div className="modalSubtitle">Alarm Sound</div>
-        <div className="px-3 ">
+        <div className="px-4">
           <Select
             className="font-semibold border-2 border-black border-solid rounded-md w-64mx-2"
             onChange={(option) => setSelectedOption(option)}
@@ -110,15 +131,6 @@ const SettingsModal = ({
             ]}
           />
         </div>
-      </div>
-      <div className="flex justify-center">
-        <MyButton
-          text="Save"
-          textOnly={true}
-          screenW={screenW}
-          styling="bg-secondary border-black border-2 border-solid"
-          handleOnClick={() => handleSave()}
-        />
       </div>
     </Modal>
   )
