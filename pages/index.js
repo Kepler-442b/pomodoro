@@ -36,7 +36,6 @@ export default function Home() {
   const [paused, togglePaused] = useState(true)
   const [isSettingsOpen, toggleSettings] = useState(false)
   const [isSkipModalOpen, showSkipModal] = useState(false)
-  // const [isMouseOver, setIsMouseOver] = useState(false)
   const [pomoTime, setPomoTime] = useState("25")
   const [shortBreak, setShortBreak] = useState("5")
   const [longBreak, setLongBreak] = useState("15")
@@ -51,6 +50,8 @@ export default function Home() {
     `${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`
   )
   const [secsElapsed, setSecsElapsed] = useState(0)
+  const [volume, setVolume] = useState(30)
+  // const [alarmType, setAlarmType] = useState()
 
   const sessionCount = useRef(0)
   const setIntialVals = () => {
@@ -74,12 +75,17 @@ export default function Home() {
       "goal",
       window.localStorage.getItem("goal") || goal
     )
-    // window.localStorage.setItem("alarm",alarm)
+    window.localStorage.setItem(
+      "volume",
+      window.localStorage.getItem("volume") || volume
+    )
+    window.localStorage.setItem("alarm", alarm)
     setPomoTime(window.localStorage.getItem("pomoTime"))
     setShortBreak(window.localStorage.getItem("shortBreak"))
     setLongBreak(window.localStorage.getItem("longBreak"))
     setLongBreakInterval(window.localStorage.getItem("longBreakInterval"))
-    setLongBreakInterval(window.localStorage.getItem("goal"))
+    setGoal(window.localStorage.getItem("goal"))
+    setVolume(window.localStorage.getItem("volume"))
   }
 
   const handleSaveSettings = useCallback(() => {
@@ -92,6 +98,9 @@ export default function Home() {
     // window.localStorage.setItem("alarm",alarm)
   }, [pomoTime, shortBreak, longBreak, longBreakInterval, goal])
 
+  useEffect(() => {
+    if (audio) audio.volume = volume / 100
+  }, [audio, volume])
   useEffect(() => {
     setIntialVals()
     setAudioFile(new Audio(LEVI_START))
@@ -236,6 +245,9 @@ export default function Home() {
               handleSave={handleSaveSettings}
               goal={goal}
               setGoal={setGoal}
+              volume={volume}
+              setVolume={setVolume}
+              audio={audio}
             />
           )}
         </div>

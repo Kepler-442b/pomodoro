@@ -32,7 +32,7 @@ module.exports = {
         timerWrapperRingSm: "15.5rem",
         timerWrapperRingMd: "18.25rem",
         timerWrapperRingLg: "21.75rem",
-        settingsModalLg: "30.25rem",
+        settingsModalLg: "33.25rem",
       },
       strokeWidth: {
         ring: "0.3rem",

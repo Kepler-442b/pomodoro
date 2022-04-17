@@ -6,6 +6,8 @@
 import React, { useState } from "react"
 import Select from "react-select"
 import Modal from "react-modal"
+import Slider from "rc-slider"
+import "rc-slider/assets/index.css"
 
 const SettingsModal = ({
   isOpen,
@@ -21,6 +23,9 @@ const SettingsModal = ({
   handleSave,
   goal,
   setGoal,
+  volume,
+  setVolume,
+  audio,
 }) => {
   Modal.setAppElement("#__next")
 
@@ -28,7 +33,7 @@ const SettingsModal = ({
 
   return (
     <Modal
-      className="settingsModal"
+      className="border-2 border-gray-900 border-solid settingsModal "
       isOpen={isOpen}
       onRequestClose={() => {
         handleSave()
@@ -129,6 +134,32 @@ const SettingsModal = ({
               { value: "Levi Ackerman", label: "Levi Ackerman" },
               { value: "Eren Jaeger", label: "Eren Jaeger" },
             ]}
+          />
+        </div>
+        <div className="flex items-center justify-between px-4 mt-3 text-xl text-white settingGroup ">
+          <p className="px-2">{volume}</p>
+          <Slider
+            style={{ width: "80%" }}
+            handleStyle={{
+              borderWidth: "3px",
+              borderColor: "#0D354B",
+              backgroundColor: "#F2E78A",
+              height: "23px",
+              width: "23px",
+              marginTop: "-.5rem",
+              opacity: 1,
+            }}
+            railStyle={{
+              height: "5px",
+            }}
+            value={volume}
+            onChange={(value) => {
+              setVolume(value[0])
+              if (audio) audio.play()
+            }}
+            range={true}
+            step={1}
+            defaultValue={50}
           />
         </div>
       </div>
