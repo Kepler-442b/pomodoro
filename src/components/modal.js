@@ -1,5 +1,5 @@
 /**
- * File: /src/components/confirm.js
+ * File: /src/components/modal.js
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
@@ -7,11 +7,13 @@ import React from "react"
 import Modal from "react-modal"
 import MyButton from "./button"
 
-const MyConfirmModal = ({
+const MyModal = ({
   isOpen,
   handleConfirm,
-  showSkipModal,
+  showModal,
   pauseTimer,
+  message,
+  btnMsg,
 }) => {
   Modal.setAppElement("#__next")
 
@@ -21,13 +23,11 @@ const MyConfirmModal = ({
       isOpen={isOpen}
       style={{ overlay: { backgroundColor: "transparent", zIndex: 9999 } }}
     >
-      <div className="mx-2">
-        Are you sure you want to skip the current session?
-      </div>
+      <div className="mx-2">{message}</div>
       <div className="flex ">
         <MyButton
           handleOnClick={() => handleConfirm()}
-          text="Skip"
+          text={btnMsg}
           styling="bg-secondary"
           textOnly={true}
         />
@@ -35,7 +35,7 @@ const MyConfirmModal = ({
           text="Cancel"
           styling="bg-secondary"
           handleOnClick={() => {
-            showSkipModal(false)
+            showModal(false)
             pauseTimer(false)
           }}
           textOnly={true}
@@ -45,4 +45,4 @@ const MyConfirmModal = ({
   )
 }
 
-export default MyConfirmModal
+export default MyModal

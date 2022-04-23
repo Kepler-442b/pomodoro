@@ -142,7 +142,7 @@ const SettingsModal = ({
             style={{ width: "80%" }}
             handleStyle={{
               borderWidth: "3px",
-              borderColor: "#0D354B",
+              borderColor: "#05334d",
               backgroundColor: "#F2E78A",
               height: "23px",
               width: "23px",

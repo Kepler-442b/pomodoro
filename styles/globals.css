@@ -35,7 +35,7 @@ input[type="text"] {
   }
 
   .settingsModal {
-    @apply absolute bottom-0 rounded-xl w-80 h-settingsModalLg right-36 top-14 bg-button;
+    @apply rounded-xl w-80 h-settingsModalLg bg-button;
   }
 
   .confirmModal {
@@ -83,7 +83,7 @@ input[type="text"] {
   }
 
   .timerRingElapsed {
-    @apply stroke-button stroke-ring;
+    @apply stroke-white opacity-40 stroke-ring;
   }
 
   .base-timer__path-remaining {
@@ -146,7 +146,15 @@ input[type="text"] {
   }
 
   .targetCounter {
-    @apply h-10 px-3 mb-5 text-3xl text-white md:text-4xl md:mx-2 [text-shadow:0_8px_8px_rgba(0,0,0,1)];
+    @apply items-center flex h-10 px-3 mb-5 text-3xl text-white md:text-4xl md:mx-2 [text-shadow:0_8px_8px_rgba(0,0,0,1)];
+  }
+
+  .resetText {
+    @apply hidden text-sm hover:inline-flex;
+  }
+
+  .resetBtn {
+    @apply self-end w-6 ml-2 hover:cursor-pointer;
   }
 
   .circle-button-style {

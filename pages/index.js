@@ -20,15 +20,16 @@ import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import debounce from "../src/utils/debounce"
 import SettingsModal from "../src/components/settingsModal"
 import MyTargetCounter from "../src/components/targetCounter"
-import MyConfirmModal from "../src/components/confirm"
+import MyModal from "../src/components/modal"
 
-export const SECONDS = "00" // TODO: change to 00
+export const SECONDS = "00"
 export const FULL_DASH_ARRAY = 283
 
 export const LEVI_BREAK = "/levi-break.mp3"
 export const LEVI_START = "/levi-start.mp3"
 
 export default function Home() {
+  const [title, setTitle] = useState("Pomodoro")
   const [windowWidth, setWindowWidth] = useState(0)
   const [currImg, setCurrImg] = useState(DefaultBg)
   const [audio, setAudioFile] = useState(null)
@@ -36,6 +37,7 @@ export default function Home() {
   const [paused, togglePaused] = useState(true)
   const [isSettingsOpen, toggleSettings] = useState(false)
   const [isSkipModalOpen, showSkipModal] = useState(false)
+  const [isResetModalOpen, showResetModal] = useState(false)
   const [pomoTime, setPomoTime] = useState("25")
   const [shortBreak, setShortBreak] = useState("5")
   const [longBreak, setLongBreak] = useState("15")
@@ -54,6 +56,7 @@ export default function Home() {
   // const [alarmType, setAlarmType] = useState()
 
   const sessionCount = useRef(0)
+
   const setIntialVals = () => {
     window.localStorage.setItem(
       "pomoTime",
@@ -79,7 +82,8 @@ export default function Home() {
       "volume",
       window.localStorage.getItem("volume") || volume
     )
-    window.localStorage.setItem("alarm", alarm)
+
+    // window.localStorage.setItem( "alarm", alarm)
     setPomoTime(window.localStorage.getItem("pomoTime"))
     setShortBreak(window.localStorage.getItem("shortBreak"))
     setLongBreak(window.localStorage.getItem("longBreak"))
@@ -88,23 +92,41 @@ export default function Home() {
     setVolume(window.localStorage.getItem("volume"))
   }
 
-  const handleSaveSettings = useCallback(() => {
-    window.localStorage.setItem("pomoTime", pomoTime)
-    window.localStorage.setItem("shortBreak", shortBreak)
-    window.localStorage.setItem("longBreak", longBreak)
-    window.localStorage.setItem("longBreakInterval", longBreakInterval)
-    window.localStorage.setItem("goal", goal)
+  useEffect(() => {
+    setIntialVals()
+    setAudioFile(new Audio(LEVI_START))
+    if (!document.cookie.includes("strikeToday")) {
+      let date = new Date(Date.now() + 86400e3)
+      date = date.toUTCString()
+      document.cookie = `strikeToday=${sessionCount.current}; expires=${date}`
+    } else {
+      sessionCount.current = parseInt(document.cookie.split("strikeToday=")[1])
+    }
+  }, [])
 
-    // window.localStorage.setItem("alarm",alarm)
-  }, [pomoTime, shortBreak, longBreak, longBreakInterval, goal])
+  useEffect(() => {
+    if (
+      sessionCount.current > parseInt(document.cookie.split("strikeToday=")[1])
+    ) {
+      document.cookie = `strikeToday=${sessionCount.current}`
+    }
+  }, [sessionCount.current])
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+
+    window.addEventListener(
+      "resize",
+      debounce(() => {
+        setWindowWidth(window.innerWidth)
+      })
+    )
+    return () => {}
+  }, [windowWidth])
 
   useEffect(() => {
     if (audio) audio.volume = volume / 100
   }, [audio, volume])
-  useEffect(() => {
-    setIntialVals()
-    setAudioFile(new Audio(LEVI_START))
-  }, [])
 
   useEffect(() => {
     if (
@@ -121,18 +143,6 @@ export default function Home() {
   }, [currMins, currSecs, currSBMins, currSBSecs, currLBMins, currLBSecs])
 
   useEffect(() => {
-    setWindowWidth(window.innerWidth)
-
-    window.addEventListener(
-      "resize",
-      debounce(() => {
-        setWindowWidth(window.innerWidth)
-      })
-    )
-    return () => {}
-  }, [windowWidth])
-
-  useEffect(() => {
     if (isOnShortBreak || isOnLongBreak) {
       setCurrImg(Levi)
       audio.play()
@@ -143,14 +153,43 @@ export default function Home() {
 
     if (audio) {
       audio.addEventListener("ended", () => {
-        if (isOnPomoSession && sessionCount.current > 1) {
+        if (isOnPomoSession && sessionCount.current > 0) {
           setAudioFile(new Audio(LEVI_BREAK))
-        } else if (isOnLongBreak || isOnShortBreak) {
+        } else {
           setAudioFile(new Audio(LEVI_START))
         }
       })
     }
   }, [isOnLongBreak, isOnShortBreak, isOnPomoSession, sessionCount.current])
+
+  useEffect(() => {
+    if (isOnPomoSession) setTitle(`On session for ${currMins}:${currSecs}`)
+    else if (isOnLongBreak) setTitle(`On break for ${currLBMins}:${currLBSecs}`)
+    else if (isOnShortBreak)
+      setTitle(`On break for ${currSBMins}:${currSBSecs}`)
+    else setTitle("Pomodoro")
+  }, [
+    isOnPomoSession,
+    isOnLongBreak,
+    isOnShortBreak,
+    currMins,
+    currSecs,
+    currLBMins,
+    currLBSecs,
+    currSBMins,
+    currSBSecs,
+  ])
+
+  const handleSaveSettings = useCallback(() => {
+    window.localStorage.setItem("pomoTime", pomoTime)
+    window.localStorage.setItem("shortBreak", shortBreak)
+    window.localStorage.setItem("longBreak", longBreak)
+    window.localStorage.setItem("longBreakInterval", longBreakInterval)
+    window.localStorage.setItem("goal", goal)
+    window.localStorage.setItem("volume", volume)
+
+    // window.localStorage.setItem("alarm",alarm)
+  }, [pomoTime, shortBreak, longBreak, longBreakInterval, goal, volume])
 
   const handleSkip = useCallback(() => {
     showSkipModal(false)
@@ -175,13 +214,27 @@ export default function Home() {
     togglePaused(false)
   }, [isOnShortBreak, isOnLongBreak, pomoTime])
 
-  const handleResetProgress = () => {}
+  const handleResetProgress = () => {
+    document.cookie = "strikeToday=0"
+    sessionCount.current = 0
+    setTimer([pomoTime, SECONDS])
+    setLBTimer([longBreak, SECONDS])
+    setSBTimer([shortBreak, SECONDS])
+    setSecsElapsed(0)
+    setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
+    setCurrImg(DefaultBg)
+    setAudioFile(new Audio(LEVI_START))
+    togglePaused(true)
+    setIsOnPomoSession(false)
+    setIsOnLongBreak(false)
+    setIsOnShortBreak(false)
+    showResetModal(false)
+  }
 
-  // console.log("dashvalarl", dashArrVal)
   return (
     <>
       <Head>
-        <title>Space and Anime Themed Pomodoro</title>
+        <title>{title}</title>
         <meta name="description" content="pomodoro" />
         <link rel="icon" href="/icons8-tomato-64.png" />
       </Head>
@@ -253,7 +306,12 @@ export default function Home() {
         </div>
       </nav>
       <div className="flex justify-center layout-spaces">
-        <MyTargetCounter goal={goal} current={sessionCount.current} />
+        <MyTargetCounter
+          goal={goal}
+          current={sessionCount.current}
+          showModal={showResetModal}
+          count={sessionCount.current}
+        />
       </div>
       <div className="timerWrapper mid-center">
         <MyTimerAnimation dashArrVal={dashArrVal} />
@@ -262,6 +320,7 @@ export default function Home() {
             pomoTime={pomoTime}
             shortBreak={shortBreak}
             longBreak={longBreak}
+            interval={longBreakInterval}
             paused={paused}
             count={sessionCount}
             isOnPomoSession={isOnPomoSession}
@@ -300,7 +359,11 @@ export default function Home() {
           showToggle={!paused}
           handleOnClick={() => {
             togglePaused(!paused)
-            if (!isOnShortBreak && !isOnShortBreak) {
+            if (
+              !isOnShortBreak &&
+              !isOnShortBreak &&
+              sessionCount.current === 0
+            ) {
               setIsOnPomoSession(!isOnPomoSession)
             }
           }}
@@ -321,11 +384,23 @@ export default function Home() {
         />
       </div>
       {isSkipModalOpen && (
-        <MyConfirmModal
+        <MyModal
           isOpen={isSkipModalOpen}
-          showSkipModal={showSkipModal}
+          showModal={showSkipModal}
           pauseTimer={togglePaused}
-          handleConfirm={() => handleSkip()}
+          handleConfirm={handleSkip}
+          message="Are you sure you want to skip the current session?"
+          btnMsg="Skip"
+        />
+      )}
+      {isResetModalOpen && (
+        <MyModal
+          isOpen={isResetModalOpen}
+          showModal={showResetModal}
+          pauseTimer={togglePaused}
+          handleConfirm={handleResetProgress}
+          message="Are you sure you want to reset the progress for today?"
+          btnMsg="Reset"
         />
       )}
       <div className="chatButtonWrapper">

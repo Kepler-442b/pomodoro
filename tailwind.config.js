@@ -11,7 +11,7 @@ module.exports = {
       },
       colors: {
         primary: "#f2e78a",
-        secondary: "#0D354B",
+        secondary: "#05334d",
         button: "#4C4F5B",
         inputBox: "#C4C4C4",
       },

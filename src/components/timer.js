@@ -12,6 +12,7 @@ const MyTimer = ({
   pomoTime,
   shortBreak,
   longBreak,
+  interval,
   paused,
   count,
   isOnShortBreak,
@@ -34,7 +35,7 @@ const MyTimer = ({
   setSecsElapsed,
 }) => {
   useEffect(() => {
-    setTimer([pomoTime, SECONDS]) //TODO: change 0 to pomoTime
+    setTimer([pomoTime, SECONDS])
     setSBTimer([shortBreak, SECONDS])
     setLBTimer([longBreak, SECONDS])
   }, [pomoTime, shortBreak, longBreak])
@@ -58,13 +59,18 @@ const MyTimer = ({
         if (isOnShortBreak || isOnLongBreak) {
           setIsOnShortBreak(false)
           setIsOnLongBreak(false)
-          setTimer([0, SECONDS])
+          setTimer([pomoTime, SECONDS])
           setIsOnPomoSession(true)
           count.current += 1
-        } else {
-          setIsOnShortBreak(true) //TODO: add long break too
+        } else if (count.current % interval === 0) {
+          // calculate whether it is long or short break
+          setIsOnLongBreak(true)
           setIsOnPomoSession(false)
-          setSBTimer([0, SECONDS])
+          setLBTimer([longBreak, SECONDS])
+        } else {
+          setIsOnShortBreak(true)
+          setIsOnPomoSession(false)
+          setSBTimer([shortBreak, SECONDS])
         }
         // when the timer's second reaches 00, set the next second to 59
       } else if (minsInt !== 0 && secsInt === 0) {
@@ -107,7 +113,7 @@ const MyTimer = ({
         let baseMins
         if (isOnShortBreak) {
           tick(timerId, setSBTimer)
-          baseMins = 6 //shortBreak
+          baseMins = shortBreak
         } else if (isOnLongBreak) {
           tick(timerId, setLBTimer)
           baseMins = longBreak
