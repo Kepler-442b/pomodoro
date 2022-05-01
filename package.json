@@ -12,7 +12,11 @@
     "public/**/*"
   ],
   "dependencies": {
+    "axios": "^0.26.1",
+    "firebase": "^9.6.11",
+    "firebase-admin": "^10.1.0",
     "next": "12.0.9",
+    "next-iron-session": "^4.2.0",
     "rc-slider": "^10.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -31,7 +35,6 @@
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-preset-env": "^7.3.0",
     "prettier": "^2.5.1",
-    "tailwindcss": "^3.0.18",
-    "tslint-config-prettier": "^1.18.0"
+    "tailwindcss": "^3.0.18"
   }
 }

@@ -16,7 +16,6 @@ const MyButton = ({
   textOnly,
   handleOnClick,
   isDisabled,
-  isHidden,
 }) => {
   return (
     <button

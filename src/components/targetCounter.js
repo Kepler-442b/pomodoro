@@ -4,9 +4,8 @@
  */
 
 import React from "react"
-import ResetIcon from "../../public/icons/icons8-reset-48.png"
+import ResetIcon from "../../public/icons/ResetIcon.png"
 const MyTargetCounter = ({ goal, current, showModal, count }) => {
-  console.log("ser", ResetIcon)
   return (
     <div className="targetCounter">
       <p> {` ${current} / ${goal}`}</p>

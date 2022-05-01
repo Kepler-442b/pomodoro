@@ -33,7 +33,7 @@ const SettingsModal = ({
 
   return (
     <Modal
-      className="border-2 border-gray-900 border-solid settingsModal "
+      className="settingsModal "
       isOpen={isOpen}
       onRequestClose={() => {
         handleSave()

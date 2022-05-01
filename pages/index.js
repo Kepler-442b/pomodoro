@@ -4,29 +4,32 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
 import Levi from "../public/images/levi.jpeg"
 import DefaultBg from "../public/images/default-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
+import SearchIcon from "../public/icons/SearchIcon.svg"
+import UserIcon from "../public/icons/UserIcon.svg"
+import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import MyButton from "../src/components/button"
 import MyTimer from "../src/components/timer"
 import MyTimerAnimation from "../src/components/timerAnimation"
-import UserIcon from "../public/icons/UserIcon.svg"
-import MyTextInputWithLabel from "../src/components/inputbox"
-import SearchIcon from "../public/icons/SearchIcon.svg"
-import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
-import debounce from "../src/utils/debounce"
+import UserMenu from "../src/components/userMenu"
 import SettingsModal from "../src/components/settingsModal"
 import MyTargetCounter from "../src/components/targetCounter"
 import MyModal from "../src/components/modal"
+import MyTextInputWithLabel from "../src/components/inputbox"
+import debounce from "../src/utils/debounce"
+import axios from "axios"
+import { auth } from "../firebase/clientApp"
 
 export const SECONDS = "00"
 export const FULL_DASH_ARRAY = 283
-
-export const LEVI_BREAK = "/levi-break.mp3"
-export const LEVI_START = "/levi-start.mp3"
+const LEVI_BREAK = "/levi-break.mp3"
+const LEVI_START = "/levi-start.mp3"
 
 export default function Home() {
   const [title, setTitle] = useState("Pomodoro")
@@ -35,7 +38,9 @@ export default function Home() {
   const [audio, setAudioFile] = useState(null)
   const [goal, setGoal] = useState(5)
   const [paused, togglePaused] = useState(true)
+  const [profilePic, setProfilePic] = useState("")
   const [isSettingsOpen, toggleSettings] = useState(false)
+  const [isUserMenuOpen, toggleUserMenu] = useState(false)
   const [isSkipModalOpen, showSkipModal] = useState(false)
   const [isResetModalOpen, showResetModal] = useState(false)
   const [pomoTime, setPomoTime] = useState("25")
@@ -231,12 +236,40 @@ export default function Home() {
     showResetModal(false)
   }
 
+  const signIn = async () => {
+    const provider = new GoogleAuthProvider()
+
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result)
+        // const token = credential.accessToken
+
+        // The signed-in user info.
+        const photo = result.user.photoURL
+        if (photo) setProfilePic(photo)
+
+        console.log("result/user", result)
+        await axios.post(`/api/users/login`, { result, credential })
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code
+        const errorMessage = error.message
+        // The email of the user's account used.
+        const email = error.email
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error)
+        // ...
+      })
+  }
+
   return (
     <>
       <Head>
         <title>{title}</title>
         <meta name="description" content="pomodoro" />
-        <link rel="icon" href="/icons8-tomato-64.png" />
+        <link rel="icon" href="/ClockfaceIcon.png" />
       </Head>
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/react-modal/3.14.3/react-modal.min.js"
@@ -268,19 +301,16 @@ export default function Home() {
         </div>
         <div className="flex top-right">
           <MyButton
-            text="users"
-            screenW={windowWidth}
-            icon={UserIcon.src}
-            styling="bg-secondary "
-            iconStyling="button-icon"
+            icon={profilePic ? profilePic : UserIcon.src}
+            handleOnClick={() => toggleUserMenu(!isUserMenuOpen)}
+            styling="circle-button-style bg-secondary"
+            iconStyling="circle-icon"
           />
           <MyButton
-            text="settings"
-            screenW={windowWidth}
             icon={SettingsIcon.src}
             handleOnClick={() => toggleSettings(!isSettingsOpen)}
-            styling="bg-secondary "
-            iconStyling="button-icon"
+            styling="circle-button-style bg-secondary"
+            iconStyling="circle-icon"
           />
           {isSettingsOpen && (
             <SettingsModal
@@ -301,6 +331,13 @@ export default function Home() {
               volume={volume}
               setVolume={setVolume}
               audio={audio}
+            />
+          )}
+          {isUserMenuOpen && (
+            <UserMenu
+              isOpen={isUserMenuOpen}
+              handleSignIn={signIn}
+              handleToggle={toggleUserMenu}
             />
           )}
         </div>
