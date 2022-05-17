@@ -6,7 +6,13 @@
 import React, { useState } from "react"
 import Modal from "react-modal"
 
-const UserMenu = ({ isOpen, handleToggle, handleSignIn, isSignedIn }) => {
+const UserMenu = ({
+  isOpen,
+  handleToggle,
+  handleSignIn,
+  handleSignOut,
+  isSignedIn,
+}) => {
   Modal.setAppElement("#__next")
 
   return (
@@ -22,7 +28,7 @@ const UserMenu = ({ isOpen, handleToggle, handleSignIn, isSignedIn }) => {
       {!isSignedIn ? (
         <div onClick={() => handleSignIn()}>Google Sign In</div>
       ) : (
-        <div>Sign Out</div>
+        <div onClick={() => handleSignOut()}>Sign Out</div>
       )}
     </Modal>
   )

@@ -4,7 +4,12 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth"
 import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
@@ -236,7 +241,18 @@ export default function Home() {
     showResetModal(false)
   }
 
-  const signIn = async () => {
+  const [user, setUser] = useState(null)
+
+  // subscribe to the auth change
+  const unSubAuth = onAuthStateChanged(auth, (currUser) => {
+    if (currUser) {
+      setUser(currUser)
+      setProfilePic(currUser.photoURL)
+      unSubAuth()
+    }
+  })
+
+  const handleSignIn = async () => {
     const provider = new GoogleAuthProvider()
 
     signInWithPopup(auth, provider)
@@ -249,7 +265,6 @@ export default function Home() {
         const photo = result.user.photoURL
         if (photo) setProfilePic(photo)
 
-        console.log("result/user", result)
         await axios.post(`/api/users/login`, { result, credential })
       })
       .catch((error) => {
@@ -262,6 +277,16 @@ export default function Home() {
         const credential = GoogleAuthProvider.credentialFromError(error)
         // ...
       })
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth)
+      setUser(null)
+      setProfilePic(null)
+    } catch (err) {
+      throw new Error(err.message)
+    }
   }
 
   return (
@@ -336,8 +361,10 @@ export default function Home() {
           {isUserMenuOpen && (
             <UserMenu
               isOpen={isUserMenuOpen}
-              handleSignIn={signIn}
+              handleSignIn={handleSignIn}
+              handleSignOut={handleSignOut}
               handleToggle={toggleUserMenu}
+              isSignedIn={!!user}
             />
           )}
         </div>

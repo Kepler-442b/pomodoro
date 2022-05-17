@@ -18,7 +18,6 @@ import {
 } from "firebase/firestore"
 import { OAuthCredential, UserCredential } from "firebase/auth"
 import { NextApiRequest } from "next"
-import {} from "next-iron-session"
 
 export default async (
   req: NextApiRequest & {
@@ -47,7 +46,7 @@ export default async (
         // queries
         const q = query(collectionRef, where("userId", "==", result.user.uid))
         let userDoc
-        onSnapshot(q, (snapshot) => {
+        const unsubCol = onSnapshot(q, (snapshot) => {
           userDoc = snapshot.docs[0].ref
         })
 
@@ -76,6 +75,7 @@ export default async (
           })
           res.status(200).json({ msg: "token updated" })
         }
+        unsubCol()
       }
     }
   } catch (e) {
