@@ -20,6 +20,7 @@ module.exports = {
         timerSmRadius: "13.25rem",
         timerMdRadius: "15.75rem",
         timerLgRadius: "18.5rem",
+        reportModal: "40rem",
       },
       height: {
         timerSmRadius: "13.25rem",

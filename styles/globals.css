@@ -38,8 +38,28 @@ input[type="text"] {
     @apply border-2 border-gray-900 border-solid rounded-xl w-80 h-settingsModalLg bg-button;
   }
 
+  .reportModal {
+    @apply p-8 border-2 border-gray-900 border-solid rounded-xl w-reportModal h-settingsModalLg bg-button;
+  }
+
+  .summary {
+    @apply flex justify-between mt-6 text-lg text-center text-white;
+  }
+
+  .summaryComponent {
+    @apply w-28;
+  }
+
+  .summaryNumVal {
+    @apply mb-2 text-5xl font-semibold text-primary;
+  }
+
+  .summaryLabel {
+    @apply text-center;
+  }
+
   .userMenu {
-    @apply w-40 h-10 text-lg text-center text-white border-2 border-gray-900 border-solid rounded-xl bg-button;
+    @apply w-40 h-16 text-lg text-center text-white border-2 border-gray-900 border-solid rounded-xl bg-button;
   }
 
   .confirmModal {
@@ -52,6 +72,10 @@ input[type="text"] {
 
   .modalSubtitle {
     @apply px-4 pb-1.5 text-lg tracking-wide text-white;
+  }
+
+  .summaryModalSubTitle {
+    @apply pr-2 pb-1.5 text-lg tracking-wide text-white;
   }
 
   .modalLabel {

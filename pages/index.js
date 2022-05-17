@@ -30,6 +30,9 @@ import MyTextInputWithLabel from "../src/components/inputbox"
 import debounce from "../src/utils/debounce"
 import axios from "axios"
 import { auth } from "../firebase/clientApp"
+import ReportModal from "../src/components/reportModal"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export const SECONDS = "00"
 export const FULL_DASH_ARRAY = 283
@@ -46,6 +49,7 @@ export default function Home() {
   const [profilePic, setProfilePic] = useState("")
   const [isSettingsOpen, toggleSettings] = useState(false)
   const [isUserMenuOpen, toggleUserMenu] = useState(false)
+  const [isReportOpen, showReport] = useState(false)
   const [isSkipModalOpen, showSkipModal] = useState(false)
   const [isResetModalOpen, showResetModal] = useState(false)
   const [pomoTime, setPomoTime] = useState("25")
@@ -267,6 +271,14 @@ export default function Home() {
 
         await axios.post(`/api/users/login`, { result, credential })
       })
+      .then(() =>
+        toast.success("Successfully logged in!", {
+          autoClose: 1500,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          position: "bottom-right",
+        })
+      )
       .catch((error) => {
         // Handle Errors here.
         const errorCode = error.code
@@ -284,9 +296,27 @@ export default function Home() {
       await signOut(auth)
       setUser(null)
       setProfilePic(null)
+      toast.success("Successfully logged out!", {
+        autoClose: 1500,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        position: "bottom-right",
+      })
     } catch (err) {
       throw new Error(err.message)
     }
+  }
+
+  const handleShowReport = () => {
+    if (!user) {
+      return toast.info("You must be signed in to view your report.", {
+        autoClose: 2100,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        position: "bottom-right",
+      })
+    }
+    showReport(!isReportOpen)
   }
 
   return (
@@ -364,8 +394,13 @@ export default function Home() {
               handleSignIn={handleSignIn}
               handleSignOut={handleSignOut}
               handleToggle={toggleUserMenu}
+              isReportOpen={isReportOpen}
+              handleShowReport={handleShowReport}
               isSignedIn={!!user}
             />
+          )}
+          {isReportOpen && (
+            <ReportModal isOpen={isReportOpen} showReport={showReport} />
           )}
         </div>
       </nav>
@@ -474,6 +509,7 @@ export default function Home() {
           iconStyling="circle-icon"
         />
       </div>
+      <ToastContainer theme="dark" />
     </>
   )
 }
