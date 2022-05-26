@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import axios from "axios"
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -13,6 +14,8 @@ import {
 import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
+import { ToastContainer, toast } from "react-toastify"
+import { auth } from "../firebase/clientApp"
 import Levi from "../public/images/levi.jpeg"
 import DefaultBg from "../public/images/default-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
@@ -28,8 +31,8 @@ import MyTargetCounter from "../src/components/targetCounter"
 import MyModal from "../src/components/modal"
 import MyTextInputWithLabel from "../src/components/inputbox"
 import debounce from "../src/utils/debounce"
-import axios from "axios"
-import { auth } from "../firebase/clientApp"
+import ReportModal from "../src/components/reportModal"
+import "react-toastify/dist/ReactToastify.css"
 
 export const SECONDS = "00"
 export const FULL_DASH_ARRAY = 283
@@ -46,6 +49,7 @@ export default function Home() {
   const [profilePic, setProfilePic] = useState("")
   const [isSettingsOpen, toggleSettings] = useState(false)
   const [isUserMenuOpen, toggleUserMenu] = useState(false)
+  const [isReportOpen, showReport] = useState(false)
   const [isSkipModalOpen, showSkipModal] = useState(false)
   const [isResetModalOpen, showResetModal] = useState(false)
   const [pomoTime, setPomoTime] = useState("25")
@@ -265,8 +269,20 @@ export default function Home() {
         const photo = result.user.photoURL
         if (photo) setProfilePic(photo)
 
-        await axios.post(`/api/users/login`, { result, credential })
+        await axios
+          .post(`/api/users/login`, { result, credential })
+          .then((res) => {
+            Cookie.set("userId", res.data.userId)
+          })
       })
+      .then(() =>
+        toast.success("Successfully logged in!", {
+          autoClose: 1500,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          position: "bottom-right",
+        })
+      )
       .catch((error) => {
         // Handle Errors here.
         const errorCode = error.code
@@ -284,9 +300,27 @@ export default function Home() {
       await signOut(auth)
       setUser(null)
       setProfilePic(null)
+      toast.success("Successfully logged out!", {
+        autoClose: 1500,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        position: "bottom-right",
+      })
     } catch (err) {
       throw new Error(err.message)
     }
+  }
+
+  const handleShowReport = () => {
+    if (!user) {
+      return toast.info("You must be signed in to view your report.", {
+        autoClose: 2100,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        position: "bottom-right",
+      })
+    }
+    showReport(!isReportOpen)
   }
 
   return (
@@ -325,6 +359,12 @@ export default function Home() {
           </div>
         </div>
         <div className="flex top-right">
+          {/* <button
+            className="h-10 button-basic-style bg-secondary rounded-2xl md:w-full w-36"
+            onClick={() => handleTemp()}
+          >
+            temp button
+          </button> */}
           <MyButton
             icon={profilePic ? profilePic : UserIcon.src}
             handleOnClick={() => toggleUserMenu(!isUserMenuOpen)}
@@ -364,8 +404,13 @@ export default function Home() {
               handleSignIn={handleSignIn}
               handleSignOut={handleSignOut}
               handleToggle={toggleUserMenu}
+              isReportOpen={isReportOpen}
+              handleShowReport={handleShowReport}
               isSignedIn={!!user}
             />
+          )}
+          {isReportOpen && (
+            <ReportModal isOpen={isReportOpen} showReport={showReport} />
           )}
         </div>
       </nav>
@@ -474,6 +519,7 @@ export default function Home() {
           iconStyling="circle-icon"
         />
       </div>
+      <ToastContainer theme="dark" />
     </>
   )
 }

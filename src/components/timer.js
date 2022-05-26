@@ -3,8 +3,10 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
+import axios from "axios"
 import React, { useCallback, useEffect } from "react"
 import { FULL_DASH_ARRAY, SECONDS } from "../../pages"
+import { getYYYYMMDD } from "../utils/date"
 
 const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
 
@@ -67,6 +69,11 @@ const MyTimer = ({
           setIsOnLongBreak(true)
           setIsOnPomoSession(false)
           setLBTimer([longBreak, SECONDS])
+          axios.post("/api/users/report/", {
+            intervalsCompleted: count.current,
+            hoursCompleted: pomoTime,
+            date: getYYYYMMDD(),
+          })
         } else {
           setIsOnShortBreak(true)
           setIsOnPomoSession(false)

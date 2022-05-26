@@ -20,10 +20,18 @@ const MyButton = ({
   return (
     <button
       className={`button-basic-style ${styling}`}
+      style={icon?.includes("google") ? { padding: 0 } : {}}
       onClick={(evt) => handleOnClick(evt)}
       disabled={isDisabled}
     >
-      {icon && <img src={icon} alt="icon" className={`${iconStyling}`} />}
+      {icon && (
+        <img
+          src={icon}
+          alt="icon"
+          className={`${iconStyling}`}
+          style={icon.includes("google") ? { borderRadius: "50%" } : {}}
+        />
+      )}
       {(text && screenW >= 768) || textOnly ? (
         <p>{showToggle ? toggleText : text}</p>
       ) : null}
