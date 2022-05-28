@@ -11,6 +11,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth"
+import Cookie from "js-cookie"
 import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
@@ -21,20 +22,17 @@ import DefaultBg from "../public/images/default-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
 import SearchIcon from "../public/icons/SearchIcon.svg"
 import UserIcon from "../public/icons/UserIcon.svg"
+import SummaryIcon from "../public/icons/SummaryIcon.svg"
 import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
 import MyButton from "../src/components/button"
 import MyTimer from "../src/components/timer"
 import MyTimerAnimation from "../src/components/timerAnimation"
-import UserMenu from "../src/components/userMenu"
 import SettingsModal from "../src/components/settingsModal"
 import MyTargetCounter from "../src/components/targetCounter"
 import MyModal from "../src/components/modal"
 import MyTextInputWithLabel from "../src/components/inputbox"
 import debounce from "../src/utils/debounce"
-import axios from "axios"
-import { auth } from "../firebase/clientApp"
 import ReportModal from "../src/components/reportModal"
-import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
 export const SECONDS = "00"
@@ -51,7 +49,7 @@ export default function Home() {
   const [paused, togglePaused] = useState(true)
   const [profilePic, setProfilePic] = useState("")
   const [isSettingsOpen, toggleSettings] = useState(false)
-  const [isUserMenuOpen, toggleUserMenu] = useState(false)
+  const [isSignOutModalOpen, showSignOutModal] = useState(false)
   const [isReportOpen, showReport] = useState(false)
   const [isSkipModalOpen, showSkipModal] = useState(false)
   const [isResetModalOpen, showResetModal] = useState(false)
@@ -299,19 +297,20 @@ export default function Home() {
   }
 
   const handleSignOut = async () => {
-    try {
-      await signOut(auth)
-      setUser(null)
-      setProfilePic(null)
-      toast.success("Successfully logged out!", {
-        autoClose: 1500,
-        hideProgressBar: true,
-        pauseOnHover: true,
-        position: "bottom-right",
-      })
-    } catch (err) {
-      throw new Error(err.message)
-    }
+    if (window)
+      try {
+        await signOut(auth)
+        setUser(null)
+        setProfilePic(null)
+        toast.success("Successfully logged out!", {
+          autoClose: 1500,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          position: "bottom-right",
+        })
+      } catch (err) {
+        throw new Error(err.message)
+      }
   }
 
   const handleShowReport = () => {
@@ -346,7 +345,7 @@ export default function Home() {
       <nav className="navWrapper">
         <div className="top-left">
           <div className="flex h-full rounded-2xl bg-secondary">
-            <MyTextInputWithLabel
+            {/* <MyTextInputWithLabel
               inputId="search-user"
               inputStyle="input-basic-style bg-secondary rounded-2xl h-10 md:w-full w-36"
               labelElement={
@@ -358,22 +357,40 @@ export default function Home() {
               }
               labelStyle="flex items-center"
               placeHolderText=" search users.."
-            />
+            /> */}
           </div>
         </div>
         <div className="flex top-right">
-          {/* <button
-            className="h-10 button-basic-style bg-secondary rounded-2xl md:w-full w-36"
-            onClick={() => handleTemp()}
-          >
-            temp button
-          </button> */}
           <MyButton
             icon={profilePic ? profilePic : UserIcon.src}
-            handleOnClick={() => toggleUserMenu(!isUserMenuOpen)}
+            handleOnClick={() => {
+              if (user) {
+                showSignOutModal(true)
+              } else {
+                handleSignIn()
+              }
+            }}
             styling="circle-button-style bg-secondary"
             iconStyling="circle-icon"
           />
+          {
+            <MyModal
+              isOpen={isSignOutModalOpen}
+              showModal={showSignOutModal}
+              handleConfirm={handleSignOut}
+              message="Are you sure you want to sign out?"
+              btnMsg="Sign me out"
+            />
+          }
+          <MyButton
+            icon={SummaryIcon.src}
+            handleOnClick={handleShowReport}
+            styling="circle-button-style bg-secondary"
+            iconStyling="circle-icon"
+          />
+          {isReportOpen && (
+            <ReportModal isOpen={isReportOpen} showReport={showReport} />
+          )}
           <MyButton
             icon={SettingsIcon.src}
             handleOnClick={() => toggleSettings(!isSettingsOpen)}
@@ -400,20 +417,6 @@ export default function Home() {
               setVolume={setVolume}
               audio={audio}
             />
-          )}
-          {isUserMenuOpen && (
-            <UserMenu
-              isOpen={isUserMenuOpen}
-              handleSignIn={handleSignIn}
-              handleSignOut={handleSignOut}
-              handleToggle={toggleUserMenu}
-              isReportOpen={isReportOpen}
-              handleShowReport={handleShowReport}
-              isSignedIn={!!user}
-            />
-          )}
-          {isReportOpen && (
-            <ReportModal isOpen={isReportOpen} showReport={showReport} />
           )}
         </div>
       </nav>
@@ -515,13 +518,13 @@ export default function Home() {
           btnMsg="Reset"
         />
       )}
-      <div className="chatButtonWrapper">
+      {/* <div className="chatButtonWrapper">
         <MyButton
           icon={ChatBubbleIcon.src}
           styling="circle-button-style bg-secondary"
           iconStyling="circle-icon"
         />
-      </div>
+      </div> */}
       <ToastContainer theme="dark" />
     </>
   )

@@ -36,7 +36,7 @@ const MyModal = ({
           styling="bg-secondary"
           handleOnClick={() => {
             showModal(false)
-            pauseTimer(false)
+            if (pauseTimer) pauseTimer(false)
           }}
           textOnly={true}
         />

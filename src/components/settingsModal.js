@@ -40,7 +40,17 @@ const SettingsModal = ({
         handleToggle(false)
       }}
       shouldCloseOnOverlayClick
-      style={{ overlay: { backgroundColor: "transparent", zIndex: 9999 } }}
+      style={{
+        overlay: {
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          marginTop: "-22rem",
+          marginLeft: "-10rem",
+          backgroundColor: "transparent",
+          zIndex: 9999,
+        },
+      }}
     >
       <div className="modalTitle">TIMER SETTINGS</div>
       <div id="mainTimerSetting" className="settingGroup">

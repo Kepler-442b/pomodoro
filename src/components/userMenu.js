@@ -11,7 +11,6 @@ const UserMenu = ({
   handleToggle,
   handleSignIn,
   handleSignOut,
-  handleShowReport,
   isSignedIn,
 }) => {
   Modal.setAppElement("#__next")
@@ -31,7 +30,6 @@ const UserMenu = ({
       ) : (
         <div onClick={() => handleSignOut()}>Sign Out</div>
       )}
-      <div onClick={() => handleShowReport()}>Show Report</div>
     </Modal>
   )
 }

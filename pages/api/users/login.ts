@@ -40,7 +40,7 @@ export default async (
     } else {
       if (req.method === "POST") {
         const usersRef = collection(db, "users")
-
+        debugger
         // queries
         const q = query(usersRef, where("userId", "==", result.user.uid))
         let userDoc: DocumentReference

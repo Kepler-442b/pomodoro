@@ -25,10 +25,10 @@ export const PERIOD = {
 }
 
 interface ReportDoc {
-  updated_at: string
-  created_at: string
-  userId: string
-  date: string
+  updated_at?: string
+  created_at?: string
+  userId?: string
+  date?: string
   hoursCompleted: number
   intervalsCompleted: number
 }
@@ -96,7 +96,7 @@ export default async (
       const reports = await getDocs(
         query(reportsCol, where("userId", "==", userId))
       )
-
+      // debugger
       if (reports.size > 0) {
         const year = date.slice(0, 4)
         const month = date.slice(5, 7)
@@ -111,12 +111,19 @@ export default async (
               where("date", "==", date)
             )
           )
+          if (reports.size > 0) {
+            reports.forEach((doc) => {
+              dailyReportRef = doc.ref
+              dailyReport = doc.data() as ReportDoc
+              return
+            })
+          } else {
+            dailyReport = {
+              hoursCompleted: 0,
+              intervalsCompleted: 0,
+            }
+          }
 
-          reports.forEach((doc) => {
-            dailyReportRef = doc.ref
-            dailyReport = doc.data() as ReportDoc
-            return
-          })
           res.status(200).json({ report: dailyReport })
         } else if (period === PERIOD.WEEK) {
           // get the last seven day's report
