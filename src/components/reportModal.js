@@ -16,7 +16,10 @@ import { getYYYYMMDD } from "../utils/date"
 const ReportModal = ({ isOpen, showReport }) => {
   Modal.setAppElement("#__next")
 
-  const [selectedOption, setSelectedOption] = useState(null)
+  const [selectedOption, setSelectedOption] = useState({
+    value: "Today",
+    label: "Today",
+  })
   const [reportSummary, setReportSummary] = useState({
     hoursCompleted: 0,
     intervalsCompleted: 0,
@@ -123,7 +126,7 @@ const ReportModal = ({ isOpen, showReport }) => {
           <BarChart data={reportEach} width={600} height={250}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" stroke="#fff"></XAxis>
-            <YAxis stroke="#fff">
+            <YAxis stroke="#fff" allowDecimals={false}>
               <Label
                 style={{
                   textAnchor: "middle",

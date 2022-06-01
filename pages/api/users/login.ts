@@ -40,7 +40,7 @@ export default async (
     } else {
       if (req.method === "POST") {
         const usersRef = collection(db, "users")
-        debugger
+
         // queries
         const q = query(usersRef, where("userId", "==", result.user.uid))
         let userDoc: DocumentReference
@@ -57,7 +57,7 @@ export default async (
             expirationTime: result.user.stsTokenManager.expirationTime,
             updated: new Date().toISOString(),
           })
-          msg = "user signed in for the first time"
+          msg = "welcome"
         } else {
           updateDoc(userDoc, {
             accessToken: credential.accessToken,

@@ -4,6 +4,7 @@
  */
 
 import axios from "axios"
+import Cookie from "js-cookie"
 import React, { useCallback, useEffect } from "react"
 import { FULL_DASH_ARRAY, SECONDS } from "../../pages"
 import { getYYYYMMDD } from "../utils/date"
@@ -69,15 +70,20 @@ const MyTimer = ({
           setIsOnLongBreak(true)
           setIsOnPomoSession(false)
           setLBTimer([longBreak, SECONDS])
-          axios.post("/api/users/report/", {
-            intervalsCompleted: count.current,
-            hoursCompleted: pomoTime,
+          axios.post(`/api/users/report?userId=${Cookie.get("userId")}`, {
+            intervalsCompleted: 1,
+            hoursCompleted: parseInt(pomoTime) / 60,
             date: getYYYYMMDD(),
           })
         } else {
           setIsOnShortBreak(true)
           setIsOnPomoSession(false)
           setSBTimer([shortBreak, SECONDS])
+          axios.post(`/api/users/report?userId=${Cookie.get("userId")}`, {
+            intervalsCompleted: 1,
+            hoursCompleted: parseInt(pomoTime) / 60,
+            date: getYYYYMMDD(),
+          })
         }
         // when the timer's second reaches 00, set the next second to 59
       } else if (minsInt !== 0 && secsInt === 0) {
