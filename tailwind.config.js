@@ -21,6 +21,7 @@ module.exports = {
         timerMdRadius: "15.75rem",
         timerLgRadius: "18.5rem",
         reportModal: "40rem",
+        reportModalMobile: "15rem",
       },
       height: {
         timerSmRadius: "13.25rem",
@@ -33,7 +34,7 @@ module.exports = {
         timerWrapperRingSm: "15.5rem",
         timerWrapperRingMd: "18.25rem",
         timerWrapperRingLg: "21.75rem",
-        settingsModalLg: "33.25rem",
+        settingsModalLg: "35.25rem",
       },
       strokeWidth: {
         ring: "0.3rem",

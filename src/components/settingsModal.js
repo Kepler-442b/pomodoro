@@ -8,6 +8,7 @@ import Select from "react-select"
 import Modal from "react-modal"
 import Slider from "rc-slider"
 import "rc-slider/assets/index.css"
+import CloseButton from "./mobileCloseBtn"
 
 const SettingsModal = ({
   isOpen,
@@ -26,14 +27,17 @@ const SettingsModal = ({
   volume,
   setVolume,
   audio,
+  windowWidth,
 }) => {
   Modal.setAppElement("#__next")
+
+  const isMobile = windowWidth < 641
 
   const [selectedOption, setSelectedOption] = useState(null)
 
   return (
     <Modal
-      className="settingsModal "
+      className={isMobile ? "settingsModalMobile" : "settingsModal"}
       isOpen={isOpen}
       onRequestClose={() => {
         handleSave()
@@ -42,17 +46,20 @@ const SettingsModal = ({
       shouldCloseOnOverlayClick
       style={{
         overlay: {
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          marginTop: "-22rem",
-          marginLeft: "-10rem",
+          // position: "fixed",
+          // top: "50%",
+          // left: "50%",
+          // marginTop: "-22rem",
+          // marginLeft: "-10rem",
           backgroundColor: "transparent",
           zIndex: 9999,
         },
       }}
     >
-      <div className="modalTitle">TIMER SETTINGS</div>
+      {isMobile && (
+        <CloseButton handleClose={handleToggle} handleSave={handleSave} />
+      )}
+      <div className="modalTitle">SETTINGS</div>
       <div id="mainTimerSetting" className="settingGroup">
         <div className="modalSubtitle">Time(minutes)</div>
         <div className="px-3">

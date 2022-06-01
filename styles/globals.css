@@ -35,23 +35,43 @@ input[type="text"] {
   }
 
   .settingsModal {
-    @apply border-2 border-gray-900 border-solid rounded-xl w-80 h-settingsModalLg bg-button;
+    @apply p-4 border-2 border-gray-900 border-solid rounded-xl w-96 h-settingsModalLg bg-button;
+  }
+
+  .settingsModalMobile {
+    @apply w-screen h-screen px-4 border-2 border-gray-900 border-solid bg-button rounded-xl;
   }
 
   .reportModal {
-    @apply p-8 border-2 border-gray-900 border-solid rounded-xl w-reportModal h-settingsModalLg bg-button;
+    @apply p-4 border-2 border-gray-900 border-solid rounded-xl w-reportModal h-settingsModalLg bg-button;
+  }
+
+  .reportModalMobile {
+    @apply w-screen h-screen px-4 border-2 border-gray-900 border-solid rounded-xl bg-button;
   }
 
   .summary {
     @apply flex justify-between mt-6 mb-10 text-lg text-center text-white;
   }
 
+  .summaryMobile {
+    @apply px-6 text-lg text-white;
+  }
+
   .summaryComponent {
     @apply w-28;
   }
 
+  .summaryComponentMobile {
+    @apply flex justify-between my-7;
+  }
+
   .summaryNumVal {
-    @apply mb-2 text-5xl font-semibold text-primary;
+    @apply text-5xl font-semibold text-primary;
+  }
+
+  .summaryTextVal {
+    @apply self-end;
   }
 
   .summaryLabel {
@@ -67,11 +87,11 @@ input[type="text"] {
   }
 
   .modalTitle {
-    @apply px-5 pt-3 pb-6 text-xl tracking-wide text-center text-white;
+    @apply px-5 pb-6 text-2xl tracking-wide text-center text-white;
   }
 
   .modalSubtitle {
-    @apply px-4 pb-1.5 text-lg tracking-wide text-white;
+    @apply pb-1.5 text-lg tracking-wide text-white;
   }
 
   .summaryModalSubTitle {
@@ -175,6 +195,10 @@ input[type="text"] {
 
   .targetCounter {
     @apply items-center flex h-10 px-3 mb-5 text-3xl text-white md:text-4xl md:mx-2 [text-shadow:0_8px_8px_rgba(0,0,0,1)];
+  }
+
+  .closeBtn {
+    @apply w-7 hover:cursor-pointer;
   }
 
   .resetText {

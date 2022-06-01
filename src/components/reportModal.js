@@ -8,13 +8,24 @@ import axios from "axios"
 import Cookie from "js-cookie"
 import Select from "react-select"
 import Modal from "react-modal"
-import { BarChart, Bar, XAxis, YAxis, Label, CartesianGrid } from "recharts"
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Label,
+  CartesianGrid,
+  Tooltip,
+} from "recharts"
 import "rc-slider/assets/index.css"
 import { PERIOD } from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
+import CloseButton from "./mobileCloseBtn"
 
-const ReportModal = ({ isOpen, showReport }) => {
+const ReportModal = ({ isOpen, showReport, windowWidth }) => {
   Modal.setAppElement("#__next")
+
+  const isMobile = windowWidth < 641
 
   const [selectedOption, setSelectedOption] = useState({
     value: "Today",
@@ -30,6 +41,7 @@ const ReportModal = ({ isOpen, showReport }) => {
     intervalsCompleted: null,
     daysAccessed: null,
   })
+
   useEffect(async () => {
     try {
       if (selectedOption !== null) {
@@ -69,7 +81,7 @@ const ReportModal = ({ isOpen, showReport }) => {
       console.log(err)
     }
   }, [selectedOption])
-  console.log("selectedOption", selectedOption)
+
   const OPTIONS = [
     { value: "Today", label: "Today" },
     { value: "This Week", label: "This Week" },
@@ -78,69 +90,89 @@ const ReportModal = ({ isOpen, showReport }) => {
 
   return (
     <Modal
-      className="absolute flex-auto reportModal"
+      className={`absolute flex-auto ${
+        isMobile ? "reportModalMobile" : "reportModal"
+      }`}
       isOpen={isOpen}
       onRequestClose={() => showReport(false)}
       shouldCloseOnOverlayClick
       style={{
         overlay: {
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          marginTop: "-22rem",
-          marginLeft: "-20rem",
+          // position: "fixed",
+          // top: "50%",
+          // left: "50%",
+          // marginTop: "-22rem",
+          // marginLeft: "-20rem",
           backgroundColor: "transparent",
           zIndex: 9999,
         },
       }}
     >
-      <div className="flex place-items-center">
-        <span className="summaryModalSubTitle">Report for</span>
-        <Select
-          className="w-40 mx-2 font-semibold border-2 border-black border-solid rounded-md"
-          onChange={(option) => setSelectedOption(option)}
-          defaultValue={OPTIONS[0]}
-          value={selectedOption}
-          options={OPTIONS}
-          closeMenuOnSelect
-        />
-      </div>
-      <div className="summary">
-        <div className="summaryComponent" id="intervalsCompleted">
-          <div className="summaryNumVal">
-            {reportSummary.intervalsCompleted}
+      {isMobile && <CloseButton handleClose={showReport} />}
+      <div className="modalTitle">ACTIVITY REPORT</div>
+
+      <div>
+        <div className="flex justify-center place-items-center">
+          <Select
+            className="mx-2 font-semibold border-2 border-black border-solid rounded-md w-60"
+            onChange={(option) => setSelectedOption(option)}
+            defaultValue={OPTIONS[0]}
+            value={selectedOption}
+            options={OPTIONS}
+            closeMenuOnSelect
+          />
+        </div>
+        <div className={isMobile ? "summaryMobile" : "summary"}>
+          <div
+            className={isMobile ? "summaryComponentMobile" : "summaryComponent"}
+            id="intervalsCompleted"
+          >
+            <div className="summaryNumVal">
+              {reportSummary.intervalsCompleted}
+            </div>
+            <div className="summaryTextVal">Intervals Completed</div>
           </div>
-          <div>Intervals Completed</div>
+          <div
+            className={isMobile ? "summaryComponentMobile" : "summaryComponent"}
+            id="hoursCompleted"
+          >
+            <div className="summaryNumVal">{reportSummary.hoursCompleted}</div>
+            <div className="summaryTextVal">Hours Completed</div>
+          </div>
+          <div
+            className={isMobile ? "summaryComponentMobile" : "summaryComponent"}
+            id="daysStreak"
+          >
+            <div className="summaryNumVal">{reportSummary.daysAccessed}</div>
+            <div className="summaryTextVal">Day(s) Accessed</div>
+          </div>
         </div>
-        <div className="summaryComponent" id="hoursCompleted">
-          <div className="summaryNumVal">{reportSummary.hoursCompleted}</div>
-          <div>Hours Completed</div>
+        <div className="flex justify-center -ml-5">
+          {reportEach.hoursCompleted !== null ? (
+            <BarChart
+              data={reportEach}
+              width={isMobile ? 350 : 600}
+              height={250}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" stroke="#fff"></XAxis>
+              <YAxis stroke="#fff" allowDecimals={false}>
+                <Label
+                  style={{
+                    textAnchor: "middle",
+                    fill: "#f2e78a",
+                  }}
+                  angle={270}
+                  value={"hour(s)"}
+                />
+              </YAxis>
+              <Bar dataKey="hoursCompleted" fill="#D0CE9E" />
+              <Tooltip />
+            </BarChart>
+          ) : (
+            <div className="text-primary">No data for this period exists.</div>
+          )}
         </div>
-        <div className="summaryComponent" id="daysStreak">
-          <div className="summaryNumVal">{reportSummary.daysAccessed}</div>
-          <div>Day(s) Accessed</div>
-        </div>
-      </div>
-      <div className="flex justify-center -ml-5">
-        {reportEach.hoursCompleted !== null ? (
-          <BarChart data={reportEach} width={600} height={250}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" stroke="#fff"></XAxis>
-            <YAxis stroke="#fff" allowDecimals={false}>
-              <Label
-                style={{
-                  textAnchor: "middle",
-                  fill: "#f2e78a",
-                }}
-                angle={270}
-                value={"hour(s)"}
-              />
-            </YAxis>
-            <Bar dataKey="hoursCompleted" fill="#D0CE9E" />
-          </BarChart>
-        ) : (
-          <div className="text-primary">No data for this period exists.</div>
-        )}
       </div>
     </Modal>
   )

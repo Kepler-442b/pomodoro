@@ -379,7 +379,7 @@ export default function Home() {
               showModal={showSignOutModal}
               handleConfirm={handleSignOut}
               message="Are you sure you want to sign out?"
-              btnMsg="Sign me out"
+              btnMsg="Yes"
             />
           }
           <MyButton
@@ -389,7 +389,11 @@ export default function Home() {
             iconStyling="circle-icon"
           />
           {isReportOpen && (
-            <ReportModal isOpen={isReportOpen} showReport={showReport} />
+            <ReportModal
+              isOpen={isReportOpen}
+              showReport={showReport}
+              windowWidth={windowWidth}
+            />
           )}
           <MyButton
             icon={SettingsIcon.src}
@@ -409,7 +413,7 @@ export default function Home() {
               setLongBreak={setLongBreak}
               longBreakInterval={longBreakInterval}
               setLongBreakInterval={setLongBreakInterval}
-              screenW={windowWidth}
+              windowWidth={windowWidth}
               handleSave={handleSaveSettings}
               goal={goal}
               setGoal={setGoal}
@@ -518,13 +522,13 @@ export default function Home() {
           btnMsg="Reset"
         />
       )}
-      {/* <div className="chatButtonWrapper">
+      <div className="chatButtonWrapper">
         <MyButton
           icon={ChatBubbleIcon.src}
           styling="circle-button-style bg-secondary"
           iconStyling="circle-icon"
         />
-      </div> */}
+      </div>
       <ToastContainer theme="dark" />
     </>
   )
