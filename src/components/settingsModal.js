@@ -3,9 +3,10 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React, { useEffect } from "react"
+import React from "react"
 import Select from "react-select"
 import Modal from "react-modal"
+import PropTypes from "prop-types"
 import Slider from "rc-slider"
 import "rc-slider/assets/index.css"
 import CloseButton from "./mobileCloseBtn"
@@ -180,6 +181,38 @@ const SettingsModal = ({
       </div>
     </Modal>
   )
+}
+
+SettingsModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  handleToggle: PropTypes.func.isRequired,
+  pomoTime: PropTypes.string.isRequired,
+  setPomoTime: PropTypes.func.isRequired,
+  shortBreak: PropTypes.string.isRequired,
+  setShortBreak: PropTypes.func.isRequired,
+  longBreak: PropTypes.string.isRequired,
+  setLongBreak: PropTypes.func.isRequired,
+  longBreakInterval: PropTypes.number.isRequired,
+  setLongBreakInterval: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  goal: PropTypes.number.isRequired,
+  setGoal: PropTypes.func.isRequired,
+  audio: PropTypes.string.isRequired,
+  volume: PropTypes.number.isRequired,
+  setVolume: PropTypes.func.isRequired,
+  selectedAlarm: PropTypes.shape({
+    value: {
+      audioStart: PropTypes.string.isRequired,
+      audioBreak: PropTypes.string.isRequired,
+      charImg: PropTypes.string.isRequired,
+      bgImg: PropTypes.string.isRequired,
+      btnClr: PropTypes.string.isRequired,
+      theme: PropTypes.string.isRequired,
+    },
+    label: PropTypes.string.isRequired,
+  }).isRequired,
+  selectAlarm: PropTypes.func.isRequired,
+  windowWidth: PropTypes.number.isRequired,
 }
 
 export default React.memo(SettingsModal)

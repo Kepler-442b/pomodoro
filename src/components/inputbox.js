@@ -1,9 +1,10 @@
 /**
- * File: /pages/inputbox.js
+ * File: src/components/inputbox.js
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
 import React from "react"
+import PropTypes from "prop-types"
 
 const MyTextInputWithLabel = ({
   inputId,
@@ -24,5 +25,11 @@ const MyTextInputWithLabel = ({
     </>
   )
 }
-
+MyTextInputWithLabel.propTypes = {
+  inputId: PropTypes.string.isRequired,
+  inputStyle: PropTypes.string.isRequired,
+  labelStyle: PropTypes.string.isRequired,
+  labelElement: PropTypes.string.isRequired,
+  placeHolderText: PropTypes.string.isRequired,
+}
 export default MyTextInputWithLabel

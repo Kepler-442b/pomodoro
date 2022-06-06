@@ -4,6 +4,7 @@
  */
 
 import React from "react"
+import PropTypes from "prop-types"
 
 const MyButton = ({
   text,
@@ -39,4 +40,27 @@ const MyButton = ({
   )
 }
 
+MyButton.propTypes = {
+  icon: PropTypes.string,
+  handleOnClick: PropTypes.func.isRequired,
+  styling: PropTypes.string,
+  iconStyling: PropTypes.string,
+  text: PropTypes.string,
+  toggleText: PropTypes.string,
+  isDisabled: PropTypes.bool,
+  showToggle: PropTypes.bool,
+  screenW: PropTypes.number,
+  textOnly: PropTypes.bool,
+}
+MyButton.defaultProps = {
+  icon: "",
+  styling: "",
+  iconStyling: "",
+  text: "",
+  toggleText: "",
+  isDisabled: false,
+  showToggle: false,
+  screenW: 0,
+  textOnly: false,
+}
 export default React.memo(MyButton)

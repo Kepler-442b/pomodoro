@@ -15,6 +15,7 @@ import Cookie from "js-cookie"
 import Head from "next/head"
 import Image from "next/image"
 import { ToastContainer, toast } from "react-toastify"
+import Confetti from "react-confetti"
 import { auth } from "../firebase/clientApp"
 import Levi from "../public/images/Levi.jpeg"
 import Anya from "../public/images/Anya.png"
@@ -23,21 +24,22 @@ import DefaultBg from "../public/images/default-bg.png"
 import LeviBg from "../public/images/levi-bg.png"
 import AnyaBg from "../public/images/anya-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
-import SearchIcon from "../public/icons/SearchIcon.svg"
 import UserIcon from "../public/icons/UserIcon.svg"
 import SummaryIcon from "../public/icons/SummaryIcon.svg"
-import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
+// import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
+// import SearchIcon from "../public/icons/SearchIcon.svg"
 import MyButton from "../src/components/button"
 import MyTimer from "../src/components/timer"
 import MyTimerAnimation from "../src/components/timerAnimation"
 import SettingsModal from "../src/components/settingsModal"
 import MyTargetCounter from "../src/components/targetCounter"
 import MyModal from "../src/components/modal"
-import MyTextInputWithLabel from "../src/components/inputbox"
+// import MyTextInputWithLabel from "../src/components/inputbox"
 import debounce from "../src/utils/debounce"
 import ReportModal from "../src/components/reportModal"
 import "react-toastify/dist/ReactToastify.css"
 import { FULL_DASH_ARRAY, SECONDS } from "../src/utils/constant"
+import { getYYYYMMDD } from "../src/utils/date"
 
 export const ALARM_SELECT_OPTIONS = [
   {
@@ -148,12 +150,17 @@ export default function Home() {
     selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
   }
 
+  const today = new Date()
+  const tomorrow = new Date(new Date(getYYYYMMDD(today)))
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const expiration = new Date(
+    tomorrow.getTime() + today.getTimezoneOffset() * 60000
+  )
+
   useEffect(() => {
     setIntialVals()
     if (!document.cookie.includes("strikeToday")) {
-      let date = new Date(Date.now() + 86400e3)
-      date = date.toUTCString()
-      document.cookie = `strikeToday=${sessionCount.current}; expires=${date}`
+      document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration}`
     } else {
       sessionCount.current = parseInt(document.cookie.split("strikeToday=")[1])
     }
@@ -168,7 +175,7 @@ export default function Home() {
     if (
       sessionCount.current > parseInt(document.cookie.split("strikeToday=")[1])
     ) {
-      document.cookie = `strikeToday=${sessionCount.current}`
+      document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration}`
     }
   }, [sessionCount.current])
 
@@ -187,6 +194,15 @@ export default function Home() {
   useEffect(() => {
     if (audio) audio.volume = volume / 100
   }, [audio, volume])
+
+  useEffect(() => {
+    if (goal == sessionCount.current && (isOnShortBreak || isOnLongBreak)) {
+      toast.success("Congratulations! You have reached your goal for today!", {
+        autoClose: 4000,
+        position: "top-center",
+      })
+    }
+  }, [goal, sessionCount.current, isOnLongBreak, isOnShortBreak])
 
   useEffect(() => {
     if (
@@ -459,7 +475,7 @@ export default function Home() {
               longBreakInterval={longBreakInterval}
               setLongBreakInterval={setLongBreakInterval}
               handleSave={handleSaveSettings}
-              goal={goal}
+              goal={parseInt(goal)}
               setGoal={setGoal}
               audio={audio}
               volume={volume}
@@ -473,10 +489,9 @@ export default function Home() {
       </nav>
       <div className="flex justify-center layout-spaces">
         <MyTargetCounter
-          goal={goal}
+          goal={parseInt(goal)}
           current={sessionCount.current}
           showModal={showResetModal}
-          count={sessionCount.current}
         />
       </div>
       <div className="timerWrapper mid-center">
@@ -486,9 +501,9 @@ export default function Home() {
             pomoTime={pomoTime}
             shortBreak={shortBreak}
             longBreak={longBreak}
-            interval={longBreakInterval}
+            interval={parseInt(longBreakInterval)}
             paused={paused}
-            count={sessionCount}
+            count={sessionCount.current}
             isOnShortBreak={isOnShortBreak}
             isOnLongBreak={isOnLongBreak}
             isOnPomoSession={isOnPomoSession}
@@ -577,6 +592,9 @@ export default function Home() {
           iconStyling="circle-icon"
         />
       </div> */}
+      {goal == sessionCount.current && (isOnShortBreak || isOnLongBreak) && (
+        <Confetti width={windowWidth} numberOfPieces={300} recycle={false} />
+      )}
       <ToastContainer theme="dark" />
     </>
   )

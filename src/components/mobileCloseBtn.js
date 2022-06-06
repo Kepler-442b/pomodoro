@@ -1,4 +1,10 @@
+/**
+ * File: src/components/mobileCloseBtn.js
+ * Copyright (c) 2022 - Sooyeon Kim
+ */
+
 import CloseIcon from "../../public/icons/CloseIcon.svg"
+import PropTypes from "prop-types"
 
 const CloseButton = ({ handleClose, handleSave }) => {
   return (
@@ -16,4 +22,11 @@ const CloseButton = ({ handleClose, handleSave }) => {
   )
 }
 
+CloseButton.propTypes = {
+  handleClose: PropTypes.func.isRequired,
+  handleSave: PropTypes.func,
+}
+CloseButton.defaultProps = {
+  handleSave: null,
+}
 export default CloseButton

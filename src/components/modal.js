@@ -5,16 +5,17 @@
 
 import React from "react"
 import Modal from "react-modal"
+import PropTypes from "prop-types"
 import MyButton from "./button"
 
 const MyModal = ({
   isOpen,
   handleConfirm,
   showModal,
-  pauseTimer,
   message,
   btnMsg,
   btnClr,
+  pauseTimer,
 }) => {
   Modal.setAppElement("#__next")
 
@@ -46,4 +47,16 @@ const MyModal = ({
   )
 }
 
+MyModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  handleConfirm: PropTypes.func.isRequired,
+  showModal: PropTypes.func.isRequired,
+  message: PropTypes.string.isRequired,
+  btnMsg: PropTypes.string.isRequired,
+  btnClr: PropTypes.string.isRequired,
+  pauseTimer: PropTypes.func,
+}
+MyModal.defaultProps = {
+  pauseTimer: null,
+}
 export default MyModal

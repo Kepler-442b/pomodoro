@@ -8,6 +8,7 @@ import axios from "axios"
 import Cookie from "js-cookie"
 import Select from "react-select"
 import Modal from "react-modal"
+import PropTypes from "prop-types"
 import {
   BarChart,
   Bar,
@@ -176,6 +177,12 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
       </div>
     </Modal>
   )
+}
+
+ReportModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  showReport: PropTypes.func.isRequired,
+  windowWidth: PropTypes.number.isRequired,
 }
 
 export default React.memo(ReportModal)

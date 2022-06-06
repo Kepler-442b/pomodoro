@@ -4,12 +4,14 @@
  */
 
 import React from "react"
+import PropTypes from "prop-types"
 import ResetIcon from "../../public/icons/ResetIcon.png"
-const MyTargetCounter = ({ goal, current, showModal, count }) => {
+
+const MyTargetCounter = ({ goal, current, showModal }) => {
   return (
     <div className="z-10 targetCounter">
       <p> {` ${current} / ${goal}`}</p>
-      {count > 0 && (
+      {current > 0 && (
         <img
           onClick={() => showModal(true)}
           className="resetBtn"
@@ -21,4 +23,9 @@ const MyTargetCounter = ({ goal, current, showModal, count }) => {
   )
 }
 
+MyTargetCounter.propTypes = {
+  goal: PropTypes.number.isRequired,
+  current: PropTypes.number.isRequired,
+  showModal: PropTypes.func.isRequired,
+}
 export default MyTargetCounter

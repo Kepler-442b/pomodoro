@@ -1,3 +1,8 @@
+/**
+ * File: /src/utils/debounce.js
+ * Copyright (c) 2022 - Sooyeon Kim
+ */
+
 const debounce = (func, delay) => {
   let timer = null
   return (args) => {

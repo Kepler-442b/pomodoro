@@ -3,9 +3,10 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
+import React, { useCallback, useEffect } from "react"
 import axios from "axios"
 import Cookie from "js-cookie"
-import React, { useCallback, useEffect } from "react"
+import PropTypes from "prop-types"
 import { FULL_DASH_ARRAY, SECONDS } from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
 
@@ -64,8 +65,8 @@ const MyTimer = ({
           setIsOnLongBreak(false)
           setTimer([pomoTime, SECONDS])
           setIsOnPomoSession(true)
-          count.current += 1
-        } else if (count.current % interval === 0) {
+          count += 1
+        } else if (count % interval === 0) {
           // calculate whether it is long or short break
           setIsOnLongBreak(true)
           setIsOnPomoSession(false)
@@ -87,13 +88,13 @@ const MyTimer = ({
         }
         // when the timer's second reaches 00, set the next second to 59
       } else if (minsInt !== 0 && secsInt === 0) {
-        count.current === 0
-          ? (count.current += 1)
+        count === 0
+          ? (count += 1)
           : handleSetTime([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
         // otherwise just reduce 1 second from the current time
       } else {
-        count.current === 0
-          ? (count.current += 1)
+        count === 0
+          ? (count += 1)
           : handleSetTime([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
       }
     },
@@ -111,7 +112,7 @@ const MyTimer = ({
 
   const displayTime = () => {
     // show Begin! only on the initial pomo session of the day
-    if (isOnPomoSession && count.current === 0) return "Begin!"
+    if (isOnPomoSession && count === 0) return "Begin!"
     else if (isOnShortBreak) return `${currSBMins}:${currSBSecs}`
     else if (isOnLongBreak) return `${currLBMins}:${currLBSecs}`
     else return `${currMins}:${currSecs}`
@@ -179,4 +180,30 @@ const MyTimer = ({
   )
 }
 
+MyTimer.propTypes = {
+  pomoTime: PropTypes.string.isRequired,
+  shortBreak: PropTypes.string.isRequired,
+  longBreak: PropTypes.string.isRequired,
+  interval: PropTypes.number.isRequired,
+  paused: PropTypes.bool.isRequired,
+  count: PropTypes.number.isRequired,
+  isOnShortBreak: PropTypes.bool.isRequired,
+  isOnLongBreak: PropTypes.bool.isRequired,
+  isOnPomoSession: PropTypes.bool.isRequired,
+  setIsOnPomoSession: PropTypes.func.isRequired,
+  setIsOnShortBreak: PropTypes.func.isRequired,
+  setIsOnLongBreak: PropTypes.func.isRequired,
+  currMins: PropTypes.string.isRequired,
+  currSecs: PropTypes.string.isRequired,
+  currSBMins: PropTypes.string.isRequired,
+  currSBSecs: PropTypes.string.isRequired,
+  currLBMins: PropTypes.string.isRequired,
+  currLBSecs: PropTypes.string.isRequired,
+  setTimer: PropTypes.func.isRequired,
+  setSBTimer: PropTypes.func.isRequired,
+  setLBTimer: PropTypes.func.isRequired,
+  setDashArrVal: PropTypes.func.isRequired,
+  secsElapsed: PropTypes.number.isRequired,
+  setSecsElapsed: PropTypes.func.isRequired,
+}
 export default MyTimer
