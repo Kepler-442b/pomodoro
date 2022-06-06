@@ -7,7 +7,7 @@ import React from "react"
 import ResetIcon from "../../public/icons/ResetIcon.png"
 const MyTargetCounter = ({ goal, current, showModal, count }) => {
   return (
-    <div className="targetCounter">
+    <div className="z-10 targetCounter">
       <p> {` ${current} / ${goal}`}</p>
       {count > 0 && (
         <img

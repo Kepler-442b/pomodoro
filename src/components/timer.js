@@ -6,7 +6,7 @@
 import axios from "axios"
 import Cookie from "js-cookie"
 import React, { useCallback, useEffect } from "react"
-import { FULL_DASH_ARRAY, SECONDS } from "../../pages"
+import { FULL_DASH_ARRAY, SECONDS } from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
 
 const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
@@ -139,8 +139,6 @@ const MyTimer = ({
 
         const totalSecs = parseInt(baseMins) * 60 + parseInt(SECONDS)
         const secsLeft = totalSecs - secsElapsed
-
-        // console.log("Hit secsElapsed", secsElapsed)
 
         const remainedFraction = secsLeft / totalSecs
         // gradually reduce the dash array to be set to 0, so that when the

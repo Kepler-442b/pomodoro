@@ -14,6 +14,7 @@ const MyModal = ({
   pauseTimer,
   message,
   btnMsg,
+  btnClr,
 }) => {
   Modal.setAppElement("#__next")
 
@@ -28,12 +29,12 @@ const MyModal = ({
         <MyButton
           handleOnClick={() => handleConfirm()}
           text={btnMsg}
-          styling="bg-secondary"
+          styling={btnClr}
           textOnly={true}
         />
         <MyButton
           text="Cancel"
-          styling="bg-secondary"
+          styling={btnClr}
           handleOnClick={() => {
             showModal(false)
             if (pauseTimer) pauseTimer(false)

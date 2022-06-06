@@ -3,12 +3,13 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React, { useState } from "react"
+import React, { useEffect } from "react"
 import Select from "react-select"
 import Modal from "react-modal"
 import Slider from "rc-slider"
 import "rc-slider/assets/index.css"
 import CloseButton from "./mobileCloseBtn"
+import { ALARM_SELECT_OPTIONS } from "../../pages"
 
 const SettingsModal = ({
   isOpen,
@@ -24,17 +25,16 @@ const SettingsModal = ({
   handleSave,
   goal,
   setGoal,
+  audio,
   volume,
   setVolume,
-  audio,
+  selectedAlarm,
+  selectAlarm,
   windowWidth,
 }) => {
   Modal.setAppElement("#__next")
 
   const isMobile = windowWidth < 641
-
-  const [selectedOption, setSelectedOption] = useState(null)
-
   return (
     <Modal
       className={isMobile ? "settingsModalMobile" : "settingsModal"}
@@ -145,12 +145,10 @@ const SettingsModal = ({
         <div className="px-4">
           <Select
             className="font-semibold border-2 border-black border-solid rounded-md w-64mx-2"
-            onChange={(option) => setSelectedOption(option)}
-            value={selectedOption}
-            options={[
-              { value: "Levi Ackerman", label: "Levi Ackerman" },
-              { value: "Eren Jaeger", label: "Eren Jaeger" },
-            ]}
+            onChange={(option) => selectAlarm(option)}
+            value={selectedAlarm}
+            options={ALARM_SELECT_OPTIONS}
+            defaultValue={ALARM_SELECT_OPTIONS[0]}
           />
         </div>
         <div className="flex items-center justify-between px-4 mt-3 text-xl text-white settingGroup ">

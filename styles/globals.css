@@ -26,10 +26,6 @@ input[type="text"] {
 }
 
 @layer components {
-  html {
-    @apply bg-no-repeat bg-cover placeholder:bg-center bg-space-theme-1;
-  }
-
   .layout-spaces {
     @apply mx-3 my-4;
   }

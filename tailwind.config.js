@@ -7,13 +7,17 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        "space-theme-1": "url('/images/hubble_cha1_mosiac.jpg')",
+        leviTheme: "url('/images/levi-wallpaper.jpg')",
+        defaultTheme: "url('/images/default-wallpaper.jpg')",
+        anyaTheme: "url('/images/anya-wallpaper.jpg')",
       },
       colors: {
-        primary: "#f2e78a",
-        secondary: "#05334d",
-        button: "#4C4F5B",
-        inputBox: "#C4C4C4",
+        primary: "#f2e78a", // yellow
+        secondary: "#05334d", // dark blue
+        tertiary: "#5B4C7E", // indigo
+        quaternary: "#E08980", // pink
+        button: "#4C4F5B", // dark grey
+        inputBox: "#C4C4C4", // light grey
       },
       width: {
         buttonSm: "7.25rem",

@@ -73,7 +73,7 @@ export default async (
         } else if (!latestReport || latestReport.date !== date) {
           addDoc(reportsCol, {
             intervalsCompleted: intervalsCompleted,
-            hoursCompleted: hoursCompleted,
+            hoursCompleted: parseFloat(hoursCompleted.toFixed(2)),
             date: date,
             updated_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
@@ -149,11 +149,10 @@ export default async (
               if (parseInt(mm) < 10) mm = "0" + mm
             }
 
-            return { mm: mm, dd: dd.toString() }
+            return { mm, dd: dd.toString() }
           }
 
           const { mm, dd } = getTheFirstDate(month, today)
-          console.log("?", mm, dd)
           // debugger
           const reports = await getDocs(
             query(

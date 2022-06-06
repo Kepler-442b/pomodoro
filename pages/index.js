@@ -12,13 +12,16 @@ import {
   signOut,
 } from "firebase/auth"
 import Cookie from "js-cookie"
-import Script from "next/script"
 import Head from "next/head"
 import Image from "next/image"
 import { ToastContainer, toast } from "react-toastify"
 import { auth } from "../firebase/clientApp"
-import Levi from "../public/images/levi.jpeg"
+import Levi from "../public/images/Levi.jpeg"
+import Anya from "../public/images/Anya.png"
+import Peanut from "../public/images/peanut.jpg"
 import DefaultBg from "../public/images/default-bg.png"
+import LeviBg from "../public/images/levi-bg.png"
+import AnyaBg from "../public/images/anya-bg.png"
 import SettingsIcon from "../public/icons/SettingsIcon.svg"
 import SearchIcon from "../public/icons/SearchIcon.svg"
 import UserIcon from "../public/icons/UserIcon.svg"
@@ -34,11 +37,43 @@ import MyTextInputWithLabel from "../src/components/inputbox"
 import debounce from "../src/utils/debounce"
 import ReportModal from "../src/components/reportModal"
 import "react-toastify/dist/ReactToastify.css"
+import { FULL_DASH_ARRAY, SECONDS } from "../src/utils/constant"
 
-export const SECONDS = "00"
-export const FULL_DASH_ARRAY = 283
-const LEVI_BREAK = "/levi-break.mp3"
-const LEVI_START = "/levi-start.mp3"
+export const ALARM_SELECT_OPTIONS = [
+  {
+    value: {
+      audioStart: "/game-start.mp3",
+      audioBreak: "/game-break.mp3",
+      charImg: Peanut,
+      bgImg: DefaultBg,
+      btnClr: "bg-tertiary",
+      theme: "/images/default-wallpaper.jpg",
+    },
+    label: "Default Sound",
+  },
+  {
+    value: {
+      audioStart: "/levi-start.mp3",
+      audioBreak: "/levi-break.mp3",
+      charImg: Levi,
+      bgImg: LeviBg,
+      btnClr: "bg-secondary",
+      theme: "/images/levi-wallpaper.jpg",
+    },
+    label: "Levi Ackerman",
+  },
+  {
+    value: {
+      audioStart: "/anya-start.mp3",
+      audioBreak: "/anya-break.mp3",
+      charImg: Anya,
+      bgImg: AnyaBg,
+      btnClr: "bg-quaternary",
+      theme: "/images/anya-wallpaper.jpg",
+    },
+    label: "Anya Foger",
+  },
+]
 
 export default function Home() {
   const [title, setTitle] = useState("Pomodoro")
@@ -68,7 +103,8 @@ export default function Home() {
   )
   const [secsElapsed, setSecsElapsed] = useState(0)
   const [volume, setVolume] = useState(30)
-  // const [alarmType, setAlarmType] = useState()
+  const [selectedAlarm, selectAlarm] = useState(ALARM_SELECT_OPTIONS[0])
+  const [user, setUser] = useState(null)
 
   const sessionCount = useRef(0)
 
@@ -97,19 +133,23 @@ export default function Home() {
       "volume",
       window.localStorage.getItem("volume") || volume
     )
+    window.localStorage.setItem(
+      "selectedAlarm",
+      window.localStorage.getItem("selectedAlarm") ||
+        JSON.stringify(selectedAlarm)
+    )
 
-    // window.localStorage.setItem( "alarm", alarm)
     setPomoTime(window.localStorage.getItem("pomoTime"))
     setShortBreak(window.localStorage.getItem("shortBreak"))
     setLongBreak(window.localStorage.getItem("longBreak"))
     setLongBreakInterval(window.localStorage.getItem("longBreakInterval"))
     setGoal(window.localStorage.getItem("goal"))
     setVolume(window.localStorage.getItem("volume"))
+    selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
   }
 
   useEffect(() => {
     setIntialVals()
-    setAudioFile(new Audio(LEVI_START))
     if (!document.cookie.includes("strikeToday")) {
       let date = new Date(Date.now() + 86400e3)
       date = date.toUTCString()
@@ -118,6 +158,11 @@ export default function Home() {
       sessionCount.current = parseInt(document.cookie.split("strikeToday=")[1])
     }
   }, [])
+
+  useEffect(() => {
+    setAudioFile(new Audio(selectedAlarm.value.audioStart))
+    setCurrImg(selectedAlarm.value.bgImg)
+  }, [selectedAlarm])
 
   useEffect(() => {
     if (
@@ -159,19 +204,19 @@ export default function Home() {
 
   useEffect(() => {
     if (isOnShortBreak || isOnLongBreak) {
-      setCurrImg(Levi)
+      setCurrImg(selectedAlarm.value.charImg)
       audio.play()
     } else if (isOnPomoSession && sessionCount.current > 0) {
-      setCurrImg(DefaultBg)
+      setCurrImg(selectedAlarm.value.bgImg)
       audio.play()
     }
 
     if (audio) {
       audio.addEventListener("ended", () => {
         if (isOnPomoSession && sessionCount.current > 0) {
-          setAudioFile(new Audio(LEVI_BREAK))
+          setAudioFile(new Audio(selectedAlarm.value.audioBreak))
         } else {
-          setAudioFile(new Audio(LEVI_START))
+          setAudioFile(new Audio(selectedAlarm.value.audioStart))
         }
       })
     }
@@ -194,59 +239,6 @@ export default function Home() {
     currSBMins,
     currSBSecs,
   ])
-
-  const handleSaveSettings = useCallback(() => {
-    window.localStorage.setItem("pomoTime", pomoTime)
-    window.localStorage.setItem("shortBreak", shortBreak)
-    window.localStorage.setItem("longBreak", longBreak)
-    window.localStorage.setItem("longBreakInterval", longBreakInterval)
-    window.localStorage.setItem("goal", goal)
-    window.localStorage.setItem("volume", volume)
-
-    // window.localStorage.setItem("alarm",alarm)
-  }, [pomoTime, shortBreak, longBreak, longBreakInterval, goal, volume])
-
-  const handleSkip = useCallback(() => {
-    showSkipModal(false)
-    if (isOnShortBreak || isOnLongBreak) {
-      setSBTimer([shortBreak, SECONDS])
-      setLBTimer([longBreak, SECONDS])
-      setIsOnShortBreak(false)
-      setIsOnLongBreak(false)
-      setIsOnPomoSession(true)
-      setCurrImg(DefaultBg)
-      setAudioFile(new Audio(LEVI_START))
-    } else {
-      setTimer([pomoTime, SECONDS])
-      setIsOnShortBreak(true)
-      setIsOnLongBreak(false)
-      setIsOnPomoSession(false)
-      setCurrImg(Levi)
-      setAudioFile(new Audio(LEVI_BREAK))
-    }
-    setSecsElapsed(0)
-    setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
-    togglePaused(false)
-  }, [isOnShortBreak, isOnLongBreak, pomoTime])
-
-  const handleResetProgress = () => {
-    document.cookie = "strikeToday=0"
-    sessionCount.current = 0
-    setTimer([pomoTime, SECONDS])
-    setLBTimer([longBreak, SECONDS])
-    setSBTimer([shortBreak, SECONDS])
-    setSecsElapsed(0)
-    setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
-    setCurrImg(DefaultBg)
-    setAudioFile(new Audio(LEVI_START))
-    togglePaused(true)
-    setIsOnPomoSession(false)
-    setIsOnLongBreak(false)
-    setIsOnShortBreak(false)
-    showResetModal(false)
-  }
-
-  const [user, setUser] = useState(null)
 
   // subscribe to the auth change
   const unSubAuth = onAuthStateChanged(auth, (currUser) => {
@@ -295,7 +287,6 @@ export default function Home() {
         // ...
       })
   }
-
   const handleSignOut = async () => {
     if (window)
       try {
@@ -311,6 +302,64 @@ export default function Home() {
       } catch (err) {
         throw new Error(err.message)
       }
+  }
+
+  const handleSaveSettings = useCallback(() => {
+    window.localStorage.setItem("pomoTime", pomoTime)
+    window.localStorage.setItem("shortBreak", shortBreak)
+    window.localStorage.setItem("longBreak", longBreak)
+    window.localStorage.setItem("longBreakInterval", longBreakInterval)
+    window.localStorage.setItem("goal", goal)
+    window.localStorage.setItem("volume", volume)
+    window.localStorage.setItem("selectedAlarm", JSON.stringify(selectedAlarm))
+  }, [
+    pomoTime,
+    shortBreak,
+    longBreak,
+    longBreakInterval,
+    goal,
+    volume,
+    selectedAlarm,
+  ])
+
+  const handleSkip = useCallback(() => {
+    showSkipModal(false)
+    if (isOnShortBreak || isOnLongBreak) {
+      setSBTimer([shortBreak, SECONDS])
+      setLBTimer([longBreak, SECONDS])
+      setIsOnShortBreak(false)
+      setIsOnLongBreak(false)
+      setIsOnPomoSession(true)
+      setCurrImg(selectedAlarm.value.bgImg)
+      setAudioFile(new Audio(selectedAlarm.value.audioStart))
+    } else {
+      setTimer([pomoTime, SECONDS])
+      setIsOnShortBreak(true)
+      setIsOnLongBreak(false)
+      setIsOnPomoSession(false)
+      setCurrImg(selectedAlarm.value.charImg)
+      setAudioFile(new Audio(selectedAlarm.value.audioBreak))
+    }
+    setSecsElapsed(0)
+    setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
+    togglePaused(false)
+  }, [isOnShortBreak, isOnLongBreak, pomoTime])
+
+  const handleResetProgress = () => {
+    document.cookie = "strikeToday=0"
+    sessionCount.current = 0
+    setTimer([pomoTime, SECONDS])
+    setLBTimer([longBreak, SECONDS])
+    setSBTimer([shortBreak, SECONDS])
+    setSecsElapsed(0)
+    setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
+    setCurrImg(selectedAlarm.value.bgImg)
+    setAudioFile(new Audio(selectedAlarm.value.audioStart))
+    togglePaused(true)
+    setIsOnPomoSession(false)
+    setIsOnLongBreak(false)
+    setIsOnShortBreak(false)
+    showResetModal(false)
   }
 
   const handleShowReport = () => {
@@ -329,25 +378,20 @@ export default function Home() {
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="pomodoro" />
-        <link rel="icon" href="/ClockfaceIcon.png" />
       </Head>
-      <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/react-modal/3.14.3/react-modal.min.js"
-        strategy="lazyOnload"
-        // integrity="sha512-MY2jfK3DBnVzdS2V8MXo5lRtr0mNRroUI9hoLVv2/yL3vrJTam3VzASuKQ96fLEpyYIT4a8o7YgtUs5lPjiLVQ=="
-        // crossOrigin="anonymous"
-        referrerPolicy="no-referrer"
-        onError={(e) => {
-          console.error("Script failed to load", e)
-        }}
+      <Image
+        alt="background"
+        src={selectedAlarm.value.theme}
+        objectFit="cover"
+        layout="fill"
+        quality={100}
       />
       <nav className="navWrapper">
         <div className="top-left">
-          <div className="flex h-full rounded-2xl bg-secondary">
+          <div className="flex h-full rounded-2xl bg-tertiary">
             {/* <MyTextInputWithLabel
               inputId="search-user"
-              inputStyle="input-basic-style bg-secondary rounded-2xl h-10 md:w-full w-36"
+              inputStyle="input-basic-style bg-tertiary rounded-2xl h-10 md:w-full w-36"
               labelElement={
                 <img
                   src={SearchIcon.src}
@@ -370,7 +414,7 @@ export default function Home() {
                 handleSignIn()
               }
             }}
-            styling="circle-button-style bg-secondary"
+            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"
           />
           {
@@ -380,12 +424,13 @@ export default function Home() {
               handleConfirm={handleSignOut}
               message="Are you sure you want to sign out?"
               btnMsg="Yes"
+              btnClr={selectedAlarm.value.btnClr}
             />
           }
           <MyButton
             icon={SummaryIcon.src}
             handleOnClick={handleShowReport}
-            styling="circle-button-style bg-secondary"
+            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"
           />
           {isReportOpen && (
@@ -398,13 +443,13 @@ export default function Home() {
           <MyButton
             icon={SettingsIcon.src}
             handleOnClick={() => toggleSettings(!isSettingsOpen)}
-            styling="circle-button-style bg-secondary"
+            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"
           />
           {isSettingsOpen && (
             <SettingsModal
-              handleToggle={toggleSettings}
               isOpen={isSettingsOpen}
+              handleToggle={toggleSettings}
               pomoTime={pomoTime}
               setPomoTime={setPomoTime}
               shortBreak={shortBreak}
@@ -413,13 +458,15 @@ export default function Home() {
               setLongBreak={setLongBreak}
               longBreakInterval={longBreakInterval}
               setLongBreakInterval={setLongBreakInterval}
-              windowWidth={windowWidth}
               handleSave={handleSaveSettings}
               goal={goal}
               setGoal={setGoal}
+              audio={audio}
               volume={volume}
               setVolume={setVolume}
-              audio={audio}
+              selectedAlarm={selectedAlarm}
+              selectAlarm={selectAlarm}
+              windowWidth={windowWidth}
             />
           )}
         </div>
@@ -442,13 +489,12 @@ export default function Home() {
             interval={longBreakInterval}
             paused={paused}
             count={sessionCount}
-            isOnPomoSession={isOnPomoSession}
             isOnShortBreak={isOnShortBreak}
             isOnLongBreak={isOnLongBreak}
+            isOnPomoSession={isOnPomoSession}
             setIsOnPomoSession={setIsOnPomoSession}
             setIsOnShortBreak={setIsOnShortBreak}
             setIsOnLongBreak={setIsOnLongBreak}
-            setAudioFile={setAudioFile}
             currMins={currMins}
             currSecs={currSecs}
             currSBMins={currSBMins}
@@ -510,6 +556,7 @@ export default function Home() {
           handleConfirm={handleSkip}
           message="Are you sure you want to skip the current session?"
           btnMsg="Skip"
+          btnClr={selectedAlarm.value.btnClr}
         />
       )}
       {isResetModalOpen && (
@@ -520,15 +567,16 @@ export default function Home() {
           handleConfirm={handleResetProgress}
           message="Are you sure you want to reset the progress for today?"
           btnMsg="Reset"
+          btnClr={selectedAlarm.value.btnClr}
         />
       )}
-      <div className="chatButtonWrapper">
+      {/* <div className="chatButtonWrapper">
         <MyButton
           icon={ChatBubbleIcon.src}
-          styling="circle-button-style bg-secondary"
+            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
           iconStyling="circle-icon"
         />
-      </div>
+      </div> */}
       <ToastContainer theme="dark" />
     </>
   )
