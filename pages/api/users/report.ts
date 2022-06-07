@@ -149,11 +149,13 @@ export default async (
               if (parseInt(mm) < 10) mm = "0" + mm
             }
 
-            return { mm, dd: dd.toString() }
+            let ddString = dd.toString()
+            if (dd < 10) ddString = "0" + ddString
+
+            return { mm, dd: ddString }
           }
 
           const { mm, dd } = getTheFirstDate(month, today)
-          // debugger
           const reports = await getDocs(
             query(
               reportsCol,
@@ -172,8 +174,8 @@ export default async (
             query(
               reportsCol,
               where("userId", "==", userId),
-              where("date", ">=", `${year}-${"05"}-01`),
-              where("date", "<=", `${year}-${"05"}-${"31"}`)
+              where("date", ">=", `${year}-${month}-01`),
+              where("date", "<", `${year}-${month}-${today}`)
             )
           )
           // get all reports in the same year and month

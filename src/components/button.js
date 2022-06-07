@@ -21,7 +21,6 @@ const MyButton = ({
   return (
     <button
       className={`button-basic-style ${styling}`}
-      style={icon?.includes("google") ? { padding: 0 } : {}}
       onClick={(evt) => handleOnClick(evt)}
       disabled={isDisabled}
     >

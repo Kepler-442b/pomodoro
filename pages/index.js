@@ -77,14 +77,13 @@ export const ALARM_SELECT_OPTIONS = [
   },
 ]
 
-export default function Home() {
+export default function Home({ profilePic }) {
   const [title, setTitle] = useState("Pomodoro")
   const [windowWidth, setWindowWidth] = useState(0)
   const [currImg, setCurrImg] = useState(DefaultBg)
   const [audio, setAudioFile] = useState(null)
   const [goal, setGoal] = useState(5)
   const [paused, togglePaused] = useState(true)
-  const [profilePic, setProfilePic] = useState("")
   const [isSettingsOpen, toggleSettings] = useState(false)
   const [isSignOutModalOpen, showSignOutModal] = useState(false)
   const [isReportOpen, showReport] = useState(false)
@@ -106,8 +105,7 @@ export default function Home() {
   const [secsElapsed, setSecsElapsed] = useState(0)
   const [volume, setVolume] = useState(30)
   const [selectedAlarm, selectAlarm] = useState(ALARM_SELECT_OPTIONS[0])
-  const [user, setUser] = useState(null)
-
+  const [user, setUser] = useState(!!auth)
   const sessionCount = useRef(0)
 
   const setIntialVals = () => {
@@ -256,13 +254,13 @@ export default function Home() {
     currSBSecs,
   ])
 
-  // subscribe to the auth change
-  const unSubAuth = onAuthStateChanged(auth, (currUser) => {
+  const monitorAuthState = onAuthStateChanged(auth, (currUser) => {
     if (currUser) {
-      setUser(currUser)
-      setProfilePic(currUser.photoURL)
-      unSubAuth()
+      setUser(true)
+    } else {
+      // toast.info("you are not logged in ")
     }
+    monitorAuthState()
   })
 
   const handleSignIn = async () => {
@@ -275,13 +273,13 @@ export default function Home() {
         // const token = credential.accessToken
 
         // The signed-in user info.
-        const photo = result.user.photoURL
-        if (photo) setProfilePic(photo)
+        if (result.user?.photoURL)
+          Cookie.set("profilePic", result.user.photoURL, { expires: 14 })
 
         await axios
           .post(`/api/users/login`, { result, credential })
           .then((res) => {
-            Cookie.set("userId", res.data.userId)
+            Cookie.set("userId", res.data.userId, { expires: 14 })
           })
       })
       .then(() =>
@@ -294,13 +292,12 @@ export default function Home() {
       )
       .catch((error) => {
         // Handle Errors here.
-        const errorCode = error.code
-        const errorMessage = error.message
-        // The email of the user's account used.
-        const email = error.email
+        const { code, message, email } = error
         // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error)
-        // ...
+        // const credential = GoogleAuthProvider.credentialFromError(error)
+        toast.error(
+          `Error while logging in ${email}: ${message}(error code: ${code})`
+        )
       })
   }
   const handleSignOut = async () => {
@@ -308,7 +305,8 @@ export default function Home() {
       try {
         await signOut(auth)
         setUser(null)
-        setProfilePic(null)
+        Cookie.remove("userId")
+        Cookie.remove("profilePic")
         toast.success("Successfully logged out!", {
           autoClose: 1500,
           hideProgressBar: true,
@@ -389,7 +387,7 @@ export default function Home() {
     }
     showReport(!isReportOpen)
   }
-
+  console.log("profi", profilePic)
   return (
     <>
       <Head>
@@ -422,7 +420,7 @@ export default function Home() {
         </div>
         <div className="flex top-right">
           <MyButton
-            icon={profilePic ? profilePic : UserIcon.src}
+            icon={profilePic || UserIcon.src}
             handleOnClick={() => {
               if (user) {
                 showSignOutModal(true)
@@ -430,7 +428,9 @@ export default function Home() {
                 handleSignIn()
               }
             }}
-            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
+            styling={`circle-button-style ${selectedAlarm.value.btnClr} ${
+              profilePic ? "p-0" : ""
+            }`}
             iconStyling="circle-icon"
           />
           {
@@ -598,4 +598,11 @@ export default function Home() {
       <ToastContainer theme="dark" />
     </>
   )
+}
+
+// TODO: figure out why only changes on refresh
+Home.getInitialProps = async (ctx) => {
+  if (ctx.req.cookies?.profilePic) {
+    return { profilePic: ctx.req.cookies.profilePic }
+  } else return { profilePic: null }
 }

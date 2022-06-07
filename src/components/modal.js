@@ -28,7 +28,10 @@ const MyModal = ({
       <div className="mx-2">{message}</div>
       <div className="flex ">
         <MyButton
-          handleOnClick={() => handleConfirm()}
+          handleOnClick={() => {
+            showModal(false)
+            handleConfirm()
+          }}
           text={btnMsg}
           styling={btnClr}
           textOnly={true}

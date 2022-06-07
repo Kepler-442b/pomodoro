@@ -13,9 +13,19 @@ import {
   where,
   onSnapshot,
   DocumentReference,
+  getDoc,
+  getDocs,
 } from "firebase/firestore"
 import { OAuthCredential, UserCredential } from "firebase/auth"
 import { NextApiRequest } from "next"
+
+interface UserDoc {
+  accessToken: string
+  expirationTime: number
+  refreshToken: string
+  userId: string
+  updated: string
+}
 
 export default async (
   req: NextApiRequest & {
@@ -39,18 +49,21 @@ export default async (
       return res.status(400).end()
     } else {
       if (req.method === "POST") {
-        const usersRef = collection(db, "users")
+        const usersCol = collection(db, "users")
+        let userRef: DocumentReference
+        let user: UserDoc
 
-        // queries
-        const q = query(usersRef, where("userId", "==", result.user.uid))
-        let userDoc: DocumentReference
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-          userDoc = snapshot.docs[0].ref
+        let users = await getDocs(
+          query(usersCol, where("userId", "==", result.user.uid))
+        )
+        users.forEach((doc) => {
+          userRef = doc.ref
+          user = doc.data() as UserDoc
+          return
         })
-
         let msg = ""
-        if (!userDoc) {
-          addDoc(usersRef, {
+        if (!user) {
+          addDoc(usersCol, {
             userId: result.user.uid,
             accessToken: credential.accessToken,
             refreshToken: result.user.stsTokenManager.refreshToken,
@@ -59,7 +72,7 @@ export default async (
           })
           msg = "welcome"
         } else {
-          updateDoc(userDoc, {
+          updateDoc(userRef, {
             accessToken: credential.accessToken,
             refreshToken: result.user.stsTokenManager.refreshToken,
             expirationTime: result.user.stsTokenManager.expirationTime,
@@ -67,8 +80,6 @@ export default async (
           })
           msg = "token updated"
         }
-
-        unsubscribe()
         return res.status(200).json({ msg, userId: result.user.uid })
       }
     }
