@@ -3,7 +3,8 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
+import PropTypes from "prop-types"
 import axios from "axios"
 import {
   GoogleAuthProvider,
@@ -186,7 +187,7 @@ export default function Home({ profilePic }) {
         setWindowWidth(window.innerWidth)
       })
     )
-    return () => {}
+    return () => window.removeEventListener("resize", debounce)
   }, [windowWidth])
 
   useEffect(() => {
@@ -604,6 +605,13 @@ export default function Home({ profilePic }) {
       <ToastContainer theme="dark" />
     </>
   )
+}
+
+Home.propTypes = {
+  profilePic: PropTypes.string,
+}
+Home.defaultProps = {
+  profilePic: "",
 }
 
 // TODO: figure out why only changes on refresh

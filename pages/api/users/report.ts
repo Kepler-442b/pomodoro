@@ -14,7 +14,7 @@ import {
   getDocs,
   DocumentReference,
 } from "firebase/firestore"
-import { NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 
 export const PERIOD = {
   DAY: "DAY",
@@ -34,7 +34,7 @@ export default async (
   req: NextApiRequest & {
     method: string
   },
-  res: any
+  res: NextApiResponse
 ) => {
   // Initialize db
   const db = getFirestore(firebaseApp)
@@ -47,7 +47,7 @@ export default async (
       const { intervalsCompleted, hoursCompleted, date } = req.body
       let latestReport: ReportDoc
       let latestReportRef: DocumentReference
-      let reports = await getDocs(
+      const reports = await getDocs(
         query(
           reportsCol,
           where("userId", "==", userId),
@@ -102,7 +102,7 @@ export default async (
         const today = new Date().toISOString().split("-")[2].slice(0, 2)
         if (period === PERIOD.DAY) {
           let dailyReport: ReportDoc
-          let reports = await getDocs(
+          const reports = await getDocs(
             query(
               reportsCol,
               where("userId", "==", userId),
@@ -124,7 +124,7 @@ export default async (
           res.status(200).json({ report: dailyReport })
         } else if (period === PERIOD.WEEK) {
           // get the last seven day's report
-          let last7DaysReport: ReportDoc[] = []
+          const last7DaysReport: ReportDoc[] = []
 
           const getTheFirstDate = (
             month: string,
@@ -171,7 +171,7 @@ export default async (
 
           res.status(200).json({ report: last7DaysReport })
         } else {
-          let reports = await getDocs(
+          const reports = await getDocs(
             query(
               reportsCol,
               where("userId", "==", userId),
@@ -180,7 +180,7 @@ export default async (
             )
           )
           // get all reports in the same year and month
-          let monthlyReport: ReportDoc[] = []
+          const monthlyReport: ReportDoc[] = []
           reports.forEach((doc) => {
             monthlyReport.push(doc.data() as ReportDoc)
           })

@@ -20,7 +20,12 @@ import {
 } from "recharts"
 import { toast } from "react-toastify"
 import "rc-slider/assets/index.css"
-import { PERIOD } from "../utils/constant"
+import {
+  MODAL_STYLE,
+  PERIOD,
+  REPORT_OPTIONS,
+  MODAL_MOBILE_STYPE,
+} from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
 import CloseButton from "./mobileCloseBtn"
 
@@ -28,19 +33,6 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
   Modal.setAppElement("#__next")
 
   const isMobile = windowWidth < 641
-
-  const modalStyle = {
-    zIndex: 9999,
-    backgroundColor: "transparent",
-  }
-
-  if (!isMobile) {
-    modalStyle.position = "absolute"
-    modalStyle.top = "8%"
-    modalStyle.display = "flex"
-    modalStyle["margin-right"] = "1rem"
-    modalStyle["justify-content"] = "end"
-  }
 
   const [selectedOption, setSelectedOption] = useState({
     value: "Today",
@@ -97,12 +89,6 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
     }
   }, [selectedOption])
 
-  const OPTIONS = [
-    { value: "Today", label: "Today" },
-    { value: "This Week", label: "This Week" },
-    { value: "This Month", label: "This Month" },
-  ]
-
   return (
     <Modal
       className={`absolute flex-auto ${
@@ -112,7 +98,7 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
       onRequestClose={() => showReport(false)}
       shouldCloseOnOverlayClick
       style={{
-        overlay: modalStyle,
+        overlay: !isMobile ? MODAL_STYLE : MODAL_MOBILE_STYPE,
       }}
     >
       {isMobile && <CloseButton handleClose={showReport} />}
@@ -123,9 +109,9 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
           <Select
             className="mx-2 font-semibold border-2 border-black border-solid rounded-md w-60"
             onChange={(option) => setSelectedOption(option)}
-            defaultValue={OPTIONS[0]}
+            defaultValue={REPORT_OPTIONS[0]}
             value={selectedOption}
-            options={OPTIONS}
+            options={REPORT_OPTIONS}
             closeMenuOnSelect
           />
         </div>
@@ -170,7 +156,7 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
                     fill: "#f2e78a",
                   }}
                   angle={270}
-                  value={"hour(s)"}
+                  value="hour(s)"
                 />
               </YAxis>
               <Bar dataKey="hoursCompleted" fill="#D0CE9E" />

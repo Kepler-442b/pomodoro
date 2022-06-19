@@ -3,6 +3,7 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
+import React from "react"
 import CloseIcon from "../../public/icons/CloseIcon.svg"
 import PropTypes from "prop-types"
 

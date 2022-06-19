@@ -6,11 +6,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        leviTheme: "url('/images/levi-wallpaper.jpg')",
-        defaultTheme: "url('/images/default-wallpaper.jpg')",
-        anyaTheme: "url('/images/anya-wallpaper.jpg')",
-      },
       colors: {
         primary: "#f2e78a", // yellow
         secondary: "#05334d", // dark blue

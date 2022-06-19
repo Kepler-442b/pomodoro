@@ -1,3 +1,9 @@
+/**
+ * File: /pages/_document.js
+ * Copyright (c) 2022 - Sooyeon Kim
+ */
+
+import React from "react"
 import Document, { Html, Head, Main, NextScript } from "next/document"
 import Script from "next/script"
 

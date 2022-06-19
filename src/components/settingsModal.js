@@ -11,6 +11,7 @@ import Slider from "rc-slider"
 import "rc-slider/assets/index.css"
 import CloseButton from "./mobileCloseBtn"
 import { ALARM_SELECT_OPTIONS } from "../../pages"
+import { MODAL_STYLE, MODAL_MOBILE_STYPE } from "../utils/constant"
 
 const SettingsModal = ({
   isOpen,
@@ -37,19 +38,6 @@ const SettingsModal = ({
 
   const isMobile = windowWidth < 641
 
-  const modalStyle = {
-    zIndex: 9999,
-    backgroundColor: "transparent",
-  }
-
-  if (!isMobile) {
-    modalStyle.position = "absolute"
-    modalStyle.top = "8%"
-    modalStyle.display = "flex"
-    modalStyle["margin-right"] = "1rem"
-    modalStyle["justify-content"] = "end"
-  }
-
   return (
     <Modal
       className={isMobile ? "settingsModalMobile" : "settingsModal"}
@@ -60,7 +48,7 @@ const SettingsModal = ({
       }}
       shouldCloseOnOverlayClick
       style={{
-        overlay: modalStyle,
+        overlay: !isMobile ? MODAL_STYLE : MODAL_MOBILE_STYPE,
       }}
     >
       {isMobile && (

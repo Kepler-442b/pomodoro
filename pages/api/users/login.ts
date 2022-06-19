@@ -15,7 +15,7 @@ import {
   getDocs,
 } from "firebase/firestore"
 import { OAuthCredential, UserCredential } from "firebase/auth"
-import { NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 interface UserDoc {
   accessToken: string
   expirationTime: number
@@ -29,7 +29,7 @@ export default async (
     body: { result: UserCredential; credential: OAuthCredential }
     method: string
   },
-  res: any
+  res: NextApiResponse
 ) => {
   // Initialize db
   const db = getFirestore(firebaseApp)
@@ -51,7 +51,7 @@ export default async (
         let userRef: DocumentReference
         let user: UserDoc
 
-        let users = await getDocs(
+        const users = await getDocs(
           query(usersCol, where("userId", "==", result.user.uid))
         )
         users.forEach((doc) => {

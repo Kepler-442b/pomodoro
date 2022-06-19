@@ -186,7 +186,7 @@ MyTimer.propTypes = {
   longBreak: PropTypes.string.isRequired,
   interval: PropTypes.number.isRequired,
   paused: PropTypes.bool.isRequired,
-  count: PropTypes.number.isRequired,
+  count: PropTypes.shape({ current: PropTypes.number.isRequired }).isRequired,
   isOnShortBreak: PropTypes.bool.isRequired,
   isOnLongBreak: PropTypes.bool.isRequired,
   isOnPomoSession: PropTypes.bool.isRequired,
