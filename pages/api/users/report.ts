@@ -36,10 +36,11 @@ export default async (
   },
   res: any
 ) => {
+  // Initialize db
+  const db = getFirestore(firebaseApp)
   try {
     const { userId } = req.query
-    // Initialize db
-    const db = getFirestore(firebaseApp)
+
     const reportsCol = collection(db, "reports")
 
     if (req.method === "POST") {
@@ -58,31 +59,32 @@ export default async (
         latestReport = doc.data() as ReportDoc
         return
       })
+
       // overwrite the existing doc
-      try {
-        if (latestReport && latestReport.date === date) {
-          updateDoc(latestReportRef, {
-            intervalsCompleted:
-              latestReport.intervalsCompleted + intervalsCompleted,
-            hoursCompleted:
-              latestReport.hoursCompleted +
-              parseFloat(hoursCompleted.toFixed(2)),
-            updated_at: new Date().toISOString(),
-          })
-          // create a new doc for a day
-        } else if (!latestReport || latestReport.date !== date) {
-          addDoc(reportsCol, {
-            intervalsCompleted: intervalsCompleted,
-            hoursCompleted: parseFloat(hoursCompleted.toFixed(2)),
-            date: date,
-            updated_at: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            userId: userId,
-          })
-        }
-      } catch (e) {
-        console.log("eeerrrriiiirr", e)
-        res.status(500).end()
+      if (latestReport && latestReport.date === date) {
+        updateDoc(latestReportRef, {
+          intervalsCompleted:
+            latestReport.intervalsCompleted + intervalsCompleted,
+          hoursCompleted:
+            latestReport.hoursCompleted + parseFloat(hoursCompleted.toFixed(2)),
+          updated_at: new Date().toISOString(),
+        })
+
+        console.log(
+          "this + this",
+          latestReport.hoursCompleted,
+          parseFloat(hoursCompleted.toFixed(2))
+        )
+        // create a new doc for a day
+      } else if (!latestReport || latestReport.date !== date) {
+        addDoc(reportsCol, {
+          intervalsCompleted: intervalsCompleted,
+          hoursCompleted: parseFloat(hoursCompleted.toFixed(2)),
+          date: date,
+          updated_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          userId: userId,
+        })
       }
 
       res.status(200).end()
@@ -100,7 +102,6 @@ export default async (
         const today = new Date().toISOString().split("-")[2].slice(0, 2)
         if (period === PERIOD.DAY) {
           let dailyReport: ReportDoc
-          let dailyReportRef: DocumentReference
           let reports = await getDocs(
             query(
               reportsCol,
@@ -110,7 +111,6 @@ export default async (
           )
           if (reports.size > 0) {
             reports.forEach((doc) => {
-              dailyReportRef = doc.ref
               dailyReport = doc.data() as ReportDoc
               return
             })
@@ -143,6 +143,7 @@ export default async (
             else if (dd === 3) dd = defaultDays - 3
             else if (dd === 2) dd = defaultDays - 4
             else if (dd === 1) dd = defaultDays - 5
+            else dd -= 6
 
             if (parseInt(today) < 7) {
               mm = (parseInt(mm) - 1).toString()
@@ -175,7 +176,7 @@ export default async (
               reportsCol,
               where("userId", "==", userId),
               where("date", ">=", `${year}-${month}-01`),
-              where("date", "<", `${year}-${month}-${today}`)
+              where("date", "<=", `${year}-${month}-${today}`)
             )
           )
           // get all reports in the same year and month
@@ -193,8 +194,22 @@ export default async (
         })
       }
     }
-  } catch (err) {
-    console.error(err)
-    res.status(500).end()
+  } catch (e) {
+    if (e instanceof Error) {
+      const errorLogsCol = collection(db, "errorLogs")
+
+      addDoc(errorLogsCol, {
+        endpoint: "users/reports",
+        method: req.method,
+        name: e.name,
+        message: e.message,
+        stack: e.stack,
+        cause: e.cause.name,
+        created: new Date().toISOString(),
+      })
+      res
+        .status(500)
+        .json({ msg: "Unknown error occurred while getting report(s)." })
+    }
   }
 }

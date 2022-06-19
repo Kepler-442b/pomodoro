@@ -17,6 +17,7 @@ const MyTargetCounter = ({ goal, current, showModal }) => {
           className="resetBtn"
           src={ResetIcon.src}
           alt="reset"
+          title="Reset target"
         />
       )}
     </div>

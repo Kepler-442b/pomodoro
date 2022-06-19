@@ -17,12 +17,14 @@ const MyButton = ({
   textOnly,
   handleOnClick,
   isDisabled,
+  titleTxt,
 }) => {
   return (
     <button
       className={`button-basic-style ${styling}`}
       onClick={(evt) => handleOnClick(evt)}
       disabled={isDisabled}
+      title={titleTxt}
     >
       {icon && (
         <img
@@ -50,6 +52,7 @@ MyButton.propTypes = {
   showToggle: PropTypes.bool,
   screenW: PropTypes.number,
   textOnly: PropTypes.bool,
+  titleTxt: PropTypes.string,
 }
 MyButton.defaultProps = {
   icon: "",
@@ -61,5 +64,6 @@ MyButton.defaultProps = {
   showToggle: false,
   screenW: 0,
   textOnly: false,
+  titleTxt: "",
 }
 export default React.memo(MyButton)

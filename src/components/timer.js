@@ -65,8 +65,8 @@ const MyTimer = ({
           setIsOnLongBreak(false)
           setTimer([pomoTime, SECONDS])
           setIsOnPomoSession(true)
-          count += 1
-        } else if (count % interval === 0) {
+          count.current += 1
+        } else if (count.current % interval === 0) {
           // calculate whether it is long or short break
           setIsOnLongBreak(true)
           setIsOnPomoSession(false)
@@ -88,13 +88,13 @@ const MyTimer = ({
         }
         // when the timer's second reaches 00, set the next second to 59
       } else if (minsInt !== 0 && secsInt === 0) {
-        count === 0
-          ? (count += 1)
+        count.current === 0
+          ? (count.current += 1)
           : handleSetTime([addZeroOnEnd(minsInt - 1), addZeroOnEnd(59)])
         // otherwise just reduce 1 second from the current time
       } else {
-        count === 0
-          ? (count += 1)
+        count.current === 0
+          ? (count.current += 1)
           : handleSetTime([addZeroOnEnd(minsInt), addZeroOnEnd(secsInt - 1)])
       }
     },
@@ -112,7 +112,7 @@ const MyTimer = ({
 
   const displayTime = () => {
     // show Begin! only on the initial pomo session of the day
-    if (isOnPomoSession && count === 0) return "Begin!"
+    if (isOnPomoSession && count.current === 0) return "Begin!"
     else if (isOnShortBreak) return `${currSBMins}:${currSBSecs}`
     else if (isOnLongBreak) return `${currLBMins}:${currLBSecs}`
     else return `${currMins}:${currSecs}`

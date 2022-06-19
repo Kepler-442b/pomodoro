@@ -36,6 +36,20 @@ const SettingsModal = ({
   Modal.setAppElement("#__next")
 
   const isMobile = windowWidth < 641
+
+  const modalStyle = {
+    zIndex: 9999,
+    backgroundColor: "transparent",
+  }
+
+  if (!isMobile) {
+    modalStyle.position = "absolute"
+    modalStyle.top = "8%"
+    modalStyle.display = "flex"
+    modalStyle["margin-right"] = "1rem"
+    modalStyle["justify-content"] = "end"
+  }
+
   return (
     <Modal
       className={isMobile ? "settingsModalMobile" : "settingsModal"}
@@ -46,15 +60,7 @@ const SettingsModal = ({
       }}
       shouldCloseOnOverlayClick
       style={{
-        overlay: {
-          // position: "fixed",
-          // top: "50%",
-          // left: "50%",
-          // marginTop: "-22rem",
-          // marginLeft: "-10rem",
-          backgroundColor: "transparent",
-          zIndex: 9999,
-        },
+        overlay: modalStyle,
       }}
     >
       {isMobile && (

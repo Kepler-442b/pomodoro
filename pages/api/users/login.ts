@@ -11,14 +11,11 @@ import {
   updateDoc,
   query,
   where,
-  onSnapshot,
   DocumentReference,
-  getDoc,
   getDocs,
 } from "firebase/firestore"
 import { OAuthCredential, UserCredential } from "firebase/auth"
 import { NextApiRequest } from "next"
-
 interface UserDoc {
   accessToken: string
   expirationTime: number
@@ -34,10 +31,11 @@ export default async (
   },
   res: any
 ) => {
+  // Initialize db
+  const db = getFirestore(firebaseApp)
+
   try {
     const { result, credential } = req.body
-    // Initialize db
-    const db = getFirestore(firebaseApp)
 
     const idToken = credential.idToken
 
@@ -65,17 +63,13 @@ export default async (
         if (!user) {
           addDoc(usersCol, {
             userId: result.user.uid,
-            accessToken: credential.accessToken,
             refreshToken: result.user.stsTokenManager.refreshToken,
-            expirationTime: result.user.stsTokenManager.expirationTime,
             updated: new Date().toISOString(),
           })
           msg = "welcome"
         } else {
           updateDoc(userRef, {
-            accessToken: credential.accessToken,
             refreshToken: result.user.stsTokenManager.refreshToken,
-            expirationTime: result.user.stsTokenManager.expirationTime,
             updated: new Date().toISOString(),
           })
           msg = "token updated"
@@ -84,7 +78,19 @@ export default async (
       }
     }
   } catch (e) {
-    console.log("eeerrrriiiirr", e)
-    res.status(400).end()
+    if (e instanceof Error) {
+      const errorLogsCol = collection(db, "errorLogs")
+
+      addDoc(errorLogsCol, {
+        endpoint: "users/login",
+        method: req.method,
+        name: e.name,
+        message: e.message,
+        stack: e.stack,
+        cause: e.cause.name,
+        created: new Date().toISOString(),
+      })
+      res.status(500).json({ msg: "Unknown error occurred while logging in." })
+    }
   }
 }

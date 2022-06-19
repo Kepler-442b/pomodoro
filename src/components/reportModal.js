@@ -18,6 +18,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts"
+import { toast } from "react-toastify"
 import "rc-slider/assets/index.css"
 import { PERIOD } from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
@@ -27,6 +28,19 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
   Modal.setAppElement("#__next")
 
   const isMobile = windowWidth < 641
+
+  const modalStyle = {
+    zIndex: 9999,
+    backgroundColor: "transparent",
+  }
+
+  if (!isMobile) {
+    modalStyle.position = "absolute"
+    modalStyle.top = "8%"
+    modalStyle.display = "flex"
+    modalStyle["margin-right"] = "1rem"
+    modalStyle["justify-content"] = "end"
+  }
 
   const [selectedOption, setSelectedOption] = useState({
     value: "Today",
@@ -79,7 +93,7 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
         })
       }
     } catch (err) {
-      console.log(err)
+      toast.error("Error occurred while fetching report", { autoClose: false })
     }
   }, [selectedOption])
 
@@ -98,15 +112,7 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
       onRequestClose={() => showReport(false)}
       shouldCloseOnOverlayClick
       style={{
-        overlay: {
-          // position: "fixed",
-          // top: "50%",
-          // left: "50%",
-          // marginTop: "-22rem",
-          // marginLeft: "-20rem",
-          backgroundColor: "transparent",
-          zIndex: 9999,
-        },
+        overlay: modalStyle,
       }}
     >
       {isMobile && <CloseButton handleClose={showReport} />}

@@ -314,7 +314,10 @@ export default function Home({ profilePic }) {
           position: "bottom-right",
         })
       } catch (err) {
-        throw new Error(err.message)
+        toast.error(
+          `Error while signing out: ${err.message}(error code: ${err.code})`,
+          { autoClose: false }
+        )
       }
   }
 
@@ -387,7 +390,7 @@ export default function Home({ profilePic }) {
     }
     showReport(!isReportOpen)
   }
-  console.log("profi", profilePic)
+
   return (
     <>
       <Head>
@@ -420,6 +423,7 @@ export default function Home({ profilePic }) {
         </div>
         <div className="flex top-right">
           <MyButton
+            titleTxt={user ? "Logout" : "Login"}
             icon={profilePic || UserIcon.src}
             handleOnClick={() => {
               if (user) {
@@ -444,6 +448,7 @@ export default function Home({ profilePic }) {
             />
           }
           <MyButton
+            titleTxt={"Show Report"}
             icon={SummaryIcon.src}
             handleOnClick={handleShowReport}
             styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
@@ -457,6 +462,7 @@ export default function Home({ profilePic }) {
             />
           )}
           <MyButton
+            titleTxt={"Open Settings"}
             icon={SettingsIcon.src}
             handleOnClick={() => toggleSettings(!isSettingsOpen)}
             styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
@@ -503,7 +509,7 @@ export default function Home({ profilePic }) {
             longBreak={longBreak}
             interval={parseInt(longBreakInterval)}
             paused={paused}
-            count={sessionCount.current}
+            count={sessionCount}
             isOnShortBreak={isOnShortBreak}
             isOnLongBreak={isOnLongBreak}
             isOnPomoSession={isOnPomoSession}
