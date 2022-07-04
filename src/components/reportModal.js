@@ -48,8 +48,7 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
     intervalsCompleted: null,
     daysAccessed: null,
   })
-
-  useEffect(async () => {
+  useEffect(() => {
     try {
       if (selectedOption !== null) {
         let endpoint = `/api/users/report?userId=${Cookie.get(
@@ -62,7 +61,7 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
         } else if (selectedOption.value === "This Month") {
           endpoint += `&period=${PERIOD.MONTH}`
         }
-        await axios.get(endpoint).then((res) => {
+        axios.get(endpoint).then((res) => {
           let hoursCompleted = 0
           let intervalsCompleted = 0
           let daysAccessed = 1
@@ -76,8 +75,8 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
             })
             daysAccessed = reports.length
           } else {
-            hoursCompleted = res.data.report.hoursCompleted
-            intervalsCompleted = res.data.report.intervalsCompleted
+            hoursCompleted = res.data.report.hoursCompleted || 0
+            intervalsCompleted = res.data.report.intervalsCompleted || 0
             arr.push(res.data.report)
           }
           setReportEach(arr)
@@ -141,7 +140,9 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
           </div>
         </div>
         <div className="flex justify-center -ml-5">
-          {reportEach.hoursCompleted !== null ? (
+          {reportSummary.hoursCompleted &&
+          reportSummary.intervalsCompleted &&
+          reportEach.hoursCompleted !== null ? (
             <BarChart
               data={reportEach}
               width={isMobile ? 350 : 600}
@@ -163,7 +164,9 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
               <Tooltip />
             </BarChart>
           ) : (
-            <div className="text-primary">No data for this period exists.</div>
+            <div className="text-primary">
+              No data for this period exists yet.
+            </div>
           )}
         </div>
       </div>

@@ -3,7 +3,7 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { unstable_batchedUpdates } from "react-dom"
 import axios from "axios"
 import {
@@ -15,20 +15,21 @@ import {
 import Cookie from "js-cookie"
 import Head from "next/head"
 import Image from "next/image"
-import { ToastContainer, toast } from "react-toastify"
+import Script from "next/script"
 import Confetti from "react-confetti"
+import { ToastContainer, toast } from "react-toastify"
 import { auth } from "../firebase/clientApp"
-import Levi from "../public/images/Levi.jpeg"
-import Anya from "../public/images/Anya.png"
-import Peanut from "../public/images/peanut.jpg"
-import DefaultBg from "../public/images/default-bg.png"
-import LeviBg from "../public/images/levi-bg.png"
-import AnyaBg from "../public/images/anya-bg.png"
-import SettingsIcon from "../public/icons/SettingsIcon.svg"
-import UserIcon from "../public/icons/UserIcon.svg"
-import SummaryIcon from "../public/icons/SummaryIcon.svg"
-// import ChatBubbleIcon from "../public/icons/ChatBubbleIcon.svg"
-// import SearchIcon from "../public/icons/SearchIcon.svg"
+import Levi from "/public/images/Levi.jpeg"
+import Anya from "/public/images/Anya.png"
+import Peanut from "/public/images/peanut.jpg"
+import DefaultBg from "/public/images/default-bg.png"
+import LeviBg from "/public/images/levi-bg.png"
+import AnyaBg from "/public/images/anya-bg.png"
+import SettingsIcon from "/public/icons/SettingsIcon.svg"
+import UserIcon from "/public/icons/UserIcon.svg"
+import SummaryIcon from "/public/icons/SummaryIcon.svg"
+// import ChatBubbleIcon from "/public/icons/ChatBubbleIcon.svg"
+// import SearchIcon from "/public/icons/SearchIcon.svg"
 import MyButton from "../src/components/button"
 import MyTimer from "../src/components/timer"
 import MyTimerAnimation from "../src/components/timerAnimation"
@@ -150,12 +151,12 @@ export default function Home() {
     selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
   }
 
-  const today = new Date()
-  const tomorrow = new Date(new Date(getYYYYMMDD(today)))
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const expiration = new Date(
-    tomorrow.getTime() + today.getTimezoneOffset() * 60000
-  )
+  const expiration = useMemo(() => {
+    const today = new Date()
+    const tomorrow = new Date(new Date(getYYYYMMDD(today)))
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    return new Date(tomorrow.getTime() + today.getTimezoneOffset() * 60000)
+  }, [])
 
   useEffect(() => {
     setIntialVals()
@@ -164,7 +165,7 @@ export default function Home() {
     } else {
       sessionCount.current = parseInt(document.cookie.split("strikeToday=")[1])
     }
-  }, [])
+  }, [expiration])
 
   useEffect(() => {
     setAudioFile(new Audio(selectedAlarm.value.audioStart))
@@ -177,7 +178,7 @@ export default function Home() {
     ) {
       document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration}`
     }
-  }, [sessionCount.current])
+  }, [expiration])
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
@@ -202,7 +203,7 @@ export default function Home() {
         position: "top-center",
       })
     }
-  }, [goal, sessionCount.current, isOnLongBreak, isOnShortBreak])
+  }, [goal, isOnLongBreak, isOnShortBreak])
 
   useEffect(() => {
     if (
@@ -216,7 +217,16 @@ export default function Home() {
       setSecsElapsed(0)
       setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
     }
-  }, [currMins, currSecs, currSBMins, currSBSecs, currLBMins, currLBSecs])
+  }, [
+    currMins,
+    currSecs,
+    currSBMins,
+    currSBSecs,
+    currLBMins,
+    currLBSecs,
+    isOnLongBreak,
+    isOnShortBreak,
+  ])
 
   useEffect(() => {
     if (isOnShortBreak || isOnLongBreak) {
@@ -236,7 +246,16 @@ export default function Home() {
         }
       })
     }
-  }, [isOnLongBreak, isOnShortBreak, isOnPomoSession, sessionCount.current])
+  }, [
+    isOnLongBreak,
+    isOnShortBreak,
+    isOnPomoSession,
+    // audio,
+    // selectedAlarm.value.audioStart,
+    // selectedAlarm.value.audioBreak,
+    selectedAlarm.value.bgImg,
+    selectedAlarm.value.charImg,
+  ])
 
   useEffect(() => {
     if (isOnPomoSession) setTitle(`On session for ${currMins}:${currSecs}`)
@@ -365,7 +384,17 @@ export default function Home() {
     setSecsElapsed(0)
     setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
     togglePaused(false)
-  }, [isOnShortBreak, isOnLongBreak, pomoTime])
+  }, [
+    isOnShortBreak,
+    isOnLongBreak,
+    pomoTime,
+    shortBreak,
+    longBreak,
+    // selectedAlarm.value.audioStart,
+    // selectedAlarm.value.audioBreak,
+    selectedAlarm.value.bgImg,
+    selectedAlarm.value.charImg,
+  ])
 
   const handleResetProgress = () => {
     document.cookie = "strikeToday=0"
@@ -403,6 +432,16 @@ export default function Home() {
       <Head>
         <title>{title}</title>
       </Head>
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/react-modal/3.14.3/react-modal.min.js"
+        strategy="lazyOnload"
+        // integrity="sha512-MY2jfK3DBnVzdS2V8MXo5lRtr0mNRroUI9hoLVv2/yL3vrJTam3VzASuKQ96fLEpyYIT4a8o7YgtUs5lPjiLVQ=="
+        // crossOrigin="anonymous"
+        referrerPolicy="no-referrer"
+        onError={(e) => {
+          console.error("Script failed to load", e)
+        }}
+      />
       <Image
         alt="background"
         src={selectedAlarm.value.theme}

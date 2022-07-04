@@ -24,8 +24,8 @@ export const MODAL_STYLE = {
   position: "absolute",
   top: "8%",
   display: "flex",
-  "margin-right": "1rem",
-  "justify-content": "end",
+  marginRight: "1rem",
+  justifyContent: "end",
 }
 
 export const REPORT_OPTIONS = [

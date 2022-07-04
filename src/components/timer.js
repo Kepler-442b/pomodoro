@@ -42,7 +42,7 @@ const MyTimer = ({
     setTimer([pomoTime, SECONDS])
     setSBTimer([shortBreak, SECONDS])
     setLBTimer([longBreak, SECONDS])
-  }, [pomoTime, shortBreak, longBreak])
+  }, [pomoTime, shortBreak, longBreak, setTimer, setSBTimer, setLBTimer])
 
   const tick = useCallback(
     (id, handleSetTime) => {
@@ -107,6 +107,17 @@ const MyTimer = ({
       currSBSecs,
       currLBMins,
       currLBSecs,
+      count,
+      interval,
+      longBreak,
+      pomoTime,
+      setIsOnLongBreak,
+      setIsOnPomoSession,
+      setIsOnShortBreak,
+      setTimer,
+      setSBTimer,
+      setLBTimer,
+      shortBreak,
     ]
   )
 
@@ -156,15 +167,22 @@ const MyTimer = ({
     }
     return () => clearInterval(timerId)
   }, [
-    [
-      paused,
-      isOnLongBreak,
-      isOnShortBreak,
-      secsElapsed,
-      pomoTime,
-      shortBreak,
-      longBreak,
-    ],
+    paused,
+    isOnLongBreak,
+    isOnShortBreak,
+    secsElapsed,
+    pomoTime,
+    shortBreak,
+    longBreak,
+    setDashArrVal,
+    setLBTimer,
+    setSBTimer,
+    setTimer,
+    tick,
+    setIsOnLongBreak,
+    setIsOnPomoSession,
+    setIsOnShortBreak,
+    setSecsElapsed,
   ])
 
   return (

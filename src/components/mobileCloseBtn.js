@@ -17,7 +17,7 @@ const CloseButton = ({ handleClose, handleSave }) => {
           if (handleSave) handleSave()
         }}
       >
-        <img src={CloseIcon.src} />
+        <img src={CloseIcon.src} alt="close" />
       </button>
     </div>
   )
