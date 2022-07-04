@@ -186,13 +186,14 @@ SettingsModal.propTypes = {
   setShortBreak: PropTypes.func.isRequired,
   longBreak: PropTypes.string.isRequired,
   setLongBreak: PropTypes.func.isRequired,
-  longBreakInterval: PropTypes.number.isRequired,
+  longBreakInterval: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
   setLongBreakInterval: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,
   goal: PropTypes.number.isRequired,
   setGoal: PropTypes.func.isRequired,
-  audio: PropTypes.string.isRequired,
-  volume: PropTypes.number.isRequired,
+  audio: PropTypes.object.isRequired,
+  volume: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   setVolume: PropTypes.func.isRequired,
   selectedAlarm: PropTypes.shape({
     value: {

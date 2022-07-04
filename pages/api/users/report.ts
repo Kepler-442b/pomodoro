@@ -70,11 +70,6 @@ export default async (
           updated_at: new Date().toISOString(),
         })
 
-        console.log(
-          "this + this",
-          latestReport.hoursCompleted,
-          parseFloat(hoursCompleted.toFixed(2))
-        )
         // create a new doc for a day
       } else if (!latestReport || latestReport.date !== date) {
         addDoc(reportsCol, {
@@ -188,9 +183,11 @@ export default async (
         }
       } else {
         res.status(200).json({
-          intervalsCompleted: 0,
-          hoursCompleted: 0,
-          date: "",
+          report: {
+            intervalsCompleted: 0,
+            hoursCompleted: 0,
+            date: "",
+          },
         })
       }
     }

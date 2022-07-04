@@ -4,7 +4,7 @@
  */
 
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import PropTypes from "prop-types"
+import { unstable_batchedUpdates } from "react-dom"
 import axios from "axios"
 import {
   GoogleAuthProvider,
@@ -78,7 +78,7 @@ export const ALARM_SELECT_OPTIONS = [
   },
 ]
 
-export default function Home({ profilePic }) {
+export default function Home() {
   const [title, setTitle] = useState("Pomodoro")
   const [windowWidth, setWindowWidth] = useState(0)
   const [currImg, setCurrImg] = useState(DefaultBg)
@@ -106,7 +106,8 @@ export default function Home({ profilePic }) {
   const [secsElapsed, setSecsElapsed] = useState(0)
   const [volume, setVolume] = useState(30)
   const [selectedAlarm, selectAlarm] = useState(ALARM_SELECT_OPTIONS[0])
-  const [user, setUser] = useState(!!auth)
+  const [user, setUser] = useState()
+  const [isLoading, setIsLoading] = useState(true)
   const sessionCount = useRef(0)
 
   const setIntialVals = () => {
@@ -255,14 +256,16 @@ export default function Home({ profilePic }) {
     currSBSecs,
   ])
 
-  const monitorAuthState = onAuthStateChanged(auth, (currUser) => {
-    if (currUser) {
-      setUser(true)
-    } else {
-      // toast.info("you are not logged in ")
-    }
-    monitorAuthState()
-  })
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (currUser) => {
+      unstable_batchedUpdates(() => {
+        setUser(currUser?.uid)
+        setIsLoading(false)
+      })
+      console.log("Auth state changed")
+    })
+    return () => unsub
+  }, [])
 
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider()
@@ -274,8 +277,9 @@ export default function Home({ profilePic }) {
         // const token = credential.accessToken
 
         // The signed-in user info.
-        if (result.user?.photoURL)
+        if (result.user?.photoURL) {
           Cookie.set("profilePic", result.user.photoURL, { expires: 14 })
+        }
 
         await axios
           .post(`/api/users/login`, { result, credential })
@@ -304,10 +308,10 @@ export default function Home({ profilePic }) {
   const handleSignOut = async () => {
     if (window)
       try {
-        await signOut(auth)
-        setUser(null)
-        Cookie.remove("userId")
-        Cookie.remove("profilePic")
+        await signOut(auth).then(() => {
+          Cookie.remove("userId")
+          Cookie.remove("profilePic")
+        })
         toast.success("Successfully logged out!", {
           autoClose: 1500,
           hideProgressBar: true,
@@ -392,7 +396,9 @@ export default function Home({ profilePic }) {
     showReport(!isReportOpen)
   }
 
-  return (
+  return isLoading ? (
+    <div />
+  ) : (
     <>
       <Head>
         <title>{title}</title>
@@ -425,7 +431,7 @@ export default function Home({ profilePic }) {
         <div className="flex top-right">
           <MyButton
             titleTxt={user ? "Logout" : "Login"}
-            icon={profilePic || UserIcon.src}
+            icon={user ? Cookie.get("profilePic") : UserIcon.src}
             handleOnClick={() => {
               if (user) {
                 showSignOutModal(true)
@@ -434,7 +440,7 @@ export default function Home({ profilePic }) {
               }
             }}
             styling={`circle-button-style ${selectedAlarm.value.btnClr} ${
-              profilePic ? "p-0" : ""
+              Cookie.get("profilePic") ? "p-0" : ""
             }`}
             iconStyling="circle-icon"
           />
@@ -605,18 +611,4 @@ export default function Home({ profilePic }) {
       <ToastContainer theme="dark" />
     </>
   )
-}
-
-Home.propTypes = {
-  profilePic: PropTypes.string,
-}
-Home.defaultProps = {
-  profilePic: "",
-}
-
-// TODO: figure out why only changes on refresh
-Home.getInitialProps = async (ctx) => {
-  if (ctx.req.cookies?.profilePic) {
-    return { profilePic: ctx.req.cookies.profilePic }
-  } else return { profilePic: null }
 }
