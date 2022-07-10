@@ -36,12 +36,12 @@ import MyTimerAnimation from "../src/components/timerAnimation"
 import SettingsModal from "../src/components/settingsModal"
 import MyTargetCounter from "../src/components/targetCounter"
 import MyModal from "../src/components/modal"
+import ReportModal from "../src/components/reportModal"
 // import MyTextInputWithLabel from "../src/components/inputbox"
 import debounce from "../src/utils/debounce"
-import ReportModal from "../src/components/reportModal"
-import "react-toastify/dist/ReactToastify.css"
 import { FULL_DASH_ARRAY, SECONDS } from "../src/utils/constant"
 import { getYYYYMMDD } from "../src/utils/date"
+import "react-toastify/dist/ReactToastify.css"
 
 export const ALARM_SELECT_OPTIONS = [
   {
@@ -112,43 +112,45 @@ export default function Home() {
   const sessionCount = useRef(0)
 
   const setIntialVals = () => {
-    window.localStorage.setItem(
-      "pomoTime",
-      window.localStorage.getItem("pomoTime") || pomoTime
-    )
-    window.localStorage.setItem(
-      "shortBreak",
-      window.localStorage.getItem("shortBreak") || shortBreak
-    )
-    window.localStorage.setItem(
-      "longBreak",
-      window.localStorage.getItem("longBreak") || longBreak
-    )
-    window.localStorage.setItem(
-      "longBreakInterval",
-      window.localStorage.getItem("longBreakInterval") || longBreakInterval
-    )
-    window.localStorage.setItem(
-      "goal",
-      window.localStorage.getItem("goal") || goal
-    )
-    window.localStorage.setItem(
-      "volume",
-      window.localStorage.getItem("volume") || volume
-    )
-    window.localStorage.setItem(
-      "selectedAlarm",
-      window.localStorage.getItem("selectedAlarm") ||
-        JSON.stringify(selectedAlarm)
-    )
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        "pomoTime",
+        window.localStorage.getItem("pomoTime") || pomoTime
+      )
+      window.localStorage.setItem(
+        "shortBreak",
+        window.localStorage.getItem("shortBreak") || shortBreak
+      )
+      window.localStorage.setItem(
+        "longBreak",
+        window.localStorage.getItem("longBreak") || longBreak
+      )
+      window.localStorage.setItem(
+        "longBreakInterval",
+        window.localStorage.getItem("longBreakInterval") || longBreakInterval
+      )
+      window.localStorage.setItem(
+        "goal",
+        window.localStorage.getItem("goal") || goal
+      )
+      window.localStorage.setItem(
+        "volume",
+        window.localStorage.getItem("volume") || volume
+      )
+      window.localStorage.setItem(
+        "selectedAlarm",
+        window.localStorage.getItem("selectedAlarm") ||
+          JSON.stringify(selectedAlarm)
+      )
 
-    setPomoTime(window.localStorage.getItem("pomoTime"))
-    setShortBreak(window.localStorage.getItem("shortBreak"))
-    setLongBreak(window.localStorage.getItem("longBreak"))
-    setLongBreakInterval(window.localStorage.getItem("longBreakInterval"))
-    setGoal(window.localStorage.getItem("goal"))
-    setVolume(window.localStorage.getItem("volume"))
-    selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
+      setPomoTime(window.localStorage.getItem("pomoTime"))
+      setShortBreak(window.localStorage.getItem("shortBreak"))
+      setLongBreak(window.localStorage.getItem("longBreak"))
+      setLongBreakInterval(window.localStorage.getItem("longBreakInterval"))
+      setGoal(window.localStorage.getItem("goal"))
+      setVolume(window.localStorage.getItem("volume"))
+      selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
+    }
   }
 
   const expiration = useMemo(() => {
@@ -160,6 +162,7 @@ export default function Home() {
 
   useEffect(() => {
     setIntialVals()
+
     if (!document.cookie.includes("strikeToday")) {
       document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration}`
     } else {
@@ -181,15 +184,17 @@ export default function Home() {
   }, [expiration])
 
   useEffect(() => {
-    setWindowWidth(window.innerWidth)
+    if (typeof window !== "undefined") {
+      setWindowWidth(window.innerWidth)
 
-    window.addEventListener(
-      "resize",
-      debounce(() => {
-        setWindowWidth(window.innerWidth)
-      })
-    )
-    return () => window.removeEventListener("resize", debounce)
+      window.addEventListener(
+        "resize",
+        debounce(() => {
+          setWindowWidth(window.innerWidth)
+        })
+      )
+      return () => window.removeEventListener("resize", debounce)
+    }
   }, [windowWidth])
 
   useEffect(() => {
@@ -346,13 +351,18 @@ export default function Home() {
   }
 
   const handleSaveSettings = useCallback(() => {
-    window.localStorage.setItem("pomoTime", pomoTime)
-    window.localStorage.setItem("shortBreak", shortBreak)
-    window.localStorage.setItem("longBreak", longBreak)
-    window.localStorage.setItem("longBreakInterval", longBreakInterval)
-    window.localStorage.setItem("goal", goal)
-    window.localStorage.setItem("volume", volume)
-    window.localStorage.setItem("selectedAlarm", JSON.stringify(selectedAlarm))
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("pomoTime", pomoTime)
+      window.localStorage.setItem("shortBreak", shortBreak)
+      window.localStorage.setItem("longBreak", longBreak)
+      window.localStorage.setItem("longBreakInterval", longBreakInterval)
+      window.localStorage.setItem("goal", goal)
+      window.localStorage.setItem("volume", volume)
+      window.localStorage.setItem(
+        "selectedAlarm",
+        JSON.stringify(selectedAlarm)
+      )
+    }
   }, [
     pomoTime,
     shortBreak,
@@ -390,8 +400,8 @@ export default function Home() {
     pomoTime,
     shortBreak,
     longBreak,
-    // selectedAlarm.value.audioStart,
-    // selectedAlarm.value.audioBreak,
+    selectedAlarm.value.audioStart,
+    selectedAlarm.value.audioBreak,
     selectedAlarm.value.bgImg,
     selectedAlarm.value.charImg,
   ])
