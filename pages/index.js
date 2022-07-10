@@ -113,6 +113,7 @@ export default function Home() {
 
   const setIntialVals = () => {
     if (typeof window !== "undefined") {
+      // TODO: set expiration in cookie
       window.localStorage.setItem(
         "pomoTime",
         window.localStorage.getItem("pomoTime") || pomoTime
@@ -159,12 +160,15 @@ export default function Home() {
     tomorrow.setDate(tomorrow.getDate() + 1)
     return new Date(tomorrow.getTime() + today.getTimezoneOffset() * 60000)
   }, [])
+  console.log("expiration", expiration)
 
   useEffect(() => {
     setIntialVals()
-
-    if (!document.cookie.includes("strikeToday")) {
-      document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration}`
+    if (
+      !document.cookie.includes("strikeToday") ||
+      sessionCount.current > parseInt(document.cookie.split("strikeToday=")[1])
+    ) {
+      document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration} sameSite=strict;`
     } else {
       sessionCount.current = parseInt(document.cookie.split("strikeToday=")[1])
     }
@@ -174,14 +178,6 @@ export default function Home() {
     setAudioFile(new Audio(selectedAlarm.value.audioStart))
     setCurrImg(selectedAlarm.value.bgImg)
   }, [selectedAlarm])
-
-  useEffect(() => {
-    if (
-      sessionCount.current > parseInt(document.cookie.split("strikeToday=")[1])
-    ) {
-      document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration}`
-    }
-  }, [expiration])
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -255,9 +251,8 @@ export default function Home() {
     isOnLongBreak,
     isOnShortBreak,
     isOnPomoSession,
-    // audio,
-    // selectedAlarm.value.audioStart,
-    // selectedAlarm.value.audioBreak,
+    selectedAlarm.value.audioStart,
+    selectedAlarm.value.audioBreak,
     selectedAlarm.value.bgImg,
     selectedAlarm.value.charImg,
   ])
@@ -407,7 +402,7 @@ export default function Home() {
   ])
 
   const handleResetProgress = () => {
-    document.cookie = "strikeToday=0"
+    document.cookie = "strikeToday=0; sameSite=strict;"
     sessionCount.current = 0
     setTimer([pomoTime, SECONDS])
     setLBTimer([longBreak, SECONDS])

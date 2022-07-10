@@ -24,7 +24,7 @@ interface UserDoc {
   updated: string
 }
 
-export default async (
+const login = async (
   req: NextApiRequest & {
     body: { result: UserCredential; credential: OAuthCredential }
     method: string
@@ -94,3 +94,5 @@ export default async (
     }
   }
 }
+
+export default login

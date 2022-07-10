@@ -30,7 +30,7 @@ interface ReportDoc {
   hoursCompleted: number
   intervalsCompleted: number
 }
-export default async (
+const report = async (
   req: NextApiRequest & {
     method: string
   },
@@ -210,3 +210,5 @@ export default async (
     }
   }
 }
+
+export default report
