@@ -18,17 +18,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react"
 import Confetti from "react-confetti"
 import { unstable_batchedUpdates } from "react-dom"
 import { ToastContainer, toast } from "react-toastify"
-import Levi from "/public/images/Levi.jpeg"
-import Anya from "/public/images/Anya.png"
-import Peanut from "/public/images/peanut.jpg"
-import DefaultBg from "/public/images/default-bg.png"
-import LeviBg from "/public/images/levi-bg.png"
-import AnyaBg from "/public/images/anya-bg.png"
-import SettingsIcon from "/public/icons/SettingsIcon.svg"
-import UserIcon from "/public/icons/UserIcon.svg"
-import SummaryIcon from "/public/icons/SummaryIcon.svg"
-// import ChatBubbleIcon from "/public/icons/ChatBubbleIcon.svg"
-// import SearchIcon from "/public/icons/SearchIcon.svg"
 import { auth } from "../firebase/clientApp"
 import MyButton from "../src/components/button"
 // import MyTextInputWithLabel from "../src/components/inputbox"
@@ -48,10 +37,10 @@ export const ALARM_SELECT_OPTIONS = [
     value: {
       audioStart: "/game-start.mp3",
       audioBreak: "/game-break.mp3",
-      charImg: Peanut,
-      bgImg: DefaultBg,
+      charImg: "/peanut.jpg",
+      bgImg: "/default-wallpaper.jpg",
       btnClr: "bg-tertiary",
-      theme: "/images/default-wallpaper.jpg",
+      theme: "/default-wallpaper.jpg",
     },
     label: "Default Sound",
   },
@@ -59,10 +48,10 @@ export const ALARM_SELECT_OPTIONS = [
     value: {
       audioStart: "/levi-start.mp3",
       audioBreak: "/levi-break.mp3",
-      charImg: Levi,
-      bgImg: LeviBg,
+      charImg: "/Levi.jpeg",
+      bgImg: "levi-wallpaper.jpg",
       btnClr: "bg-secondary",
-      theme: "/images/levi-wallpaper.jpg",
+      theme: "/levi-wallpaper.jpg",
     },
     label: "Levi Ackerman",
   },
@@ -70,10 +59,10 @@ export const ALARM_SELECT_OPTIONS = [
     value: {
       audioStart: "/anya-start.mp3",
       audioBreak: "/anya-break.mp3",
-      charImg: Anya,
-      bgImg: AnyaBg,
+      charImg: "/Anya.png",
+      bgImg: "/anya-wallpaper.jpg",
       btnClr: "bg-quaternary",
-      theme: "/images/anya-wallpaper.jpg",
+      theme: "/anya-wallpaper.jpg",
     },
     label: "Anya Foger",
   },
@@ -82,7 +71,7 @@ export const ALARM_SELECT_OPTIONS = [
 export default function Home() {
   const [title, setTitle] = useState("Pomodoro")
   const [windowWidth, setWindowWidth] = useState(0)
-  const [currImg, setCurrImg] = useState(DefaultBg)
+  const [currImg, setCurrImg] = useState("/default-wallpaper.jpg")
   const [audio, setAudioFile] = useState(null)
   const [goal, setGoal] = useState(5)
   const [paused, togglePaused] = useState(true)
@@ -476,7 +465,7 @@ export default function Home() {
         <div className="flex top-right">
           <MyButton
             titleTxt={user ? "Logout" : "Login"}
-            icon={user ? Cookie.get("profilePic") : UserIcon.src}
+            icon={user ? Cookie.get("profilePic") : "/UserIcon.svg"}
             handleOnClick={() => {
               if (user) {
                 showSignOutModal(true)
@@ -501,7 +490,7 @@ export default function Home() {
           }
           <MyButton
             titleTxt={"Show Report"}
-            icon={SummaryIcon.src}
+            icon="/SummaryIcon.svg"
             handleOnClick={handleShowReport}
             styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"
@@ -515,7 +504,7 @@ export default function Home() {
           )}
           <MyButton
             titleTxt={"Open Settings"}
-            icon={SettingsIcon.src}
+            icon="/SettingsIcon.svg"
             handleOnClick={() => toggleSettings(!isSettingsOpen)}
             styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"

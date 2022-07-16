@@ -5,7 +5,6 @@
 
 import PropTypes from "prop-types"
 import React from "react"
-import ResetIcon from "../../public/icons/ResetIcon.png"
 
 const MyTargetCounter = ({ goal, current, showModal }) => {
   return (
@@ -15,7 +14,7 @@ const MyTargetCounter = ({ goal, current, showModal }) => {
         <img
           onClick={() => showModal(true)}
           className="resetBtn"
-          src={ResetIcon.src}
+          src="/ResetIcon.png"
           alt="reset"
           title="Reset target"
         />

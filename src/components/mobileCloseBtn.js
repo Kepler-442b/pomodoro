@@ -5,7 +5,6 @@
 
 import PropTypes from "prop-types"
 import React from "react"
-import CloseIcon from "../../public/icons/CloseIcon.svg"
 
 const CloseButton = ({ handleClose, handleSave }) => {
   return (
@@ -17,7 +16,7 @@ const CloseButton = ({ handleClose, handleSave }) => {
           if (handleSave) handleSave()
         }}
       >
-        <img src={CloseIcon.src} alt="close" />
+        <img src="/CloseIcon.svg" alt="close" />
       </button>
     </div>
   )
