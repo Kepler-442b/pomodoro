@@ -20,9 +20,9 @@ const MyButton = ({
   titleTxt,
 }) => {
   //TODO: figure out why this only changes on window size change
-  if (titleTxt === "Logout" || titleTxt === "Login") {
-    console.log("ssss", styling)
-  }
+  // if (titleTxt === "Logout" || titleTxt === "Login") {
+  //   console.log("ssss", styling)
+  // }
   return (
     <button
       className={`button-basic-style ${styling}`}
