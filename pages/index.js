@@ -38,7 +38,7 @@ export const ALARM_SELECT_OPTIONS = [
       audioStart: "/game-start.mp3",
       audioBreak: "/game-break.mp3",
       charImg: "/peanut.jpg",
-      bgImg: "/default-wallpaper.jpg",
+      bgImg: "/default-bg.png",
       btnClr: "bg-tertiary",
       theme: "/default-wallpaper.jpg",
     },
@@ -49,7 +49,7 @@ export const ALARM_SELECT_OPTIONS = [
       audioStart: "/levi-start.mp3",
       audioBreak: "/levi-break.mp3",
       charImg: "/Levi.jpeg",
-      bgImg: "levi-wallpaper.jpg",
+      bgImg: "/levi-bg.png",
       btnClr: "bg-secondary",
       theme: "/levi-wallpaper.jpg",
     },
@@ -60,7 +60,7 @@ export const ALARM_SELECT_OPTIONS = [
       audioStart: "/anya-start.mp3",
       audioBreak: "/anya-break.mp3",
       charImg: "/Anya.png",
-      bgImg: "/anya-wallpaper.jpg",
+      bgImg: "/anya-bg.png",
       btnClr: "bg-quaternary",
       theme: "/anya-wallpaper.jpg",
     },
@@ -139,7 +139,7 @@ export default function Home() {
       setGoal(window.localStorage.getItem("goal"))
       setVolume(window.localStorage.getItem("volume"))
       selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
-      setSessionCount(parseInt(Cookie.get("strikeToday")))
+      setSessionCount(parseInt(Cookie.get("strikeToday") || sessionCount))
     }
   }
 
