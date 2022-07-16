@@ -3,7 +3,8 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import firebaseApp from "../../../firebase/clientApp"
+import { NextApiRequest, NextApiResponse } from "next"
+import { OAuthCredential, UserCredential } from "firebase/auth"
 import {
   getFirestore,
   addDoc,
@@ -14,8 +15,7 @@ import {
   DocumentReference,
   getDocs,
 } from "firebase/firestore"
-import { OAuthCredential, UserCredential } from "firebase/auth"
-import { NextApiRequest, NextApiResponse } from "next"
+import firebaseApp from "../../../firebase/clientApp"
 interface UserDoc {
   accessToken: string
   expirationTime: number

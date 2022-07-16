@@ -3,8 +3,8 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React from "react"
 import Document, { Html, Head, Main, NextScript } from "next/document"
+import React from "react"
 class MyDocument extends Document {
   render() {
     return (

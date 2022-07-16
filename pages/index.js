@@ -3,8 +3,6 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { unstable_batchedUpdates } from "react-dom"
 import axios from "axios"
 import {
   GoogleAuthProvider,
@@ -12,13 +10,14 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth"
-import Cookie from "js-cookie"
 import Head from "next/head"
 import Image from "next/image"
 import Script from "next/script"
+import Cookie from "js-cookie"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import Confetti from "react-confetti"
+import { unstable_batchedUpdates } from "react-dom"
 import { ToastContainer, toast } from "react-toastify"
-import { auth } from "../firebase/clientApp"
 import Levi from "/public/images/Levi.jpeg"
 import Anya from "/public/images/Anya.png"
 import Peanut from "/public/images/peanut.jpg"
@@ -30,14 +29,15 @@ import UserIcon from "/public/icons/UserIcon.svg"
 import SummaryIcon from "/public/icons/SummaryIcon.svg"
 // import ChatBubbleIcon from "/public/icons/ChatBubbleIcon.svg"
 // import SearchIcon from "/public/icons/SearchIcon.svg"
+import { auth } from "../firebase/clientApp"
 import MyButton from "../src/components/button"
-import MyTimer from "../src/components/timer"
-import MyTimerAnimation from "../src/components/timerAnimation"
-import SettingsModal from "../src/components/settingsModal"
-import MyTargetCounter from "../src/components/targetCounter"
+// import MyTextInputWithLabel from "../src/components/inputbox"
 import MyModal from "../src/components/modal"
 import ReportModal from "../src/components/reportModal"
-// import MyTextInputWithLabel from "../src/components/inputbox"
+import SettingsModal from "../src/components/settingsModal"
+import MyTimer from "../src/components/timer"
+import MyTimerAnimation from "../src/components/timerAnimation"
+import MyTargetCounter from "../src/components/targetCounter"
 import debounce from "../src/utils/debounce"
 import { FULL_DASH_ARRAY, SECONDS } from "../src/utils/constant"
 import { getYYYYMMDD } from "../src/utils/date"
@@ -109,11 +109,10 @@ export default function Home() {
   const [selectedAlarm, selectAlarm] = useState(ALARM_SELECT_OPTIONS[0])
   const [user, setUser] = useState()
   const [isLoading, setIsLoading] = useState(true)
-  const sessionCount = useRef(0)
+  const [sessionCount, setSessionCount] = useState(0)
 
   const setIntialVals = () => {
     if (typeof window !== "undefined") {
-      // TODO: set expiration in cookie
       window.localStorage.setItem(
         "pomoTime",
         window.localStorage.getItem("pomoTime") || pomoTime
@@ -151,6 +150,7 @@ export default function Home() {
       setGoal(window.localStorage.getItem("goal"))
       setVolume(window.localStorage.getItem("volume"))
       selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
+      setSessionCount(parseInt(Cookie.get("strikeToday")))
     }
   }
 
@@ -160,19 +160,19 @@ export default function Home() {
     tomorrow.setDate(tomorrow.getDate() + 1)
     return new Date(tomorrow.getTime() + today.getTimezoneOffset() * 60000)
   }, [])
-  console.log("expiration", expiration)
 
   useEffect(() => {
     setIntialVals()
-    if (
-      !document.cookie.includes("strikeToday") ||
-      sessionCount.current > parseInt(document.cookie.split("strikeToday=")[1])
-    ) {
-      document.cookie = `strikeToday=${sessionCount.current}; expires=${expiration} sameSite=strict;`
-    } else {
-      sessionCount.current = parseInt(document.cookie.split("strikeToday=")[1])
+    if (!Cookie.get("strikeToday")) {
+      document.cookie = `strikeToday=0; expires=${expiration} sameSite=strict;`
     }
   }, [expiration])
+
+  useEffect(() => {
+    if (sessionCount >= Cookie.get("strikeToday")) {
+      Cookie.set("strikeToday", sessionCount)
+    }
+  }, [sessionCount])
 
   useEffect(() => {
     setAudioFile(new Audio(selectedAlarm.value.audioStart))
@@ -198,7 +198,7 @@ export default function Home() {
   }, [audio, volume])
 
   useEffect(() => {
-    if (goal == sessionCount.current && (isOnShortBreak || isOnLongBreak)) {
+    if (goal == sessionCount && (isOnShortBreak || isOnLongBreak)) {
       toast.success("Congratulations! You have reached your goal for today!", {
         autoClose: 4000,
         position: "top-center",
@@ -233,14 +233,14 @@ export default function Home() {
     if (isOnShortBreak || isOnLongBreak) {
       setCurrImg(selectedAlarm.value.charImg)
       audio.play()
-    } else if (isOnPomoSession && sessionCount.current > 0) {
+    } else if (isOnPomoSession && sessionCount > 0) {
       setCurrImg(selectedAlarm.value.bgImg)
       audio.play()
     }
 
     if (audio) {
       audio.addEventListener("ended", () => {
-        if (isOnPomoSession && sessionCount.current > 0) {
+        if (isOnPomoSession && sessionCount > 0) {
           setAudioFile(new Audio(selectedAlarm.value.audioBreak))
         } else {
           setAudioFile(new Audio(selectedAlarm.value.audioStart))
@@ -402,8 +402,8 @@ export default function Home() {
   ])
 
   const handleResetProgress = () => {
-    document.cookie = "strikeToday=0; sameSite=strict;"
-    sessionCount.current = 0
+    setSessionCount(0)
+    Cookie.set("strikeToday", 0)
     setTimer([pomoTime, SECONDS])
     setLBTimer([longBreak, SECONDS])
     setSBTimer([shortBreak, SECONDS])
@@ -547,8 +547,9 @@ export default function Home() {
       <div className="flex justify-center layout-spaces">
         <MyTargetCounter
           goal={parseInt(goal)}
-          current={sessionCount.current}
+          current={sessionCount}
           showModal={showResetModal}
+          setCount={setSessionCount}
         />
       </div>
       <div className="timerWrapper mid-center">
@@ -561,6 +562,7 @@ export default function Home() {
             interval={parseInt(longBreakInterval)}
             paused={paused}
             count={sessionCount}
+            setCount={setSessionCount}
             isOnShortBreak={isOnShortBreak}
             isOnLongBreak={isOnLongBreak}
             isOnPomoSession={isOnPomoSession}
@@ -596,11 +598,7 @@ export default function Home() {
           showToggle={!paused}
           handleOnClick={() => {
             togglePaused(!paused)
-            if (
-              !isOnShortBreak &&
-              !isOnShortBreak &&
-              sessionCount.current === 0
-            ) {
+            if (!isOnShortBreak && !isOnShortBreak && sessionCount === 0) {
               setIsOnPomoSession(!isOnPomoSession)
             }
           }}
@@ -609,7 +607,6 @@ export default function Home() {
           textOnly={true}
         />
         <MyButton
-          // isDisabled={sessionCount.current === 0 ? true : false}
           text="skip"
           screenW={windowWidth}
           styling="long-button-style"
@@ -649,7 +646,7 @@ export default function Home() {
           iconStyling="circle-icon"
         />
       </div> */}
-      {goal == sessionCount.current && (isOnShortBreak || isOnLongBreak) && (
+      {goal == sessionCount && (isOnShortBreak || isOnLongBreak) && (
         <Confetti width={windowWidth} numberOfPieces={300} recycle={false} />
       )}
       <ToastContainer theme="dark" />

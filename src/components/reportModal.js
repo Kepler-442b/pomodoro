@@ -3,12 +3,13 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React, { useEffect, useState } from "react"
 import axios from "axios"
 import Cookie from "js-cookie"
-import Select from "react-select"
-import Modal from "react-modal"
 import PropTypes from "prop-types"
+import React, { useEffect, useState } from "react"
+import Modal from "react-modal"
+import Select from "react-select"
+import { toast } from "react-toastify"
 import {
   BarChart,
   Bar,
@@ -18,8 +19,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts"
-import { toast } from "react-toastify"
-import "rc-slider/assets/index.css"
+import CloseButton from "./mobileCloseBtn"
 import {
   MODAL_STYLE,
   PERIOD,
@@ -27,7 +27,7 @@ import {
   MODAL_MOBILE_STYPE,
 } from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
-import CloseButton from "./mobileCloseBtn"
+import "rc-slider/assets/index.css"
 
 const ReportModal = ({ isOpen, showReport, windowWidth }) => {
   Modal.setAppElement("#__next")

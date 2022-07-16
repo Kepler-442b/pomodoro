@@ -3,8 +3,8 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React from "react"
 import PropTypes from "prop-types"
+import React from "react"
 
 const MyTextInputWithLabel = ({
   inputId,

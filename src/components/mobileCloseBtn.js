@@ -3,9 +3,9 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
+import PropTypes from "prop-types"
 import React from "react"
 import CloseIcon from "../../public/icons/CloseIcon.svg"
-import PropTypes from "prop-types"
 
 const CloseButton = ({ handleClose, handleSave }) => {
   return (

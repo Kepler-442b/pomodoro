@@ -3,15 +3,15 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React from "react"
-import Select from "react-select"
-import Modal from "react-modal"
 import PropTypes from "prop-types"
 import Slider from "rc-slider"
-import "rc-slider/assets/index.css"
+import React from "react"
+import Modal from "react-modal"
+import Select from "react-select"
 import CloseButton from "./mobileCloseBtn"
 import { ALARM_SELECT_OPTIONS } from "../../pages"
 import { MODAL_STYLE, MODAL_MOBILE_STYPE } from "../utils/constant"
+import "rc-slider/assets/index.css"
 
 const SettingsModal = ({
   isOpen,

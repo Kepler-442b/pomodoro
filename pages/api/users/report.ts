@@ -3,7 +3,7 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import firebaseApp from "../../../firebase/clientApp"
+import { NextApiRequest, NextApiResponse } from "next"
 import {
   getFirestore,
   addDoc,
@@ -14,7 +14,7 @@ import {
   getDocs,
   DocumentReference,
 } from "firebase/firestore"
-import { NextApiRequest, NextApiResponse } from "next"
+import firebaseApp from "../../../firebase/clientApp"
 
 export const PERIOD = {
   DAY: "DAY",
