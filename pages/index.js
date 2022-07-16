@@ -204,7 +204,7 @@ export default function Home() {
         position: "top-center",
       })
     }
-  }, [goal, isOnLongBreak, isOnShortBreak])
+  }, [goal, isOnLongBreak, isOnShortBreak, sessionCount])
 
   useEffect(() => {
     if (
@@ -255,6 +255,7 @@ export default function Home() {
     selectedAlarm.value.audioBreak,
     selectedAlarm.value.bgImg,
     selectedAlarm.value.charImg,
+    sessionCount,
   ])
 
   useEffect(() => {

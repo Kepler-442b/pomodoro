@@ -119,6 +119,7 @@ const MyTimer = ({
       setSBTimer,
       setLBTimer,
       shortBreak,
+      setCount,
     ]
   )
 
