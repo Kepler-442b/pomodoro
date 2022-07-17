@@ -1,34 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Description
 
-## Getting Started
+A pomodoro web app that lets you choose different themes and shows you your daily/weekly/monthly report. You can hear your favorite anime character's voice on a session completion.
 
-First, run the development server:
+## Demo Link
+https://pomodoro-teal.vercel.app/
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Stacks Used
+- Design: Figma
+- Language: Javascript, Typescript
+- Framework: Next.js
+- Database: Firestore
+- CSS: Tailwind.css
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Screenshots
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+<img width="600" alt="spy family themed desktop view pomodoro" src="https://user-images.githubusercontent.com/60099921/179382481-b4663705-7903-4b18-9673-19740ebf8449.png">
+<img width="600" alt="spy family themed desktop view pomodoro with monthly report modal opened. a bar graph that shows the hours completed for each day in a given month" src="https://user-images.githubusercontent.com/60099921/179382541-c3dde060-87d3-4ea6-af79-8f98ca40b4eb.png">
+<img width="600" alt="spy family themed desktop view pomodoro with settings modal opened. input boxes for selecting pomodoro time, short and long break time, target pomodoro session, and choosing themes" src="https://user-images.githubusercontent.com/60099921/179382553-87d7731d-118d-4327-963a-4923ace94822.png">
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Looks good on mobile view, too!
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<img width="365" alt="mobile view of the pomodoro app with levi theme" src="https://user-images.githubusercontent.com/60099921/179382603-dbe2653c-c402-4895-9517-e1bb659ef969.PNG">
+<img width="365" alt="mobile view of the pomodoro app with default theme(snoopy)" src="https://user-images.githubusercontent.com/60099921/179382608-9013a5a5-9053-4670-b870-58c51ce300fd.PNG">
