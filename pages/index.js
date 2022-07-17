@@ -97,6 +97,7 @@ export default function Home() {
   const [volume, setVolume] = useState(30)
   const [selectedAlarm, selectAlarm] = useState(ALARM_SELECT_OPTIONS[0])
   const [user, setUser] = useState()
+  const [profilePic, setProfilePic] = useState("/UserIcon.svg")
   const [isLoading, setIsLoading] = useState(true)
   const [sessionCount, setSessionCount] = useState(0)
 
@@ -288,6 +289,7 @@ export default function Home() {
         // The signed-in user info.
         if (result.user?.photoURL) {
           Cookie.set("profilePic", result.user.photoURL, { expires: 14 })
+          setProfilePic(result.user.photoURL)
         }
 
         await axios
@@ -320,6 +322,7 @@ export default function Home() {
         await signOut(auth).then(() => {
           Cookie.remove("userId")
           Cookie.remove("profilePic")
+          setProfilePic("/UserIcon.svg")
         })
         toast.success("Successfully logged out!", {
           autoClose: 1500,
@@ -465,7 +468,7 @@ export default function Home() {
         <div className="flex top-right">
           <MyButton
             titleTxt={user ? "Logout" : "Login"}
-            icon={user ? Cookie.get("profilePic") : "/UserIcon.svg"}
+            icon={profilePic}
             handleOnClick={() => {
               if (user) {
                 showSignOutModal(true)
@@ -474,7 +477,7 @@ export default function Home() {
               }
             }}
             styling={`circle-button-style ${selectedAlarm.value.btnClr} ${
-              Cookie.get("profilePic") ? "p-0" : ""
+              profilePic !== "/UserIcon.svg" ? "p-0" : ""
             }`}
             iconStyling="circle-icon"
           />
