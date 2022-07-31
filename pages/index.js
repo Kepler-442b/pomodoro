@@ -325,6 +325,7 @@ export default function Home() {
           Cookie.remove("userId")
           Cookie.remove("profilePic")
           setProfilePic("/UserIcon.svg")
+          handleResetProgress()
         })
         toast.success("Successfully logged out!", {
           autoClose: 1500,
@@ -396,8 +397,8 @@ export default function Home() {
     selectedAlarm.value.charImg,
   ])
 
-  const handleResetProgress = () => {
-    setSessionCount(0)
+  const handleResetProgress = (resetCount = true) => {
+    if (resetCount) setSessionCount(0)
     Cookie.set("strikeToday", 0)
     setTimer([pomoTime, SECONDS])
     setLBTimer([longBreak, SECONDS])
@@ -475,6 +476,7 @@ export default function Home() {
               if (user) {
                 showSignOutModal(true)
               } else {
+                handleResetProgress(false)
                 handleSignIn()
               }
             }}

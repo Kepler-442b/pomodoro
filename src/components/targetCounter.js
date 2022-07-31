@@ -4,21 +4,27 @@
  */
 
 import PropTypes from "prop-types"
-import React from "react"
+import React, { useState } from "react"
 
 const MyTargetCounter = ({ goal, current, showModal }) => {
+  const [style, setStyle] = useState("cursor-pointer")
   return (
     <div className="z-10 targetCounter">
-      <p> {` ${current} / ${goal}`}</p>
-      {current > 0 && (
-        <img
-          onClick={() => showModal(true)}
-          className="resetBtn"
-          src="/ResetIcon.png"
-          alt="reset"
-          title="Reset target"
-        />
-      )}
+      <p
+        className={style}
+        title="Reset Progress"
+        onMouseEnter={() =>
+          setStyle(
+            (prev) => prev + " underline decoration-solid underline-offset-2"
+          )
+        }
+        onMouseLeave={() => setStyle("cursor-pointer")}
+        onClick={() => {
+          if (current > 0) showModal(true)
+        }}
+      >
+        {`${current} of ${goal}`}
+      </p>
     </div>
   )
 }
