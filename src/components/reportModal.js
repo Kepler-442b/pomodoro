@@ -145,7 +145,7 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
           reportEach.hoursCompleted !== null ? (
             <BarChart
               data={reportEach}
-              width={isMobile ? 350 : 600}
+              width={isMobile ? 350 : 650}
               height={250}
             >
               <CartesianGrid strokeDasharray="3 3" />
