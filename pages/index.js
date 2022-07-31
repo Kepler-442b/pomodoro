@@ -97,7 +97,9 @@ export default function Home() {
   const [volume, setVolume] = useState(30)
   const [selectedAlarm, selectAlarm] = useState(ALARM_SELECT_OPTIONS[0])
   const [user, setUser] = useState()
-  const [profilePic, setProfilePic] = useState("/UserIcon.svg")
+  const [profilePic, setProfilePic] = useState(
+    Cookie.get("profilePic") || "/UserIcon.svg"
+  )
   const [isLoading, setIsLoading] = useState(true)
   const [sessionCount, setSessionCount] = useState(0)
 

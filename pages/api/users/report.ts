@@ -92,9 +92,8 @@ const report = async (
       )
 
       if (reports.size > 0) {
-        const year = date.slice(0, 4)
-        const month = date.slice(5, 7) as string
-        const today = new Date().toISOString().split("-")[2].slice(0, 2)
+        const dateArr = (date as string).split("-")
+        const [year, month, today] = dateArr
         if (period === PERIOD.DAY) {
           let dailyReport: ReportDoc
           const reports = await getDocs(
@@ -129,7 +128,7 @@ const report = async (
             let dd = parseInt(today)
 
             let defaultDays = 30
-            const longMonths = ["01", "03", "05", "07", "08", "10", "12"]
+            const longMonths = ["1", "3", "5", "7", "8", "10", "12"]
             if (!longMonths.includes(mm)) defaultDays = 31
             if (dd === 7) dd = 1
             else if (dd === 6) dd = defaultDays
@@ -142,11 +141,9 @@ const report = async (
 
             if (parseInt(today) < 7) {
               mm = (parseInt(mm) - 1).toString()
-              if (parseInt(mm) < 10) mm = "0" + mm
             }
 
             let ddString = dd.toString()
-            if (dd < 10) ddString = "0" + ddString
 
             return { mm, dd: ddString }
           }
