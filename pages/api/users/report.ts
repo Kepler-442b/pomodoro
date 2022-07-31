@@ -143,9 +143,7 @@ const report = async (
               mm = (parseInt(mm) - 1).toString()
             }
 
-            let ddString = dd.toString()
-
-            return { mm, dd: ddString }
+            return { mm, dd: dd.toString() }
           }
 
           const { mm, dd } = getTheFirstDate(month, today)
