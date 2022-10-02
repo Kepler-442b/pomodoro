@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        nature: "#295517", // dark green
+        nature: "#68acd4", // light blue //"#295517", // dark green
         primary: "#f2e78a", // yellow
         secondary: "#05334d", // dark blue
         tertiary: "#5B4C7E", // indigo
@@ -27,7 +27,7 @@ module.exports = {
         timerSmRadius: "15.25rem",
         timerMdRadius: "18.25rem",
         timerLgRadius: "20.5rem",
-        buttonSm: "2.5rem",
+        buttonSm: "2.75rem",
         timerWrapperSm: "14.75rem",
         timerWrapperMd: "17.5rem",
         timerWrapperLg: "21rem",

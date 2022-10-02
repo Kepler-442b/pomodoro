@@ -16,7 +16,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
           <link
-            href="https://fonts.googleapis.com/css2?family=Silkscreen"
+            href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap"
             rel="stylesheet"
           />
           <link rel="icon" href="/ClockfaceIcon.png" />

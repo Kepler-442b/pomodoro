@@ -34,11 +34,11 @@ import { getYYYYMMDD } from "../src/utils/date"
 import "react-toastify/dist/ReactToastify.css"
 
 export default function Home(props) {
-  const { img, credit, creditLink, location, altText, options } = props
+  const { options } = props
 
   const [title, setTitle] = useState("Pomodoro")
   const [windowWidth, setWindowWidth] = useState(0)
-  const [currImg, setCurrImg] = useState("/default-wallpaper.jpg")
+  const [currImg, setCurrImg] = useState("")
   const [audio, setAudioFile] = useState(null)
   const [goal, setGoal] = useState(5)
   const [paused, togglePaused] = useState(true)
@@ -113,16 +113,6 @@ export default function Home(props) {
     }
   }
 
-  console.log(
-    "selectedAlarm.value.theme",
-    selectedAlarm.label,
-    selectedAlarm.value.theme,
-    credit,
-    creditLink,
-    location,
-    altText
-  )
-
   const expiration = useMemo(() => {
     const today = new Date()
     const tomorrow = new Date(new Date(getYYYYMMDD(today)))
@@ -144,17 +134,8 @@ export default function Home(props) {
   }, [sessionCount])
 
   useEffect(() => {
-    if (selectedAlarm.label === "Nature") {
-      selectAlarm((prev) => {
-        const modified = prev
-        modified.value.theme = img
-        return modified
-      })
-    } else {
-      setCurrImg(selectedAlarm.value.bgImg)
-    }
-
     setAudioFile(new Audio(selectedAlarm.value.audioStart))
+    setCurrImg(selectedAlarm.value.bgImg)
   }, [selectedAlarm])
 
   useEffect(() => {
@@ -431,7 +412,7 @@ export default function Home(props) {
       />
       <div className="fixed flex items-center justify-center w-full h-full">
         <Image
-          alt={altText || "background"}
+          alt={selectedAlarm?.value?.altText || "background"}
           src={selectedAlarm.value.theme}
           objectFit="cover"
           layout="fill"
@@ -487,7 +468,7 @@ export default function Home(props) {
             titleTxt={"Show Report"}
             icon="/SummaryIcon.svg"
             handleOnClick={handleShowReport}
-            styling={`circle-button-style `}
+            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"
           />
           {isReportOpen && (
@@ -501,7 +482,7 @@ export default function Home(props) {
             titleTxt={"Open Settings"}
             icon="/SettingsIcon.svg"
             handleOnClick={() => toggleSettings(!isSettingsOpen)}
-            styling={`circle-button-style `}
+            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"
           />
           {isSettingsOpen && (
@@ -581,7 +562,7 @@ export default function Home(props) {
       </div>
       <div className="buttonsWrapper">
         <MyButton
-          text="start"
+          text="START"
           toggleText="pause"
           showToggle={!paused}
           handleOnClick={() => {
@@ -591,13 +572,13 @@ export default function Home(props) {
             }
           }}
           screenW={windowWidth}
-          styling={`long-button-style `}
+          styling={`long-button-style ${selectedAlarm.value.btnClr}`}
           textOnly={true}
         />
         <MyButton
-          text="skip"
+          text="SKIP"
           screenW={windowWidth}
-          styling={`long-button-style `}
+          styling={`long-button-style ${selectedAlarm.value.btnClr}`}
           textOnly={true}
           handleOnClick={() => {
             showSkipModal(!isSkipModalOpen)
@@ -627,17 +608,25 @@ export default function Home(props) {
           btnClr={selectedAlarm.value.btnClr}
         />
       )}
-      {credit && (
-        <div className="fixed z-50 px-3 font-mono text-sm text-white" id="ra">
-          Photo credit:
-          <a src={creditLink}>{credit}</a>
-          {location && <div>{location}</div>}
+      {selectedAlarm.value?.credit && (
+        <div className="fixed z-50 grid px-3 mt-12 font-mono text-sm text-white ">
+          Photo by:
+          <a
+            href={selectedAlarm.value?.creditLink}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {selectedAlarm.value.credit}
+          </a>
+          {selectedAlarm.value?.location && (
+            <div>{selectedAlarm.value.location}</div>
+          )}
         </div>
       )}
       {/* <div className="chatButtonWrapper">
         <MyButton
-          icon={ChatBubbleIcon.src}
-            styling={`circle-button-style `}
+          icon="/SummaryIcon.svg"
+          styling={`circle-button-style `}
           iconStyling="circle-icon"
         />
       </div> */}
@@ -662,14 +651,8 @@ export const getServerSideProps = async () => {
       orientation: "landscape",
     })
     .then((res) => (randomPhoto = res.response))
-
   return {
     props: {
-      img: randomPhoto.urls.full,
-      credit: randomPhoto.user.name,
-      creditLink: randomPhoto.user.portfolio_url,
-      location: randomPhoto.location.name,
-      altText: randomPhoto.alt_description,
       options: [
         {
           value: {
@@ -680,8 +663,12 @@ export const getServerSideProps = async () => {
             bgImg:
               "https://drive.google.com/uc?id=1N2eWKjm4-52XTOHB9-G8HarghdvxF1Oi",
             btnClr: "bg-nature",
-            theme:
-              "https://drive.google.com/uc?id=1FPA4cuihQcpwGH3s5ky3eDht6d-BHz9C",
+            theme: randomPhoto.urls.full,
+            credit: randomPhoto.user.name,
+            creditLink:
+              randomPhoto.user.portfolio_url || randomPhoto.links.html || "",
+            location: randomPhoto.location.name,
+            altText: randomPhoto.alt_description,
           },
           label: "Nature",
         },
