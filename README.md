@@ -20,5 +20,4 @@ https://pomodoro-teal.vercel.app/
 
 Looks good on mobile view, too!
 
-<img width="365" alt="mobile view of the pomodoro app with levi theme" src="https://user-images.githubusercontent.com/60099921/179382603-dbe2653c-c402-4895-9517-e1bb659ef969.PNG">
 <img width="365" alt="mobile view of the pomodoro app with default theme(snoopy)" src="https://user-images.githubusercontent.com/60099921/179382608-9013a5a5-9053-4670-b870-58c51ce300fd.PNG">
