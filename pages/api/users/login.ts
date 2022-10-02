@@ -87,7 +87,7 @@ const login = async (
         name: e.name,
         message: e.message,
         stack: e.stack,
-        cause: e.cause.name,
+        // cause: e.cause.name,
         created: new Date().toISOString(),
       })
       res.status(500).json({ msg: "Unknown error occurred while logging in." })

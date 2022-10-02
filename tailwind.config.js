@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        nature: "#295517", // dark green
         primary: "#f2e78a", // yellow
         secondary: "#05334d", // dark blue
         tertiary: "#5B4C7E", // indigo
@@ -15,24 +16,24 @@ module.exports = {
         inputBox: "#C4C4C4", // light grey
       },
       width: {
-        buttonSm: "7.25rem",
-        timerSmRadius: "13.25rem",
-        timerMdRadius: "15.75rem",
-        timerLgRadius: "18.5rem",
+        buttonSm: "8rem",
+        timerSmRadius: "15.25rem",
+        timerMdRadius: "18.25rem",
+        timerLgRadius: "20.5rem",
         reportModal: "42rem",
         reportModalMobile: "15rem",
       },
       height: {
-        timerSmRadius: "13.25rem",
-        timerMdRadius: "15.75rem",
-        timerLgRadius: "18.5rem",
-        buttonSm: "2.25rem",
+        timerSmRadius: "15.25rem",
+        timerMdRadius: "18.25rem",
+        timerLgRadius: "20.5rem",
+        buttonSm: "2.5rem",
         timerWrapperSm: "14.75rem",
         timerWrapperMd: "17.5rem",
         timerWrapperLg: "21rem",
-        timerWrapperRingSm: "15.5rem",
-        timerWrapperRingMd: "18.25rem",
-        timerWrapperRingLg: "21.75rem",
+        timerWrapperRingSm: "18rem",
+        timerWrapperRingMd: "21.5rem",
+        timerWrapperRingLg: "24rem",
         settingsModalLg: "35.25rem",
       },
       strokeWidth: {

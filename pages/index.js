@@ -3,6 +3,7 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import axios from "axios"
 import {
   GoogleAuthProvider,
@@ -14,7 +15,7 @@ import Head from "next/head"
 import Image from "next/image"
 import Script from "next/script"
 import Cookie from "js-cookie"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { createApi } from "unsplash-js"
 import Confetti from "react-confetti"
 import { unstable_batchedUpdates } from "react-dom"
 import { ToastContainer, toast } from "react-toastify"
@@ -32,43 +33,9 @@ import { FULL_DASH_ARRAY, SECONDS } from "../src/utils/constant"
 import { getYYYYMMDD } from "../src/utils/date"
 import "react-toastify/dist/ReactToastify.css"
 
-export const ALARM_SELECT_OPTIONS = [
-  {
-    value: {
-      audioStart: "/game-start.mp3",
-      audioBreak: "/game-break.mp3",
-      charImg: "/peanut.jpg",
-      bgImg: "/default-bg.png",
-      btnClr: "bg-tertiary",
-      theme: "/default-wallpaper.jpg",
-    },
-    label: "Default Sound",
-  },
-  {
-    value: {
-      audioStart: "/levi-start.mp3",
-      audioBreak: "/levi-break.mp3",
-      charImg: "/Levi.jpeg",
-      bgImg: "/levi-bg.png",
-      btnClr: "bg-secondary",
-      theme: "/levi-wallpaper.jpg",
-    },
-    label: "Levi Ackerman",
-  },
-  {
-    value: {
-      audioStart: "/anya-start.mp3",
-      audioBreak: "/anya-break.mp3",
-      charImg: "/Anya.png",
-      bgImg: "/anya-bg.png",
-      btnClr: "bg-quaternary",
-      theme: "/anya-wallpaper.jpg",
-    },
-    label: "Anya Foger",
-  },
-]
+export default function Home(props) {
+  const { img, credit, creditLink, location, altText, options } = props
 
-export default function Home() {
   const [title, setTitle] = useState("Pomodoro")
   const [windowWidth, setWindowWidth] = useState(0)
   const [currImg, setCurrImg] = useState("/default-wallpaper.jpg")
@@ -95,7 +62,7 @@ export default function Home() {
   )
   const [secsElapsed, setSecsElapsed] = useState(0)
   const [volume, setVolume] = useState(30)
-  const [selectedAlarm, selectAlarm] = useState(ALARM_SELECT_OPTIONS[0])
+  const [selectedAlarm, selectAlarm] = useState(options[0])
   const [user, setUser] = useState()
   const [profilePic, setProfilePic] = useState(
     Cookie.get("profilePic") || "/UserIcon.svg"
@@ -146,6 +113,16 @@ export default function Home() {
     }
   }
 
+  console.log(
+    "selectedAlarm.value.theme",
+    selectedAlarm.label,
+    selectedAlarm.value.theme,
+    credit,
+    creditLink,
+    location,
+    altText
+  )
+
   const expiration = useMemo(() => {
     const today = new Date()
     const tomorrow = new Date(new Date(getYYYYMMDD(today)))
@@ -167,8 +144,17 @@ export default function Home() {
   }, [sessionCount])
 
   useEffect(() => {
+    if (selectedAlarm.label === "Nature") {
+      selectAlarm((prev) => {
+        const modified = prev
+        modified.value.theme = img
+        return modified
+      })
+    } else {
+      setCurrImg(selectedAlarm.value.bgImg)
+    }
+
     setAudioFile(new Audio(selectedAlarm.value.audioStart))
-    setCurrImg(selectedAlarm.value.bgImg)
   }, [selectedAlarm])
 
   useEffect(() => {
@@ -443,13 +429,15 @@ export default function Home() {
           console.error("Script failed to load", e)
         }}
       />
-      <Image
-        alt="background"
-        src={selectedAlarm.value.theme}
-        objectFit="cover"
-        layout="fill"
-        quality={100}
-      />
+      <div className="fixed flex items-center justify-center w-full h-full">
+        <Image
+          alt={altText || "background"}
+          src={selectedAlarm.value.theme}
+          objectFit="cover"
+          layout="fill"
+          quality={100}
+        />
+      </div>
       <nav className="navWrapper">
         <div className="top-left">
           <div className="flex h-full rounded-2xl bg-tertiary">
@@ -499,7 +487,7 @@ export default function Home() {
             titleTxt={"Show Report"}
             icon="/SummaryIcon.svg"
             handleOnClick={handleShowReport}
-            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
+            styling={`circle-button-style `}
             iconStyling="circle-icon"
           />
           {isReportOpen && (
@@ -513,7 +501,7 @@ export default function Home() {
             titleTxt={"Open Settings"}
             icon="/SettingsIcon.svg"
             handleOnClick={() => toggleSettings(!isSettingsOpen)}
-            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
+            styling={`circle-button-style `}
             iconStyling="circle-icon"
           />
           {isSettingsOpen && (
@@ -537,6 +525,7 @@ export default function Home() {
               selectedAlarm={selectedAlarm}
               selectAlarm={selectAlarm}
               windowWidth={windowWidth}
+              options={options}
             />
           )}
         </div>
@@ -579,13 +568,15 @@ export default function Home() {
             secsElapsed={secsElapsed}
             setSecsElapsed={setSecsElapsed}
           />
-          <Image
-            objectFit="cover"
-            src={currImg}
-            alt="timer background"
-            layout="fill"
-            priority
-          />
+          {selectedAlarm.label !== "Nature" && (
+            <Image
+              objectFit="cover"
+              src={currImg}
+              alt="timer background"
+              layout="fill"
+              priority
+            />
+          )}
         </div>
       </div>
       <div className="buttonsWrapper">
@@ -600,13 +591,13 @@ export default function Home() {
             }
           }}
           screenW={windowWidth}
-          styling="long-button-style"
+          styling={`long-button-style `}
           textOnly={true}
         />
         <MyButton
           text="skip"
           screenW={windowWidth}
-          styling="long-button-style"
+          styling={`long-button-style `}
           textOnly={true}
           handleOnClick={() => {
             showSkipModal(!isSkipModalOpen)
@@ -636,10 +627,17 @@ export default function Home() {
           btnClr={selectedAlarm.value.btnClr}
         />
       )}
+      {credit && (
+        <div className="fixed z-50 px-3 font-mono text-sm text-white" id="ra">
+          Photo credit:
+          <a src={creditLink}>{credit}</a>
+          {location && <div>{location}</div>}
+        </div>
+      )}
       {/* <div className="chatButtonWrapper">
         <MyButton
           icon={ChatBubbleIcon.src}
-            styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
+            styling={`circle-button-style `}
           iconStyling="circle-icon"
         />
       </div> */}
@@ -649,4 +647,87 @@ export default function Home() {
       <ToastContainer theme="dark" />
     </>
   )
+}
+
+export const getServerSideProps = async () => {
+  const unsplash = createApi({
+    accessKey: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY,
+  })
+
+  let randomPhoto
+
+  await unsplash.photos
+    .getRandom({
+      query: "lake",
+      orientation: "landscape",
+    })
+    .then((res) => (randomPhoto = res.response))
+
+  return {
+    props: {
+      img: randomPhoto.urls.full,
+      credit: randomPhoto.user.name,
+      creditLink: randomPhoto.user.portfolio_url,
+      location: randomPhoto.location.name,
+      altText: randomPhoto.alt_description,
+      options: [
+        {
+          value: {
+            audioStart: "/game-start.mp3",
+            audioBreak: "/game-break.mp3",
+            charImg:
+              "https://drive.google.com/uc?id=1rbTwRGp4S4EbMCp1umYhHKkZJBbHvw-F",
+            bgImg:
+              "https://drive.google.com/uc?id=1N2eWKjm4-52XTOHB9-G8HarghdvxF1Oi",
+            btnClr: "bg-nature",
+            theme:
+              "https://drive.google.com/uc?id=1FPA4cuihQcpwGH3s5ky3eDht6d-BHz9C",
+          },
+          label: "Nature",
+        },
+        {
+          value: {
+            audioStart: "/game-start.mp3",
+            audioBreak: "/game-break.mp3",
+            charImg:
+              "https://drive.google.com/uc?id=1rbTwRGp4S4EbMCp1umYhHKkZJBbHvw-F",
+            bgImg:
+              "https://drive.google.com/uc?id=1N2eWKjm4-52XTOHB9-G8HarghdvxF1Oi",
+            btnClr: "bg-tertiary",
+            theme:
+              "https://drive.google.com/uc?id=1FPA4cuihQcpwGH3s5ky3eDht6d-BHz9C",
+          },
+          label: "Peanut",
+        },
+        {
+          value: {
+            audioStart: "/levi-start.mp3",
+            audioBreak: "/levi-break.mp3",
+            charImg:
+              "https://drive.google.com/uc?id=12GTkByGc5syBlmF-QsrGv-gNjZRUgxoS",
+            bgImg:
+              "https://drive.google.com/uc?id=18mGonihiJMSGCuPow87KoUQzfUT1Fzm-",
+            btnClr: "bg-secondary",
+            theme:
+              "https://drive.google.com/uc?id=18QoTHyPFg3D8qrlUacv9rRdh3D0zVqG7",
+          },
+          label: "Attack on Titan",
+        },
+        {
+          value: {
+            audioStart: "/anya-start.mp3",
+            audioBreak: "/anya-break.mp3",
+            charImg:
+              "https://drive.google.com/uc?id=1grm_sEEQhGXwXVlNJAEdvMnxnRgQPoEz",
+            bgImg:
+              "https://drive.google.com/uc?id=1ANPUQZ33ukL9Tbs6eypNBaAnfmNl2tyM",
+            btnClr: "bg-quaternary",
+            theme:
+              "https://drive.google.com/uc?id=1wjg9rHcgjP2VegJ1UZmhAqAzU2ioDBS_",
+          },
+          label: "Spy Family",
+        },
+      ],
+    },
+  }
 }

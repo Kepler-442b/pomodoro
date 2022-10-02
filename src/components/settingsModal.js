@@ -9,7 +9,6 @@ import React from "react"
 import Modal from "react-modal"
 import Select from "react-select"
 import CloseButton from "./mobileCloseBtn"
-import { ALARM_SELECT_OPTIONS } from "../../pages"
 import { MODAL_STYLE, MODAL_MOBILE_STYPE } from "../utils/constant"
 import "rc-slider/assets/index.css"
 
@@ -33,6 +32,7 @@ const SettingsModal = ({
   selectedAlarm,
   selectAlarm,
   windowWidth,
+  options,
 }) => {
   Modal.setAppElement("#__next")
 
@@ -136,14 +136,14 @@ const SettingsModal = ({
         </div>
       </div>
       <div id="soundSetting" className="settingGroup">
-        <div className="modalSubtitle">Alarm Sound</div>
+        <div className="modalSubtitle">Theme</div>
         <div className="px-4">
           <Select
             className="font-semibold border-2 border-black border-solid rounded-md w-64mx-2"
             onChange={(option) => selectAlarm(option)}
             value={selectedAlarm}
-            options={ALARM_SELECT_OPTIONS}
-            defaultValue={ALARM_SELECT_OPTIONS[0]}
+            options={options}
+            defaultValue={options[0]}
           />
         </div>
         <div className="flex items-center justify-between px-4 mt-3 text-xl text-white settingGroup ">

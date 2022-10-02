@@ -66,7 +66,7 @@ const report = async (
           intervalsCompleted:
             latestReport.intervalsCompleted + intervalsCompleted,
           hoursCompleted:
-            latestReport.hoursCompleted + parseFloat(hoursCompleted.toFixed(2)),
+            latestReport.hoursCompleted + parseFloat(hoursCompleted).toFixed(2),
           updated_at: new Date().toISOString(),
         })
 
@@ -74,7 +74,7 @@ const report = async (
       } else if (!latestReport || latestReport.date !== date) {
         addDoc(reportsCol, {
           intervalsCompleted: intervalsCompleted,
-          hoursCompleted: parseFloat(hoursCompleted.toFixed(2)),
+          hoursCompleted: parseFloat(hoursCompleted).toFixed(2),
           date: date,
           updated_at: new Date().toISOString(),
           created_at: new Date().toISOString(),
@@ -196,7 +196,7 @@ const report = async (
         name: e.name,
         message: e.message,
         stack: e.stack,
-        cause: e.cause.name,
+        // cause: e.cause.name,
         created: new Date().toISOString(),
       })
       res

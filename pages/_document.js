@@ -15,6 +15,10 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap"
             rel="stylesheet"
           />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Silkscreen"
+            rel="stylesheet"
+          />
           <link rel="icon" href="/ClockfaceIcon.png" />
         </Head>
         <body>

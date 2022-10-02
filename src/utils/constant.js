@@ -25,6 +25,7 @@ export const MODAL_STYLE = {
   top: "8%",
   display: "flex",
   marginRight: "1rem",
+  marginTop: "1rem",
   justifyContent: "end",
 }
 
