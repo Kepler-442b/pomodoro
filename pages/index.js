@@ -2,7 +2,8 @@
  * File: /pages/index.js
  * Copyright (c) 2022 - Sooyeon Kim
  */
-
+//TODO: reduce the time of loading the page (especially the image)
+//TODO: improve the mobile version
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import axios from "axios"
 import {
