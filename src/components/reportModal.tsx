@@ -1,11 +1,10 @@
 /**
- * File: /src/components/reportModal.js
+ * File: /src/components/reportModal.tsx
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
 import axios from "axios"
 import Cookie from "js-cookie"
-import PropTypes from "prop-types"
 import React, { useEffect, useState } from "react"
 import Modal from "react-modal"
 import Select from "react-select"
@@ -29,7 +28,15 @@ import {
 import { getYYYYMMDD } from "../utils/date"
 import "rc-slider/assets/index.css"
 
-const ReportModal = ({ isOpen, showReport, windowWidth }) => {
+interface Props {
+  isOpen: boolean
+  showReport: (isOpen: boolean) => void
+  windowWidth: number
+}
+
+const ReportModal = (props: Props): JSX.Element => {
+  const { isOpen, showReport, windowWidth } = props
+
   Modal.setAppElement("#__next")
 
   const isMobile = windowWidth < 641
@@ -43,11 +50,13 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
     intervalsCompleted: 0,
     daysAccessed: 0,
   })
-  const [reportEach, setReportEach] = useState({
-    hoursCompleted: null,
-    intervalsCompleted: null,
-    daysAccessed: null,
-  })
+  const [reportEach, setReportEach] = useState<
+    {
+      hoursCompleted: number | null
+      intervalsCompleted: number | null
+      daysAccessed: number | null
+    }[]
+  >([])
   useEffect(() => {
     try {
       if (selectedOption !== null) {
@@ -142,9 +151,9 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
         <div className="flex justify-center -ml-5">
           {reportSummary.hoursCompleted &&
           reportSummary.intervalsCompleted &&
-          reportEach.hoursCompleted !== null ? (
+          reportEach?.[0]?.hoursCompleted !== null ? (
             <BarChart
-              data={reportEach}
+              data={[reportEach]}
               width={isMobile ? 350 : 650}
               height={250}
             >
@@ -172,12 +181,6 @@ const ReportModal = ({ isOpen, showReport, windowWidth }) => {
       </div>
     </Modal>
   )
-}
-
-ReportModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  showReport: PropTypes.func.isRequired,
-  windowWidth: PropTypes.number.isRequired,
 }
 
 export default React.memo(ReportModal)

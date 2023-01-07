@@ -12,6 +12,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth"
+import { ref, getDownloadURL } from "firebase/storage"
 import Head from "next/head"
 import Image from "next/image"
 import Script from "next/script"
@@ -20,7 +21,7 @@ import { createApi } from "unsplash-js"
 import Confetti from "react-confetti"
 import { unstable_batchedUpdates } from "react-dom"
 import { ToastContainer, toast } from "react-toastify"
-import { auth } from "../firebase/clientApp"
+import { auth, storage } from "../firebase/clientApp"
 import MyButton from "../src/components/button"
 // import MyTextInputWithLabel from "../src/components/inputbox"
 import MyModal from "../src/components/modal"
@@ -39,7 +40,6 @@ export default function Home(props) {
 
   const [title, setTitle] = useState("Pomodoro")
   const [windowWidth, setWindowWidth] = useState(0)
-  const [currImg, setCurrImg] = useState("")
   const [audio, setAudioFile] = useState(null)
   const [goal, setGoal] = useState(5)
   const [paused, togglePaused] = useState(true)
@@ -63,7 +63,7 @@ export default function Home(props) {
   )
   const [secsElapsed, setSecsElapsed] = useState(0)
   const [volume, setVolume] = useState(30)
-  const [selectedAlarm, selectAlarm] = useState(options[0])
+  const [selectedAlarm /*selectAlarm*/] = useState(options[0])
   const [user, setUser] = useState()
   const [profilePic, setProfilePic] = useState(
     Cookie.get("profilePic") || "/UserIcon.svg"
@@ -97,11 +97,6 @@ export default function Home(props) {
         "volume",
         window.localStorage.getItem("volume") || volume
       )
-      window.localStorage.setItem(
-        "selectedAlarm",
-        window.localStorage.getItem("selectedAlarm") ||
-          JSON.stringify(selectedAlarm)
-      )
 
       setPomoTime(window.localStorage.getItem("pomoTime"))
       setShortBreak(window.localStorage.getItem("shortBreak"))
@@ -109,7 +104,6 @@ export default function Home(props) {
       setLongBreakInterval(window.localStorage.getItem("longBreakInterval"))
       setGoal(window.localStorage.getItem("goal"))
       setVolume(window.localStorage.getItem("volume"))
-      selectAlarm(JSON.parse(window.localStorage.getItem("selectedAlarm")))
       setSessionCount(parseInt(Cookie.get("strikeToday") || sessionCount))
     }
   }
@@ -136,7 +130,6 @@ export default function Home(props) {
 
   useEffect(() => {
     setAudioFile(new Audio(selectedAlarm.value.audioStart))
-    setCurrImg(selectedAlarm.value.bgImg)
   }, [selectedAlarm])
 
   useEffect(() => {
@@ -191,10 +184,8 @@ export default function Home(props) {
 
   useEffect(() => {
     if (isOnShortBreak || isOnLongBreak) {
-      setCurrImg(selectedAlarm.value.charImg)
       audio.play()
     } else if (isOnPomoSession && sessionCount > 0) {
-      setCurrImg(selectedAlarm.value.bgImg)
       audio.play()
     }
 
@@ -217,6 +208,39 @@ export default function Home(props) {
     selectedAlarm.value.charImg,
     sessionCount,
   ])
+
+  const storageRef = ref(storage, "anya-bg.png")
+
+  // Create a reference from a Google Cloud Storage URI
+  // const gsReference = ref(
+  //   storage,
+  //   `gs://${storageRef.bucket}/${storageRef.fullPath}`
+  // )
+  // console.log("??", gsReference)
+
+  getDownloadURL(storageRef)
+    .then((url) => console.log("I am", url))
+    .catch((error) => {
+      // A full list of error codes is available at
+      // https://firebase.google.com/docs/storage/web/handle-errors
+      switch (error.code) {
+        case "storage/object-not-found":
+          // File doesn't exist
+          break
+        case "storage/unauthorized":
+          // User doesn't have permission to access the object
+          break
+        case "storage/canceled":
+          // User canceled the upload
+          break
+
+        // ...
+
+        case "storage/unknown":
+          // Unknown error occurred, inspect the server response
+          break
+      }
+    })
 
   useEffect(() => {
     if (isOnPomoSession) setTitle(`On session for ${currMins}:${currSecs}`)
@@ -340,14 +364,12 @@ export default function Home(props) {
       setIsOnShortBreak(false)
       setIsOnLongBreak(false)
       setIsOnPomoSession(true)
-      setCurrImg(selectedAlarm.value.bgImg)
       setAudioFile(new Audio(selectedAlarm.value.audioStart))
     } else {
       setTimer([pomoTime, SECONDS])
       setIsOnShortBreak(true)
       setIsOnLongBreak(false)
       setIsOnPomoSession(false)
-      setCurrImg(selectedAlarm.value.charImg)
       setAudioFile(new Audio(selectedAlarm.value.audioBreak))
     }
     setSecsElapsed(0)
@@ -373,7 +395,6 @@ export default function Home(props) {
     setSBTimer([shortBreak, SECONDS])
     setSecsElapsed(0)
     setDashArrVal(`${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`)
-    setCurrImg(selectedAlarm.value.bgImg)
     setAudioFile(new Audio(selectedAlarm.value.audioStart))
     togglePaused(true)
     setIsOnPomoSession(false)
@@ -505,7 +526,6 @@ export default function Home(props) {
               volume={volume}
               setVolume={setVolume}
               selectedAlarm={selectedAlarm}
-              selectAlarm={selectAlarm}
               windowWidth={windowWidth}
               options={options}
             />
@@ -517,7 +537,6 @@ export default function Home(props) {
           goal={parseInt(goal)}
           current={sessionCount}
           showModal={showResetModal}
-          setCount={setSessionCount}
         />
       </div>
       <div className="timerWrapper mid-center">
@@ -672,48 +691,6 @@ export const getServerSideProps = async () => {
             altText: randomPhoto.alt_description,
           },
           label: "Nature",
-        },
-        {
-          value: {
-            audioStart: "/game-start.mp3",
-            audioBreak: "/game-break.mp3",
-            charImg:
-              "https://drive.google.com/uc?id=1rbTwRGp4S4EbMCp1umYhHKkZJBbHvw-F",
-            bgImg:
-              "https://drive.google.com/uc?id=1N2eWKjm4-52XTOHB9-G8HarghdvxF1Oi",
-            btnClr: "bg-tertiary",
-            theme:
-              "https://drive.google.com/uc?id=1FPA4cuihQcpwGH3s5ky3eDht6d-BHz9C",
-          },
-          label: "Peanut",
-        },
-        {
-          value: {
-            audioStart: "/levi-start.mp3",
-            audioBreak: "/levi-break.mp3",
-            charImg:
-              "https://drive.google.com/uc?id=12GTkByGc5syBlmF-QsrGv-gNjZRUgxoS",
-            bgImg:
-              "https://drive.google.com/uc?id=18mGonihiJMSGCuPow87KoUQzfUT1Fzm-",
-            btnClr: "bg-secondary",
-            theme:
-              "https://drive.google.com/uc?id=18QoTHyPFg3D8qrlUacv9rRdh3D0zVqG7",
-          },
-          label: "Attack on Titan",
-        },
-        {
-          value: {
-            audioStart: "/anya-start.mp3",
-            audioBreak: "/anya-break.mp3",
-            charImg:
-              "https://drive.google.com/uc?id=1grm_sEEQhGXwXVlNJAEdvMnxnRgQPoEz",
-            bgImg:
-              "https://drive.google.com/uc?id=1ANPUQZ33ukL9Tbs6eypNBaAnfmNl2tyM",
-            btnClr: "bg-quaternary",
-            theme:
-              "https://drive.google.com/uc?id=1wjg9rHcgjP2VegJ1UZmhAqAzU2ioDBS_",
-          },
-          label: "Spy Family",
         },
       ],
     },

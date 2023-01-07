@@ -1,12 +1,17 @@
 /**
- * File: src/components/mobileCloseBtn.js
+ * File: src/components/mobileCloseBtn.tsx
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import PropTypes from "prop-types"
 import React from "react"
 
-const CloseButton = ({ handleClose, handleSave }) => {
+interface Props {
+  handleClose: (show: boolean) => void
+  handleSave?: () => void
+}
+
+const CloseButton = (props: Props): JSX.Element => {
+  const { handleClose, handleSave } = props
   return (
     <div className="flex justify-end m-3">
       <button
@@ -22,11 +27,4 @@ const CloseButton = ({ handleClose, handleSave }) => {
   )
 }
 
-CloseButton.propTypes = {
-  handleClose: PropTypes.func.isRequired,
-  handleSave: PropTypes.func,
-}
-CloseButton.defaultProps = {
-  handleSave: null,
-}
 export default CloseButton

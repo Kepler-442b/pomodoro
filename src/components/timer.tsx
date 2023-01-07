@@ -1,44 +1,73 @@
 /**
- * File: /src/components/timer.js
+ * File: /src/components/timer.tsx
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
 import axios from "axios"
 import Cookie from "js-cookie"
-import PropTypes from "prop-types"
-import React, { useCallback, useEffect } from "react"
+import React, { Dispatch, SetStateAction, useCallback, useEffect } from "react"
 import { FULL_DASH_ARRAY, SECONDS } from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
 
-const addZeroOnEnd = (int) => int.toString().padStart(2, "0")
+const addZeroOnEnd = (int: number) => int.toString().padStart(2, "0")
 
-const MyTimer = ({
-  pomoTime,
-  shortBreak,
-  longBreak,
-  interval,
-  paused,
-  count,
-  isOnShortBreak,
-  isOnLongBreak,
-  isOnPomoSession,
-  setIsOnPomoSession,
-  setIsOnShortBreak,
-  setIsOnLongBreak,
-  currMins,
-  currSecs,
-  currSBMins,
-  currSBSecs,
-  currLBMins,
-  currLBSecs,
-  setTimer,
-  setSBTimer,
-  setLBTimer,
-  setDashArrVal,
-  secsElapsed,
-  setSecsElapsed,
-  setCount,
-}) => {
+interface Props {
+  pomoTime: string
+  shortBreak: string
+  longBreak: string
+  interval: number
+  paused: boolean
+  count: number
+  isOnShortBreak: boolean
+  isOnLongBreak: boolean
+  isOnPomoSession: boolean
+  setIsOnPomoSession: Dispatch<SetStateAction<boolean>>
+  setIsOnShortBreak: Dispatch<SetStateAction<boolean>>
+  setIsOnLongBreak: Dispatch<SetStateAction<boolean>>
+  currMins: string
+  currSecs: string
+  currSBMins: string
+  currSBSecs: string
+  currLBMins: string
+  currLBSecs: string
+  setTimer: Dispatch<SetStateAction<[string, string]>>
+  setSBTimer: Dispatch<SetStateAction<[string, string]>>
+  setLBTimer: Dispatch<SetStateAction<[string, string]>>
+  setDashArrVal: Dispatch<SetStateAction<string>>
+  secsElapsed: number
+  setSecsElapsed: Dispatch<SetStateAction<number>>
+  setCount: Dispatch<SetStateAction<number>>
+}
+
+const MyTimer = (props: Props): JSX.Element => {
+  const {
+    pomoTime,
+    shortBreak,
+    longBreak,
+    interval,
+    paused,
+    count,
+    isOnShortBreak,
+    isOnLongBreak,
+    isOnPomoSession,
+    setIsOnPomoSession,
+    setIsOnShortBreak,
+    setIsOnLongBreak,
+    currMins,
+    currSecs,
+    currSBMins,
+    currSBSecs,
+    currLBMins,
+    currLBSecs,
+    setTimer,
+    setSBTimer,
+    setLBTimer,
+    setDashArrVal,
+    secsElapsed,
+    setSecsElapsed,
+    setCount,
+  } = props
+
   useEffect(() => {
     setTimer([pomoTime, SECONDS])
     setSBTimer([shortBreak, SECONDS])
@@ -200,31 +229,4 @@ const MyTimer = ({
   )
 }
 
-MyTimer.propTypes = {
-  pomoTime: PropTypes.string.isRequired,
-  shortBreak: PropTypes.string.isRequired,
-  longBreak: PropTypes.string.isRequired,
-  interval: PropTypes.number.isRequired,
-  paused: PropTypes.bool.isRequired,
-  count: PropTypes.number.isRequired,
-  isOnShortBreak: PropTypes.bool.isRequired,
-  isOnLongBreak: PropTypes.bool.isRequired,
-  isOnPomoSession: PropTypes.bool.isRequired,
-  setIsOnPomoSession: PropTypes.func.isRequired,
-  setIsOnShortBreak: PropTypes.func.isRequired,
-  setIsOnLongBreak: PropTypes.func.isRequired,
-  currMins: PropTypes.string.isRequired,
-  currSecs: PropTypes.string.isRequired,
-  currSBMins: PropTypes.string.isRequired,
-  currSBSecs: PropTypes.string.isRequired,
-  currLBMins: PropTypes.string.isRequired,
-  currLBSecs: PropTypes.string.isRequired,
-  setTimer: PropTypes.func.isRequired,
-  setSBTimer: PropTypes.func.isRequired,
-  setLBTimer: PropTypes.func.isRequired,
-  setDashArrVal: PropTypes.func.isRequired,
-  secsElapsed: PropTypes.number.isRequired,
-  setSecsElapsed: PropTypes.func.isRequired,
-  setCount: PropTypes.func.isRequired,
-}
 export default MyTimer

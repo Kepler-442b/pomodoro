@@ -1,39 +1,61 @@
 /**
- * File: /src/components/settingsModal.js
+ * File: /src/components/settingsModal.tsx
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import PropTypes from "prop-types"
 import Slider from "rc-slider"
-import React from "react"
+import React, { Dispatch, SetStateAction } from "react"
 import Modal from "react-modal"
-import Select from "react-select"
+// import Select from "react-select"
 import CloseButton from "./mobileCloseBtn"
 import { MODAL_STYLE, MODAL_MOBILE_STYPE } from "../utils/constant"
 import "rc-slider/assets/index.css"
 
-const SettingsModal = ({
-  isOpen,
-  handleToggle,
-  pomoTime,
-  setPomoTime,
-  shortBreak,
-  setShortBreak,
-  longBreak,
-  setLongBreak,
-  longBreakInterval,
-  setLongBreakInterval,
-  handleSave,
-  goal,
-  setGoal,
-  audio,
-  volume,
-  setVolume,
-  selectedAlarm,
-  selectAlarm,
-  windowWidth,
-  options,
-}) => {
+interface Props {
+  isOpen: boolean
+  handleToggle: Dispatch<SetStateAction<boolean>>
+  pomoTime: string
+  setPomoTime: Dispatch<SetStateAction<string>>
+  shortBreak: string
+  setShortBreak: Dispatch<SetStateAction<string>>
+  longBreak: string
+  setLongBreak: Dispatch<SetStateAction<string>>
+  longBreakInterval: number
+  setLongBreakInterval: Dispatch<SetStateAction<number>>
+  handleSave: () => void
+  goal: number
+  setGoal: Dispatch<SetStateAction<number>>
+  audio: HTMLAudioElement
+  volume: number
+  setVolume: Dispatch<SetStateAction<number>>
+  windowWidth: number
+  // selectedAlarm: any
+  // options: any
+}
+
+const SettingsModal = (props: Props): JSX.Element => {
+  const {
+    isOpen,
+    handleToggle,
+    pomoTime,
+    setPomoTime,
+    shortBreak,
+    setShortBreak,
+    longBreak,
+    setLongBreak,
+    longBreakInterval,
+    setLongBreakInterval,
+    handleSave,
+    goal,
+    setGoal,
+    audio,
+    volume,
+    setVolume,
+    windowWidth,
+    // selectedAlarm,
+    // options,
+  } = props
+
   Modal.setAppElement("#__next")
 
   const isMobile = windowWidth < 641
@@ -110,7 +132,9 @@ const SettingsModal = ({
             max={10}
             step={1}
             value={longBreakInterval}
-            onChange={(evt) => setLongBreakInterval(evt.currentTarget.value)}
+            onChange={(evt) =>
+              setLongBreakInterval(parseInt(evt.currentTarget.value))
+            }
           />
           <label className="modalLabel" htmlFor="pomodoroInput">
             pomodoro(s)
@@ -128,7 +152,7 @@ const SettingsModal = ({
             max={50}
             step={1}
             value={goal}
-            onChange={(evt) => setGoal(evt.currentTarget.value)}
+            onChange={(evt) => setGoal(parseInt(evt.currentTarget.value))}
           />
           <label className="modalLabel" htmlFor="pomodoroInput">
             pomodoro(s)
@@ -136,16 +160,16 @@ const SettingsModal = ({
         </div>
       </div>
       <div id="soundSetting" className="settingGroup">
-        <div className="modalSubtitle">Theme</div>
+        {/* <div className="modalSubtitle">Theme</div>
         <div className="px-4">
           <Select
             className="font-semibold border-2 border-black border-solid rounded-md w-64mx-2"
-            onChange={(option) => selectAlarm(option)}
+            // onChange={(option) => selectAlarm(option)}
             value={selectedAlarm}
             options={options}
             defaultValue={options[0]}
           />
-        </div>
+        </div> */}
         <div className="flex items-center justify-between px-4 mt-3 text-xl text-white settingGroup ">
           <p className="px-2">{volume}</p>
           <Slider
@@ -175,39 +199,6 @@ const SettingsModal = ({
       </div>
     </Modal>
   )
-}
-
-SettingsModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  handleToggle: PropTypes.func.isRequired,
-  pomoTime: PropTypes.string.isRequired,
-  setPomoTime: PropTypes.func.isRequired,
-  shortBreak: PropTypes.string.isRequired,
-  setShortBreak: PropTypes.func.isRequired,
-  longBreak: PropTypes.string.isRequired,
-  setLongBreak: PropTypes.func.isRequired,
-  longBreakInterval: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    .isRequired,
-  setLongBreakInterval: PropTypes.func.isRequired,
-  handleSave: PropTypes.func.isRequired,
-  goal: PropTypes.number.isRequired,
-  setGoal: PropTypes.func.isRequired,
-  audio: PropTypes.object.isRequired,
-  volume: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  setVolume: PropTypes.func.isRequired,
-  selectedAlarm: PropTypes.shape({
-    value: {
-      audioStart: PropTypes.string.isRequired,
-      audioBreak: PropTypes.string.isRequired,
-      charImg: PropTypes.string.isRequired,
-      bgImg: PropTypes.string.isRequired,
-      btnClr: PropTypes.string.isRequired,
-      theme: PropTypes.string.isRequired,
-    },
-    label: PropTypes.string.isRequired,
-  }).isRequired,
-  selectAlarm: PropTypes.func.isRequired,
-  windowWidth: PropTypes.number.isRequired,
 }
 
 export default React.memo(SettingsModal)

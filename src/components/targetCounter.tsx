@@ -1,13 +1,21 @@
 /**
- * File: /src/components/targetCounter.js
+ * File: /src/components/targetCounter.tsx
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React, { Dispatch, SetStateAction, useState } from "react"
 
-const MyTargetCounter = ({ goal, current, showModal }) => {
+interface Props {
+  goal: number
+  current: number
+  showModal: Dispatch<SetStateAction<boolean>>
+}
+
+const MyTargetCounter = (props: Props): JSX.Element => {
+  const { goal, current, showModal } = props
+
   const [style, setStyle] = useState("cursor-pointer")
+
   return (
     <div className="z-10 targetCounter">
       <p
@@ -29,9 +37,4 @@ const MyTargetCounter = ({ goal, current, showModal }) => {
   )
 }
 
-MyTargetCounter.propTypes = {
-  goal: PropTypes.number.isRequired,
-  current: PropTypes.number.isRequired,
-  showModal: PropTypes.func.isRequired,
-}
 export default MyTargetCounter
