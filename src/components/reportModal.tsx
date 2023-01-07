@@ -19,12 +19,7 @@ import {
   Tooltip,
 } from "recharts"
 import CloseButton from "./MobileCloseBtn"
-import {
-  MODAL_STYLE,
-  PERIOD,
-  REPORT_OPTIONS,
-  MODAL_MOBILE_STYPE,
-} from "../utils/constant"
+import { PERIOD, REPORT_OPTIONS } from "../utils/constant"
 import { getYYYYMMDD } from "../utils/date"
 import "rc-slider/assets/index.css"
 

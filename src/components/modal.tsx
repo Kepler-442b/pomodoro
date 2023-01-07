@@ -3,27 +3,36 @@
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import PropTypes from "prop-types"
 import React from "react"
-import Modal from "react-modal"
+import { Modal } from "react-daisyui"
 import MyButton from "./Button"
 
-const MyModal = ({
-  isOpen,
-  handleConfirm,
-  showModal,
-  message,
-  btnMsg,
-  btnClr,
-  pauseTimer,
-}) => {
-  Modal.setAppElement("#__next")
+interface Props {
+  isOpen: boolean
+  handleConfirm: () => void
+  showModal: (show: boolean) => void
+  message: string
+  btnMsg: string
+  btnClr: string
+  pauseTimer?: (pause: boolean) => void
+}
+
+const MyModal = (props: Props): JSX.Element => {
+  const {
+    isOpen,
+    handleConfirm,
+    showModal,
+    message,
+    btnMsg,
+    btnClr,
+    pauseTimer,
+  } = props
 
   return (
     <Modal
       className="confirmModal"
-      isOpen={isOpen}
-      style={{ overlay: { backgroundColor: "transparent", zIndex: 9999 } }}
+      open={isOpen}
+      // style={{ overlay: { backgroundColor: "transparent", zIndex: 9999 } }}
     >
       <div className="mx-2">{message}</div>
       <div className="flex ">
@@ -50,16 +59,4 @@ const MyModal = ({
   )
 }
 
-MyModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  handleConfirm: PropTypes.func.isRequired,
-  showModal: PropTypes.func.isRequired,
-  message: PropTypes.string.isRequired,
-  btnMsg: PropTypes.string.isRequired,
-  btnClr: PropTypes.string.isRequired,
-  pauseTimer: PropTypes.func,
-}
-MyModal.defaultProps = {
-  pauseTimer: null,
-}
 export default MyModal

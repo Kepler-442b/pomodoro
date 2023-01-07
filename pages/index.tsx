@@ -124,7 +124,9 @@ export default function Home(props: Props) {
       )
       setGoal(parseInt(window.localStorage.getItem("goal")))
       setVolume(parseInt(window.localStorage.getItem("volume")))
-      setSessionCount(parseInt(Cookie.get("strikeToday") || sessionCount))
+      setSessionCount(
+        parseInt(Cookie.get("strikeToday") || sessionCount.toString())
+      )
     }
   }
 
@@ -143,8 +145,8 @@ export default function Home(props: Props) {
   }, [expiration])
 
   useEffect(() => {
-    if (sessionCount >= Cookie.get("strikeToday")) {
-      Cookie.set("strikeToday", sessionCount)
+    if (sessionCount >= parseInt(Cookie.get("strikeToday"))) {
+      Cookie.set("strikeToday", sessionCount.toString())
     }
   }, [sessionCount])
 
@@ -415,7 +417,7 @@ export default function Home(props: Props) {
 
   const handleResetProgress = (resetCount = true) => {
     if (resetCount) setSessionCount(0)
-    Cookie.set("strikeToday", 0)
+    Cookie.set("strikeToday", "0")
     setTimer([pomoTime, SECONDS])
     setLBTimer([longBreak, SECONDS])
     setSBTimer([shortBreak, SECONDS])
@@ -449,7 +451,6 @@ export default function Home(props: Props) {
         <title>{title}</title>
       </Head>
       <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/react-modal/3.14.3/react-modal.min.js"
         strategy="lazyOnload"
         // integrity="sha512-MY2jfK3DBnVzdS2V8MXo5lRtr0mNRroUI9hoLVv2/yL3vrJTam3VzASuKQ96fLEpyYIT4a8o7YgtUs5lPjiLVQ=="
         // crossOrigin="anonymous"

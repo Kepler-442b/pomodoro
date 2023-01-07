@@ -5,7 +5,6 @@
  *
  */
 
-import PropTypes from "prop-types"
 import React from "react"
 
 const MyTimerAnimation = ({ dashArrVal }) => {
@@ -31,10 +30,6 @@ const MyTimerAnimation = ({ dashArrVal }) => {
       </g>
     </svg>
   )
-}
-
-MyTimerAnimation.propTypes = {
-  dashArrVal: PropTypes.string.isRequired,
 }
 
 export default React.memo(MyTimerAnimation)
