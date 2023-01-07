@@ -1,5 +1,5 @@
 /**
- * File: /pages/index.js
+ * File: /pages/index.tsx
  * Copyright (c) 2022 - Sooyeon Kim
  */
 //TODO: reduce the time of loading the page (especially the image)
@@ -22,20 +22,37 @@ import Confetti from "react-confetti"
 import { unstable_batchedUpdates } from "react-dom"
 import { ToastContainer, toast } from "react-toastify"
 import { auth, storage } from "../firebase/clientApp"
-import MyButton from "../src/components/button"
-// import MyTextInputWithLabel from "../src/components/inputbox"
+import MyButton from "../src/components/Button"
 import MyModal from "../src/components/modal"
-import ReportModal from "../src/components/reportModal"
-import SettingsModal from "../src/components/settingsModal"
-import MyTimer from "../src/components/timer"
-import MyTimerAnimation from "../src/components/timerAnimation"
-import MyTargetCounter from "../src/components/targetCounter"
+import ReportModal from "../src/components/ReportModal"
+import SettingsModal from "../src/components/SettingsModal"
+import MyTimer from "../src/components/Timer"
+import MyTimerAnimation from "../src/components/TimerAnimation"
+import MyTargetCounter from "../src/components/TargetCounter"
 import debounce from "../src/utils/debounce"
 import { FULL_DASH_ARRAY, SECONDS } from "../src/utils/constant"
 import { getYYYYMMDD } from "../src/utils/date"
 import "react-toastify/dist/ReactToastify.css"
 
-export default function Home(props) {
+interface Props {
+  options: {
+    value: {
+      audioStart: string
+      audioBreak: string
+      charImg: string
+      bgImg: string
+      btnClr: string
+      theme: string
+      credit: string
+      creditLink: string
+      location: string
+      altText: string
+    }
+    label: string
+  }[]
+}
+
+export default function Home(props: Props) {
   const { options } = props
 
   const [title, setTitle] = useState("Pomodoro")
@@ -64,7 +81,7 @@ export default function Home(props) {
   const [secsElapsed, setSecsElapsed] = useState(0)
   const [volume, setVolume] = useState(30)
   const [selectedAlarm /*selectAlarm*/] = useState(options[0])
-  const [user, setUser] = useState()
+  const [user, setUser] = useState<string>("")
   const [profilePic, setProfilePic] = useState(
     Cookie.get("profilePic") || "/UserIcon.svg"
   )
@@ -87,23 +104,26 @@ export default function Home(props) {
       )
       window.localStorage.setItem(
         "longBreakInterval",
-        window.localStorage.getItem("longBreakInterval") || longBreakInterval
+        window.localStorage.getItem("longBreakInterval") ||
+          longBreakInterval.toString()
       )
       window.localStorage.setItem(
         "goal",
-        window.localStorage.getItem("goal") || goal
+        window.localStorage.getItem("goal") || goal.toString()
       )
       window.localStorage.setItem(
         "volume",
-        window.localStorage.getItem("volume") || volume
+        window.localStorage.getItem("volume") || volume.toString()
       )
 
       setPomoTime(window.localStorage.getItem("pomoTime"))
       setShortBreak(window.localStorage.getItem("shortBreak"))
       setLongBreak(window.localStorage.getItem("longBreak"))
-      setLongBreakInterval(window.localStorage.getItem("longBreakInterval"))
-      setGoal(window.localStorage.getItem("goal"))
-      setVolume(window.localStorage.getItem("volume"))
+      setLongBreakInterval(
+        parseInt(window.localStorage.getItem("longBreakInterval"))
+      )
+      setGoal(parseInt(window.localStorage.getItem("goal")))
+      setVolume(parseInt(window.localStorage.getItem("volume")))
       setSessionCount(parseInt(Cookie.get("strikeToday") || sessionCount))
     }
   }
@@ -260,6 +280,10 @@ export default function Home(props) {
     currSBSecs,
   ])
 
+  const handleClickSettings = () => {
+    toggleSettings((prev) => !prev)
+  }
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currUser) => {
       unstable_batchedUpdates(() => {
@@ -268,7 +292,8 @@ export default function Home(props) {
       })
       console.log("Auth state changed")
     })
-    return () => unsub
+
+    return unsub()
   }, [])
 
   const handleSignIn = async () => {
@@ -338,9 +363,12 @@ export default function Home(props) {
       window.localStorage.setItem("pomoTime", pomoTime)
       window.localStorage.setItem("shortBreak", shortBreak)
       window.localStorage.setItem("longBreak", longBreak)
-      window.localStorage.setItem("longBreakInterval", longBreakInterval)
-      window.localStorage.setItem("goal", goal)
-      window.localStorage.setItem("volume", volume)
+      window.localStorage.setItem(
+        "longBreakInterval",
+        longBreakInterval.toString()
+      )
+      window.localStorage.setItem("goal", goal.toString())
+      window.localStorage.setItem("volume", volume.toString())
       window.localStorage.setItem(
         "selectedAlarm",
         JSON.stringify(selectedAlarm)
@@ -383,8 +411,6 @@ export default function Home(props) {
     longBreak,
     selectedAlarm.value.audioStart,
     selectedAlarm.value.audioBreak,
-    selectedAlarm.value.bgImg,
-    selectedAlarm.value.charImg,
   ])
 
   const handleResetProgress = (resetCount = true) => {
@@ -503,7 +529,7 @@ export default function Home(props) {
           <MyButton
             titleTxt={"Open Settings"}
             icon="/SettingsIcon.svg"
-            handleOnClick={() => toggleSettings(!isSettingsOpen)}
+            handleOnClick={() => handleClickSettings()}
             styling={`circle-button-style ${selectedAlarm.value.btnClr}`}
             iconStyling="circle-icon"
           />
@@ -520,21 +546,21 @@ export default function Home(props) {
               longBreakInterval={longBreakInterval}
               setLongBreakInterval={setLongBreakInterval}
               handleSave={handleSaveSettings}
-              goal={parseInt(goal)}
+              goal={goal}
               setGoal={setGoal}
               audio={audio}
               volume={volume}
               setVolume={setVolume}
-              selectedAlarm={selectedAlarm}
               windowWidth={windowWidth}
-              options={options}
+              // selectedAlarm={selectedAlarm}
+              // options={options}
             />
           )}
         </div>
       </nav>
       <div className="flex justify-center layout-spaces">
         <MyTargetCounter
-          goal={parseInt(goal)}
+          goal={goal}
           current={sessionCount}
           showModal={showResetModal}
         />
@@ -546,7 +572,7 @@ export default function Home(props) {
             pomoTime={pomoTime}
             shortBreak={shortBreak}
             longBreak={longBreak}
-            interval={parseInt(longBreakInterval)}
+            interval={longBreakInterval}
             paused={paused}
             count={sessionCount}
             setCount={setSessionCount}
@@ -572,7 +598,7 @@ export default function Home(props) {
           {selectedAlarm.label !== "Nature" && (
             <Image
               objectFit="cover"
-              src={currImg}
+              src={selectedAlarm.value.bgImg}
               alt="timer background"
               layout="fill"
               priority
@@ -643,13 +669,6 @@ export default function Home(props) {
           )}
         </div>
       )}
-      {/* <div className="chatButtonWrapper">
-        <MyButton
-          icon="/SummaryIcon.svg"
-          styling={`circle-button-style `}
-          iconStyling="circle-icon"
-        />
-      </div> */}
       {goal == sessionCount && (isOnShortBreak || isOnLongBreak) && (
         <Confetti width={windowWidth} numberOfPieces={300} recycle={false} />
       )}

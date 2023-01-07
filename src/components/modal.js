@@ -6,7 +6,7 @@
 import PropTypes from "prop-types"
 import React from "react"
 import Modal from "react-modal"
-import MyButton from "./button"
+import MyButton from "./Button"
 
 const MyModal = ({
   isOpen,

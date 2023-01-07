@@ -188,7 +188,7 @@ const MyTimer = (props: Props): JSX.Element => {
         // timer ends, the animation also ends at the same time
         const reducer =
           remainedFraction - (1 / totalSecs) * (1 - remainedFraction)
-        let updatedDashArr = reducer * FULL_DASH_ARRAY
+        const updatedDashArr = reducer * FULL_DASH_ARRAY
 
         const circleDasharray = `${updatedDashArr.toFixed(
           0

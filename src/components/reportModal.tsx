@@ -5,8 +5,8 @@
 
 import axios from "axios"
 import Cookie from "js-cookie"
+import { Modal } from "react-daisyui"
 import React, { useEffect, useState } from "react"
-import Modal from "react-modal"
 import Select from "react-select"
 import { toast } from "react-toastify"
 import {
@@ -18,7 +18,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts"
-import CloseButton from "./mobileCloseBtn"
+import CloseButton from "./MobileCloseBtn"
 import {
   MODAL_STYLE,
   PERIOD,
@@ -36,8 +36,6 @@ interface Props {
 
 const ReportModal = (props: Props): JSX.Element => {
   const { isOpen, showReport, windowWidth } = props
-
-  Modal.setAppElement("#__next")
 
   const isMobile = windowWidth < 641
 
@@ -74,7 +72,7 @@ const ReportModal = (props: Props): JSX.Element => {
           let hoursCompleted = 0
           let intervalsCompleted = 0
           let daysAccessed = 1
-          let arr = []
+          const arr = []
           if (Array.isArray(res.data?.report) && res.data?.report.length > 0) {
             const reports = res.data.report
             reports.forEach((report) => {
@@ -99,86 +97,94 @@ const ReportModal = (props: Props): JSX.Element => {
 
   return (
     <Modal
-      className={`absolute flex-auto ${
-        isMobile ? "reportModalMobile" : "reportModal"
-      }`}
-      isOpen={isOpen}
-      onRequestClose={() => showReport(false)}
-      shouldCloseOnOverlayClick
-      style={{
-        overlay: !isMobile ? MODAL_STYLE : MODAL_MOBILE_STYPE,
-      }}
-    >
-      {isMobile && <CloseButton handleClose={showReport} />}
-      <div className="modalTitle">ACTIVITY REPORT</div>
+      className={` ${isMobile ? "reportModalMobile" : "reportModal"}`}
+      open={isOpen}
+      onClickBackdrop={() => showReport(false)}
 
-      <div>
-        <div className="flex justify-center place-items-center">
-          <Select
-            className="mx-2 font-semibold border-2 border-black border-solid rounded-md w-60"
-            onChange={(option) => setSelectedOption(option)}
-            defaultValue={REPORT_OPTIONS[0]}
-            value={selectedOption}
-            options={REPORT_OPTIONS}
-            closeMenuOnSelect
-          />
-        </div>
-        <div className={isMobile ? "summaryMobile" : "summary"}>
-          <div
-            className={isMobile ? "summaryComponentMobile" : "summaryComponent"}
-            id="intervalsCompleted"
-          >
-            <div className="summaryNumVal">
-              {reportSummary.intervalsCompleted}
-            </div>
-            <div className="summaryTextVal">Intervals Completed</div>
+      // style={{
+      //   overlay: !isMobile ? MODAL_STYLE : MODAL_MOBILE_STYPE,
+      // }}
+    >
+      <Modal.Body>
+        {isMobile && <CloseButton handleClose={showReport} />}
+        <div className="modalTitle">ACTIVITY REPORT</div>
+
+        <div>
+          <div className="flex justify-center place-items-center">
+            <Select
+              className="mx-2 font-semibold border-2 border-black border-solid rounded-md w-60"
+              onChange={(option) => setSelectedOption(option)}
+              defaultValue={REPORT_OPTIONS[0]}
+              value={selectedOption}
+              options={REPORT_OPTIONS}
+              closeMenuOnSelect
+            />
           </div>
-          <div
-            className={isMobile ? "summaryComponentMobile" : "summaryComponent"}
-            id="hoursCompleted"
-          >
-            <div className="summaryNumVal">{reportSummary.hoursCompleted}</div>
-            <div className="summaryTextVal">Hours Completed</div>
-          </div>
-          <div
-            className={isMobile ? "summaryComponentMobile" : "summaryComponent"}
-            id="daysStreak"
-          >
-            <div className="summaryNumVal">{reportSummary.daysAccessed}</div>
-            <div className="summaryTextVal">Day(s) Accessed</div>
-          </div>
-        </div>
-        <div className="flex justify-center -ml-5">
-          {reportSummary.hoursCompleted &&
-          reportSummary.intervalsCompleted &&
-          reportEach?.[0]?.hoursCompleted !== null ? (
-            <BarChart
-              data={[reportEach]}
-              width={isMobile ? 350 : 650}
-              height={250}
+          <div className={isMobile ? "summaryMobile" : "summary"}>
+            <div
+              className={
+                isMobile ? "summaryComponentMobile" : "summaryComponent"
+              }
+              id="intervalsCompleted"
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" stroke="#fff"></XAxis>
-              <YAxis stroke="#fff" allowDecimals={false}>
-                <Label
-                  style={{
-                    textAnchor: "middle",
-                    fill: "#f2e78a",
-                  }}
-                  angle={270}
-                  value="hour(s)"
-                />
-              </YAxis>
-              <Bar dataKey="hoursCompleted" fill="#D0CE9E" />
-              <Tooltip />
-            </BarChart>
-          ) : (
-            <div className="text-primary">
-              No data for this period exists yet.
+              <div className="summaryNumVal">
+                {reportSummary.intervalsCompleted}
+              </div>
+              <div className="summaryTextVal">Intervals Completed</div>
             </div>
-          )}
+            <div
+              className={
+                isMobile ? "summaryComponentMobile" : "summaryComponent"
+              }
+              id="hoursCompleted"
+            >
+              <div className="summaryNumVal">
+                {reportSummary.hoursCompleted}
+              </div>
+              <div className="summaryTextVal">Hours Completed</div>
+            </div>
+            <div
+              className={
+                isMobile ? "summaryComponentMobile" : "summaryComponent"
+              }
+              id="daysStreak"
+            >
+              <div className="summaryNumVal">{reportSummary.daysAccessed}</div>
+              <div className="summaryTextVal">Day(s) Accessed</div>
+            </div>
+          </div>
+          <div className="flex justify-center -ml-5">
+            {reportSummary.hoursCompleted &&
+            reportSummary.intervalsCompleted &&
+            reportEach?.[0]?.hoursCompleted !== null ? (
+              <BarChart
+                data={[reportEach]}
+                width={isMobile ? 350 : 650}
+                height={250}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" stroke="#fff"></XAxis>
+                <YAxis stroke="#fff" allowDecimals={false}>
+                  <Label
+                    style={{
+                      textAnchor: "middle",
+                      fill: "#f2e78a",
+                    }}
+                    angle={270}
+                    value="hour(s)"
+                  />
+                </YAxis>
+                <Bar dataKey="hoursCompleted" fill="#D0CE9E" />
+                <Tooltip />
+              </BarChart>
+            ) : (
+              <div className="text-primary">
+                No data for this period exists yet.
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </Modal.Body>
     </Modal>
   )
 }

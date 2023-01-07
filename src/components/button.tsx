@@ -1,24 +1,23 @@
 /**
- * File: /src/components/button.tsx
+ * File: /src/components/Button.tsx
  * Copyright (c) 2022 - Sooyeon Kim
  */
 
-import React from "react"
+import React, { MouseEvent } from "react"
 
 interface Props {
-  text: string
-  toggleText: string
-  showToggle: boolean
-  icon: string
-  styling: string
-  iconStyling: string
-  screenW: number
-  textOnly: boolean
-  handleOnClick: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void
-  isDisabled: boolean
-  titleTxt: string
+  handleOnClick: () => // event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  void
+  text?: string
+  screenW?: number
+  textOnly?: boolean
+  toggleText?: string
+  showToggle?: boolean
+  isDisabled?: boolean
+  titleTxt?: string
+  styling?: string
+  iconStyling?: string
+  icon?: string
 }
 
 const MyButton = (props: Props): JSX.Element => {
@@ -38,7 +37,7 @@ const MyButton = (props: Props): JSX.Element => {
   return (
     <button
       className={`button-basic-style ${styling}`}
-      onClick={(evt) => handleOnClick(evt)}
+      onClick={() => handleOnClick()}
       disabled={isDisabled}
       title={titleTxt}
     >

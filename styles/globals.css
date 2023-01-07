@@ -189,11 +189,11 @@ input[type="text"] {
   }
 
   .button-basic-style {
-    @apply relative flex items-center justify-center w-auto h-10 px-2 py-1 mx-1 text-lg text-white border-b-2 shadow-xl border-neutral-800 hover:border-b-0 md:mx-2 hover:bg-slate-800 rounded-2xl;
+    @apply relative flex items-center justify-center w-auto h-10 px-2 py-1 mx-1 text-lg text-white border-b-2 shadow-xl hover:border-b-0 md:mx-2 hover:bg-slate-800 rounded-2xl;
   }
 
   .long-button-style {
-    @apply justify-center my-2 text-2xl border-b-4 border-neutral-800 hover:border-b-0 md:my-3 md:text-3xl w-buttonSm h-buttonSm md:h-12 md:w-52;
+    @apply justify-center my-2 text-2xl border-b-4 hover:border-b-0 md:my-3 md:text-3xl w-buttonSm h-buttonSm md:h-12 md:w-52;
   }
 
   .targetCounter {
@@ -213,7 +213,7 @@ input[type="text"] {
   }
 
   .circle-button-style {
-    @apply flex items-center justify-center w-12 h-12 border-b-4 rounded-full border-neutral-800 hover:border-b-0;
+    @apply flex items-center justify-center w-12 h-12 border-b-4 rounded-full hover:border-b-0;
   }
 
   .circle-icon {
